@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JPC 模擬數據分析平台</title>
+    <!-- Chart.js 核心與縮放套件 (需搭配 Hammer.js) -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/hammerjs@2.0.8"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.0.1/dist/chartjs-plugin-zoom.min.js"></script>
+    <style>
+        :root {
+            --bg-main: #F4F7F6;
+            /* 淺灰底色 */
+            --bg-sub: #FFFFFF;
+            /* 純白卡片 */
+            --accent: #0055A4;
+            /* 佳必琪藍 (JPC Blue) */
+            --accent-hover: #003F7A;
+            --accent-secondary: #8CC63F;
+            /* 佳必琪綠 (JPC Green) */
+            --text-main: #333333;
+            --text-muted: #666666;
+            --pass-color: #2E7D32;
+            --fail-color: #D32F2F;
+            --border-color: #DDE2E5;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        /* 雙欄佈局 */
+        .layout-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            width: 100%;
+            max-width: 1400px;
+            /* 支援大螢幕 */
+        }
+
+        @media (max-width: 1000px) {
+            .layout-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* 區塊卡片 UI */
+        .section-card {
+            background-color: var(--bg-sub);
+            margin-bottom: 20px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            padding: 20px;
+        }
+
+        .section-card h2 {
+            font-size: 1.1em;
+            color: var(--accent);
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
+            margin-top: 0;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .details-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .full-width {
+            grid-column: span 2;
+        }
+
+        label {
+            margin-bottom: 5px;
+            font-size: 0.9em;
+            color: var(--text-muted);
+            font-weight: bold;
+        }
+
+        .required {
+            color: var(--fail-color);
+            margin-left: 3px;
+        }
+
+        input[type="text"] {
+            padding: 10px;
+            border: 1px solid #B0BEC5;
+            background-color: #FAFAFA;
+            color: var(--text-main);
+            border-radius: 4px;
+            transition: 0.2s;
+        }
+
+        input:focus {
+            border-color: var(--accent);
+            background-color: #FFF;
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(0, 85, 164, 0.2);
+        }
+
+        /* 拖曳上傳區塊 */
+        .drop-zone {
+            border: 2px dashed #B0BEC5;
+            border-radius: 8px;
+            padding: 30px;
+            text-align: center;
+            background-color: #FAFAFA;
+            cursor: pointer;
+            transition: 0.3s;
+            position: relative;
+        }
+
+        .drop-zone.dragover {
+            background-color: rgba(0, 85, 164, 0.1);
+            border-color: var(--accent);
+        }
+
+        .drop-zone p {
+            margin: 0;
+            color: var(--text-muted);
+            font-weight: bold;
+            pointer-events: none;
+        }
+
+        .drop-zone span {
+            display: block;
+            font-size: 0.8em;
+            color: #999;
+            margin-top: 5px;
+            pointer-events: none;
+        }
+
+        .drop-zone input[type="file"] {
+            display: none;
+        }
+
+        /* 檔案標籤 */
+        .file-badge {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 5px 10px;
+            background: #E3F2FD;
+            color: var(--accent);
+            border-radius: 4px;
+            font-size: 0.85em;
+            font-weight: bold;
+        }
+
+        /* 按鈕設計與 Loading 動畫 */
+        .btn-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .btn {
+            flex: 1;
+            background-color: var(--accent);
+            color: white;
+            border: none;
+            padding: 14px;
+            font-size: 1.05em;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: 0.2s;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn:hover:not(:disabled) {
+            background-color: var(--accent-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        #btn-report {
+            background-color: var(--accent-secondary);
+            flex: 0.5;
+        }
+
+        #btn-report:hover {
+            background-color: #7AB036;
+        }
+
+        .btn-small {
+            padding: 6px 12px;
+            font-size: 0.85em;
+            flex: none;
+            background: #eee;
+            color: #333;
+            box-shadow: none;
+        }
+
+        .btn-small:hover {
+            background: #ddd;
+            transform: none;
+        }
+
+        .spinner {
+            display: none;
+            width: 18px;
+            height: 18px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-top: 3px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* 結果與圖表 */
+        #result-placeholder {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            color: #aaa;
+            text-align: center;
+        }
+
+        #result-content {
+            display: none;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .summary-cards {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .card {
+            flex: 1;
+            background: #F8FAFC;
+            padding: 15px;
+            border-radius: 6px;
+            text-align: center;
+            border: 1px solid var(--border-color);
+        }
+
+        .card span {
+            display: block;
+            font-size: 1.5em;
+            font-weight: bold;
+            margin-top: 5px;
+            color: var(--accent);
+        }
+
+        #pass-fail-badge {
+            font-size: 1em;
+            padding: 5px 12px;
+            border-radius: 20px;
+            color: white;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        .badge-pass {
+            background-color: var(--pass-color);
+        }
+
+        .badge-fail {
+            background-color: var(--fail-color);
+        }
+
+        .chart-container {
+            position: relative;
+            flex-grow: 1;
+            min-height: 400px;
+            width: 100%;
+            background: #FFF;
+            padding: 10px;
+            border-radius: 4px;
+            border: 1px solid #eee;
+        }
+
+        /* Toast 提示 */
+        #toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .toast {
+            padding: 15px 25px;
+            border-radius: 6px;
+            color: white;
+            font-weight: bold;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            transform: translateX(120%);
+            transition: transform 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+
+        .toast.success {
+            background-color: var(--pass-color);
+        }
+
+        .toast.error {
+            background-color: var(--fail-color);
+        }
+
+        /* 列印隱藏左欄 */
+        @media print {
+            .layout-container {
+                display: block;
+            }
+
+            .col-left,
+            .btn-group {
+                display: none;
+            }
+
+            .section-card {
+                border: none;
+                box-shadow: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="toast-container"></div>
+
+    <div class="layout-container">
+        <!-- 左欄：參數與檔案上傳 -->
+        <div class="col-left">
+            <div style="margin-bottom: 20px;">
+                <h1
+                    style="color: var(--accent); border-bottom: 3px solid var(--accent); padding-bottom: 10px; margin:0;">
+                    JPC Simulation Analyzer
+                </h1>
+            </div>
+
+            <form id="analysis-form">
+                <div class="section-card">
+                    <h2>專案資訊</h2>
+                    <div class="details-content">
+                        <div class="form-group"><label>專案名稱 <span class="required">*</span></label><input type="text"
+                                id="proj_name" required></div>
+                        <div class="form-group"><label>DUT</label><input type="text" id="proj_dut"></div>
+                        <div class="form-group"><label>版本</label><input type="text" id="proj_ver"></div>
+                        <div class="form-group"><label>負責人</label><input type="text" id="proj_owner"></div>
+                    </div>
+                </div>
+
+                <div class="section-card">
+                    <h2>模擬條件</h2>
+                    <div class="details-content">
+                        <div class="form-group"><label>Solver</label><input type="text" id="sim_solver"></div>
+                        <div class="form-group"><label>Port</label><input type="text" id="sim_port"></div>
+                        <div class="form-group"><label>Boundary</label><input type="text" id="sim_boundary"></div>
+                        <div class="form-group"><label>Mesh</label><input type="text" id="sim_mesh"></div>
+                        <div class="form-group full-width"><label>Material</label><input type="text" id="sim_material">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section-card">
+                    <h2>檔案上傳</h2>
+                    <div class="form-group" style="margin-bottom: 15px;">
+                        <label>S-parameter CSV <span class="required">*</span></label>
+                        <div class="drop-zone" id="csv-drop-zone">
+                            <p>📥 將 CSV 檔案拖曳至此處</p>
+                            <span>或點擊選擇檔案</span>
+                            <input type="file" id="csv_file" accept=".csv" required>
+                        </div>
+                        <div id="csv-filename" class="file-badge" style="display:none;"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>模擬結果圖 (輔助報告)</label>
+                        <input type="file" id="img_file" accept="image/*"
+                            style="border:none; padding:0; background:transparent;">
+                    </div>
+                </div>
+
+                <div class="btn-group">
+                    <button type="submit" class="btn" id="btn-submit">
+                        <div class="spinner" id="submit-spinner"></div>
+                        <span id="submit-text">開始分析</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- 右欄：分析結果與圖表 -->
+        <div class="col-right">
+            <div class="section-card" style="height: calc(100% - 40px); display: flex; flex-direction: column;">
+
+                <!-- 初始佔位符 -->
+                <div id="result-placeholder">
+                    <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#ddd" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                        <line x1="3" y1="9" x2="21" y2="9"></line>
+                        <line x1="9" y1="21" x2="9" y2="9"></line>
+                    </svg>
+                    <h3 style="margin-top:15px; color:#999;">請先在左側輸入參數並分析</h3>
+                </div>
+
+                <!-- 分析結果 (隱藏直到分析完成) -->
+                <div id="result-content" style="display:none;">
+                    <h2>
+                        分析結論
+                        <div>
+                            <span id="pass-fail-badge"></span>
+                            <button class="btn btn-small" id="btn-report" style="margin-left: 10px;">匯出報告</button>
+                        </div>
+                    </h2>
+
+                    <div class="summary-cards">
+                        <div class="card">最大值 (Max dB) <span id="val-max">-</span></div>
+                        <div class="card">最小值 (Min dB) <span id="val-min">-</span></div>
+                    </div>
+
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 5px;">
+                        <label style="margin:0;">頻率響應圖 (可使用滑鼠滾輪縮放)</label>
+                        <button type="button" class="btn btn-small" onclick="resetZoom()">重設縮放 (Reset Zoom)</button>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="resultChart"></canvas>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // === Toast 提示功能 ===
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.innerText = message;
+            container.appendChild(toast);
+
+            // 觸發進場動畫
+            setTimeout(() => toast.classList.add('show'), 10);
+            // 3秒後離場並刪除
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        // === 拖曳上傳功能 (Drag & Drop) ===
+        const dropZone = document.getElementById('csv-drop-zone');
+        const fileInput = document.getElementById('csv_file');
+        const fileNameDisplay = document.getElementById('csv-filename');
+
+        // 點擊區塊觸發 input
+        dropZone.addEventListener('click', () => fileInput.click());
+
+        // 拖曳事件視覺回饋
+        dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('dragover'); });
+        dropZone.addEventListener('dragleave', (e) => { e.preventDefault(); dropZone.classList.remove('dragover'); });
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('dragover');
+            if (e.dataTransfer.files.length > 0) {
+                fileInput.files = e.dataTransfer.files; // 將拖曳的檔案塞給 input
+                updateFileName();
+            }
+        });
+
+        // 一般點擊選擇檔案後更新檔名
+        fileInput.addEventListener('change', updateFileName);
+
+        function updateFileName() {
+            if (fileInput.files.length > 0) {
+                fileNameDisplay.style.display = 'inline-block';
+                fileNameDisplay.innerText = "📄 " + fileInput.files[0].name;
+            }
+        }
+
+        // 處理輔助圖片上傳 (Base64)
+        let uploadedImageBase64 = "";
+        document.getElementById('img_file').addEventListener('change', function (e) {
+            if (e.target.files[0]) {
+                const reader = new FileReader();
+                reader.onload = (event) => { uploadedImageBase64 = event.target.result; };
+                reader.readAsDataURL(e.target.files[0]);
+            }
+        });
+
+        // === 表單提交與分析 ===
+        let currentChart = null;
+
+        document.getElementById('analysis-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            if (!fileInput.files[0]) {
+                showToast("請上傳 CSV 檔案", "error");
+                return;
+            }
+
+            // UI Loading 狀態
+            const btnSubmit = document.getElementById('btn-submit');
+            const spinner = document.getElementById('submit-spinner');
+            const btnText = document.getElementById('submit-text');
+
+            btnSubmit.disabled = true;
+            spinner.style.display = 'block';
+            btnText.innerText = '分析運算中...';
+
+            const formData = new FormData();
+            formData.append('csv_file', fileInput.files[0]);
+
+            try {
+                const response = await fetch('/analyze', { method: 'POST', body: formData });
+                const result = await response.json();
+
+                if (result.status === 'error') {
+                    showToast(result.message, "error");
+                } else {
+                    showToast(result.message, "success");
+
+                    // 切換右側顯示
+                    document.getElementById('result-placeholder').style.display = 'none';
+                    document.getElementById('result-content').style.display = 'flex';
+
+                    // 更新數據
+                    document.getElementById('val-max').innerText = result.data.max.toFixed(2);
+                    document.getElementById('val-min').innerText = result.data.min.toFixed(2);
+
+                    const badge = document.getElementById('pass-fail-badge');
+                    if (result.data.is_pass) {
+                        badge.innerText = "PASS";
+                        badge.className = "badge-pass";
+                    } else {
+                        badge.innerText = "FAIL";
+                        badge.className = "badge-fail";
+                    }
+
+                    // 畫圖表
+                    renderChart(result.data);
+                }
+            } catch (error) {
+                console.error("Error:", error);
+                showToast("伺服器連線錯誤", "error");
+            } finally {
+                // 恢復按鈕狀態
+                btnSubmit.disabled = false;
+                spinner.style.display = 'none';
+                btnText.innerText = '開始分析';
+            }
+        });
+
+        // === 繪製 Chart.js (支援縮放) ===
+        function renderChart(data) {
+            const ctx = document.getElementById('resultChart').getContext('2d');
+            if (currentChart) currentChart.destroy();
+
+            currentChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: data.freq,
+                    datasets: [
+                        {
+                            label: data.sim_name,
+                            data: data.sim,
+                            borderColor: '#0055A4', // 佳必琪企業藍
+                            backgroundColor: 'rgba(0, 85, 164, 0.1)',
+                            borderWidth: 2,
+                            pointRadius: 0,
+                            tension: 0.1 // 讓線條稍微平滑
+                        },
+                        {
+                            label: data.spec_name,
+                            data: data.spec,
+                            borderColor: '#F44336', // 警示紅
+                            borderDash: [5, 5],
+                            borderWidth: 2,
+                            pointRadius: 0
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false,
+                    },
+                    scales: {
+                        x: { title: { display: true, text: 'Frequency (GHz)', color: '#666' }, ticks: { color: '#666' }, grid: { color: '#EEE' } },
+                        y: { title: { display: true, text: 'dB', color: '#666' }, ticks: { color: '#666' }, grid: { color: '#EEE' } }
+                    },
+                    plugins: {
+                        legend: { labels: { color: '#333' } },
+                        tooltip: {
+                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                            titleFont: { size: 14 },
+                            bodyFont: { size: 14 },
+                            padding: 10
+                        },
+                        // 縮放與平移設定 (透過 chartjs-plugin-zoom)
+                        zoom: {
+                            pan: { enabled: true, mode: 'x' }, // 允許左右拖曳
+                            zoom: {
+                                wheel: { enabled: true },      // 允許滑鼠滾輪縮放
+                                pinch: { enabled: true },      // 允許觸控板兩指縮放
+                                mode: 'x'                      // 鎖定只能針對 X軸(頻率)縮放
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // 重設縮放功能
+        function resetZoom() {
+            if (currentChart) {
+                currentChart.resetZoom();
+            }
+        }
+
+        // === 產生報告 ===
+        document.getElementById('btn-report').addEventListener('click', () => {
+            // 先重設縮放，確保印出來是完整的全頻段圖
+            resetZoom();
+
+            // 延遲一下等圖表重繪完畢再抓圖
+            setTimeout(() => {
+                const chartBase64 = document.getElementById('resultChart').toDataURL('image/png');
+                const getValue = (id) => document.getElementById(id).value || "N/A";
+
+                const reportWindow = window.open('', '_blank');
+                reportWindow.document.write(`
+                <html>
+                <head>
+                    <title>JPC Report - ${getValue('proj_name')}</title>
+                    <style>
+                        body { font-family: Arial, sans-serif; padding: 40px; color: #333; line-height: 1.6; max-width: 1000px; margin: 0 auto;}
+                        h1 { color: #0055A4; border-bottom: 2px solid #8CC63F; padding-bottom: 10px; }
+                        h2 { margin-top: 30px; color: #2C2C2C; font-size: 1.2em; border-left: 4px solid #0055A4; padding-left: 10px;}
+                        table { width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 0.95em;}
+                        th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+                        th { background-color: #F8FAFC; width: 25%; color: #0055A4;}
+                        .pass { color: #2E7D32; font-weight: bold; }
+                        .fail { color: #D32F2F; font-weight: bold; }
+                        img { max-width: 100%; height: auto; margin-top: 15px; border: 1px solid #eee; }
+                        @media print { button { display: none; } }
+                    </style>
+                </head>
+                <body>
+                    <h1>Simulation Analysis Report</h1>
+                    
+                    <h2>Project Information</h2>
+                    <table>
+                        <tr><th>Project Name</th><td>${getValue('proj_name')}</td><th>DUT</th><td>${getValue('proj_dut')}</td></tr>
+                        <tr><th>Version</th><td>${getValue('proj_ver')}</td><th>Owner</th><td>${getValue('proj_owner')}</td></tr>
+                    </table>
+
+                    <h2>Simulation Conditions</h2>
+                    <table>
+                        <tr><th>Solver</th><td>${getValue('sim_solver')}</td><th>Port</th><td>${getValue('sim_port')}</td></tr>
+                        <tr><th>Boundary</th><td>${getValue('sim_boundary')}</td><th>Mesh</th><td>${getValue('sim_mesh')}</td></tr>
+                        <tr><th>Material</th><td colspan="3">${getValue('sim_material')}</td></tr>
+                    </table>
+
+                    <h2>Analysis Result</h2>
+                    <p>Status: <span class="${document.getElementById('pass-fail-badge').innerText.toLowerCase()}">
+                        ${document.getElementById('pass-fail-badge').innerText}
+                    </span></p>
+                    <p>Max Value: ${document.getElementById('val-max').innerText} dB</p>
+                    <p>Min Value: ${document.getElementById('val-min').innerText} dB</p>
+                    
+                    <h2>Frequency Response</h2>
+                    <img src="${chartBase64}" alt="Chart">
+
+                    ${uploadedImageBase64 ? `<h2>Simulation Model</h2><img src="${uploadedImageBase64}" alt="Model" style="max-height: 400px; object-fit: contain;">` : ''}
+
+                    <script>
+                        setTimeout(() => { window.print(); }, 800);
+                    <\/script>
+                </body>
+                </html>
+            `);
+                reportWindow.document.close();
+            }, 100);
+        });
+    </script>
+</body>
+
+</html>
