@@ -117,29 +117,29 @@
         <form id="report-form">
             <h2>1. 專案資訊</h2>
             <div class="grid-2">
-                <div class="form-group"><label>專案名稱</label><input type="text" id="i_pname" value="PCIe Gen6 CEM to MCIO Cable"></div>
-                <div class="form-group"><label>客戶 / 內部專案</label><input type="text" id="i_pclient" value="Internal"></div>
-                <div class="form-group"><label>板號 / 版本</label><input type="text" id="i_prev" value="EVT-001 / Rev.A"></div>
-                <div class="form-group"><label>DUT / Sample ID</label><input type="text" id="i_pdut" value="Sample-001"></div>
-                <div class="form-group"><label>負責人</label><input type="text" id="i_powner" value="Henry"></div>
-                <div class="form-group"><label>報告日期</label><input type="date" id="i_pdate" value="2026-06-26"></div>
-                <div class="form-group"><label>報告版本</label><input type="text" id="i_pver" value="v0.1"></div>
+                <div class="form-group"><label>專案名稱</label><input type="text" id="i_pname" placeholder="如: PCIe Gen6 CEM to MCIO Cable"></div>
+                <div class="form-group"><label>客戶 / 內部專案</label><input type="text" id="i_pclient" placeholder="如: Internal"></div>
+                <div class="form-group"><label>板號 / 版本</label><input type="text" id="i_prev" placeholder="如: EVT-001 / Rev.A"></div>
+                <div class="form-group"><label>DUT / Sample ID</label><input type="text" id="i_pdut" placeholder="如: Sample-001"></div>
+                <div class="form-group"><label>負責人</label><input type="text" id="i_powner" placeholder="請輸入姓名"></div>
+                <div class="form-group"><label>報告日期</label><input type="date" id="i_pdate"></div>
+                <div class="form-group"><label>報告版本</label><input type="text" id="i_pver" placeholder="如: v0.1"></div>
                 <div class="form-group full-width"><label>模擬目的</label>
-                    <input type="text" id="i_ppurpose" value="確認高速通道 IL / RL / NEXT / FEXT 是否滿足規格，並找出風險頻點與結構區域。">
+                    <input type="text" id="i_ppurpose" placeholder="確認高速通道 IL / RL / NEXT / FEXT 是否滿足規格...">
                 </div>
             </div>
 
             <h2>2. 模擬條件與模型設定</h2>
             <div class="grid-2">
-                <div class="form-group"><label>模擬軟體</label><input type="text" id="i_ssoft" value="CST Studio Suite"></div>
-                <div class="form-group"><label>Solver</label><input type="text" id="i_ssolver" value="Frequency Domain Solver"></div>
-                <div class="form-group"><label>頻率範圍</label><input type="text" id="i_sfreq" value="0.01 ~ 40 GHz"></div>
-                <div class="form-group"><label>Port 設定</label><input type="text" id="i_sport" value="Differential Port / Waveguide Port"></div>
-                <div class="form-group"><label>Boundary Condition</label><input type="text" id="i_sbound" value="Open / PML"></div>
-                <div class="form-group"><label>Mesh / Accuracy</label><input type="text" id="i_smesh" value="Adaptive mesh, S-parameter convergence < 0.02"></div>
-                <div class="form-group full-width"><label>材料 / Stackup</label><input type="text" id="i_smat" value="PCB: ML-4062-HCB1 Contact: C5210 Cable: Twinax 30AWG"></div>
+                <div class="form-group"><label>模擬軟體</label><input type="text" id="i_ssoft" placeholder="如: CST Studio Suite"></div>
+                <div class="form-group"><label>Solver</label><input type="text" id="i_ssolver" placeholder="如: Frequency Domain Solver"></div>
+                <div class="form-group"><label>頻率範圍</label><input type="text" id="i_sfreq" placeholder="如: 0.01 ~ 40 GHz"></div>
+                <div class="form-group"><label>Port 設定</label><input type="text" id="i_sport" placeholder="如: Differential Port / Waveguide Port"></div>
+                <div class="form-group"><label>Boundary Condition</label><input type="text" id="i_sbound" placeholder="如: Open / PML"></div>
+                <div class="form-group"><label>Mesh / Accuracy</label><input type="text" id="i_smesh" placeholder="如: Adaptive mesh..."></div>
+                <div class="form-group full-width"><label>材料 / Stackup</label><input type="text" id="i_smat" placeholder="如: PCB: ML-4062-HCB1 Contact: C5210..."></div>
                 <div class="form-group full-width"><label>模型假設與限制</label>
-                    <input type="text" id="i_slimit" value="未納入製程公差；焊錫/UV 尺寸依目前 3D 模型；fixture loss 需另行確認。">
+                    <input type="text" id="i_slimit" placeholder="如: 未納入製程公差；fixture loss 需另行確認。">
                 </div>
             </div>
 
@@ -147,24 +147,24 @@
             <table class="input-table" id="specTable">
                 <tr><th>項目</th><th>規格/條件</th><th>模擬結果</th><th>Margin</th><th>判定</th><th>備註</th></tr>
                 <tr>
-                    <td><input type="text" value="Insertion Loss / Sdd21"></td><td><input type="text" value="依專案 spec line"></td>
-                    <td><input type="text" value="待填"></td><td><input type="text" value="待填"></td>
-                    <td><select><option>Pass</option><option selected>Fail</option></select></td><td><input type="text"></td>
+                    <td><input type="text" placeholder="Insertion Loss / Sdd21"></td><td><input type="text" placeholder="依專案 spec line"></td>
+                    <td><input type="text"></td><td><input type="text"></td>
+                    <td><select><option value="" disabled selected>請選擇</option><option>Pass</option><option>Fail</option></select></td><td><input type="text"></td>
                 </tr>
                 <tr>
-                    <td><input type="text" value="Return Loss / Sdd11"></td><td><input type="text" value="依專案 spec line"></td>
-                    <td><input type="text" value="待填"></td><td><input type="text" value="待填"></td>
-                    <td><select><option selected>Pass</option><option>Fail</option></select></td><td><input type="text"></td>
+                    <td><input type="text" placeholder="Return Loss / Sdd11"></td><td><input type="text" placeholder="依專案 spec line"></td>
+                    <td><input type="text"></td><td><input type="text"></td>
+                    <td><select><option value="" disabled selected>請選擇</option><option>Pass</option><option>Fail</option></select></td><td><input type="text"></td>
                 </tr>
                 <tr>
-                    <td><input type="text" value="NEXT"></td><td><input type="text" value="依專案 spec line"></td>
-                    <td><input type="text" value="待填"></td><td><input type="text" value="待填"></td>
-                    <td><select><option selected>Pass</option><option>Fail</option></select></td><td><input type="text"></td>
+                    <td><input type="text" placeholder="NEXT"></td><td><input type="text" placeholder="依專案 spec line"></td>
+                    <td><input type="text"></td><td><input type="text"></td>
+                    <td><select><option value="" disabled selected>請選擇</option><option>Pass</option><option>Fail</option></select></td><td><input type="text"></td>
                 </tr>
                 <tr>
-                    <td><input type="text" value="FEXT"></td><td><input type="text" value="依專案 spec line"></td>
-                    <td><input type="text" value="待填"></td><td><input type="text" value="待填"></td>
-                    <td><select><option selected>Pass</option><option>Fail</option></select></td><td><input type="text"></td>
+                    <td><input type="text" placeholder="FEXT"></td><td><input type="text" placeholder="依專案 spec line"></td>
+                    <td><input type="text"></td><td><input type="text"></td>
+                    <td><select><option value="" disabled selected>請選擇</option><option>Pass</option><option>Fail</option></select></td><td><input type="text"></td>
                 </tr>
             </table>
 
@@ -191,12 +191,12 @@
 
             <h2>5. 結論</h2>
             <div class="form-group">
-                <textarea id="i_c_conc">本次模擬結果存在未滿足規格的項目，建議優先針對最差 margin 的頻點與對應結構區域進行 debug。主要風險項目包含：Insertion Loss / Sdd21。需特別追蹤：Fixture loss、焊接區阻抗、via stub、材料 Dk/Df、cable stripping 長度需與實物一致。</textarea>
+                <textarea id="i_c_conc" placeholder="請填寫結論與風險提醒..."></textarea>
             </div>
 
             <h2>6. 建議後續動作</h2>
             <div class="form-group">
-                <textarea id="i_c_next">1. 與實測 S-parameter / TDR 進行 correlation。&#10;2. 若 IL 或 RL fail，優先檢查 worst frequency 對應結構區域。&#10;3. 針對焊接區、via、anti-pad、cap pad 建立 DOE。&#10;4. 更新模型材料參數與製程公差後重新模擬。</textarea>
+                <textarea id="i_c_next" placeholder="1. 與實測 S-parameter / TDR 進行 correlation。&#10;2. 若 IL 或 RL fail，優先檢查..."></textarea>
             </div>
 
             <button type="button" class="btn-generate" id="btn-print">產生報告 (自動開啟列印)</button>
@@ -229,7 +229,6 @@
             reader.onload = function(event) {
                 const lines = event.target.result.trim().split('\n');
                 const xData = [], yData = [];
-                // 簡易解析前兩欄
                 for (let i = 1; i < lines.length; i++) {
                     const cols = lines[i].split(',');
                     if(cols.length >= 2) {
@@ -238,20 +237,15 @@
                     }
                 }
                 
-                // 使用隱藏 Canvas 畫圖並轉成 Base64
                 const ctx = document.getElementById('hiddenCanvas').getContext('2d');
                 if(tempChart) tempChart.destroy();
                 
                 tempChart = new Chart(ctx, {
                     type: 'line',
                     data: { labels: xData, datasets: [{ label: 'Data', data: yData, borderColor: 'blue', pointRadius: 0 }] },
-                    options: { 
-                        animation: false, // 關閉動畫確保立刻取得影像
-                        responsive: false 
-                    }
+                    options: { animation: false, responsive: false }
                 });
                 
-                // 等待一拍讓圖表渲染完成
                 setTimeout(() => {
                     csvChartBase64 = document.getElementById('hiddenCanvas').toDataURL('image/png');
                     document.getElementById('csv-list').innerHTML = `<div>已選取: ${file.name} (圖表產生完成)</div>`;
@@ -267,10 +261,18 @@
             let specTableHTML = '';
             for(let i = 1; i < specRows.length; i++) {
                 const inputs = specRows[i].querySelectorAll('input, select');
+                // 若為空值，補上空格保持表格排版不跑位
+                const val0 = inputs[0].value || "&nbsp;";
+                const val1 = inputs[1].value || "&nbsp;";
+                const val2 = inputs[2].value || "&nbsp;";
+                const val3 = inputs[3].value || "&nbsp;";
+                const val4 = inputs[4].value || "&nbsp;";
+                const val5 = inputs[5].value || "&nbsp;";
+
                 specTableHTML += `
                     <tr>
-                        <td>${inputs[0].value}</td><td>${inputs[1].value}</td><td>${inputs[2].value}</td>
-                        <td>${inputs[3].value}</td><td>${inputs[4].value}</td><td>${inputs[5].value}</td>
+                        <td>${val0}</td><td>${val1}</td><td>${val2}</td>
+                        <td>${val3}</td><td>${val4}</td><td>${val5}</td>
                     </tr>
                 `;
             }
@@ -283,8 +285,11 @@
             });
             if(imagesHTML === '') imagesHTML = '<p style="color:#999; font-size:0.9em;">(無圖表資料)</p>';
 
-            // 抓取文字並處理換行
-            const getVal = (id) => document.getElementById(id).value.replace(/\n/g, '<br>');
+            // 抓取文字並處理換行 (若為空值則回傳空格以維持高度)
+            const getVal = (id) => {
+                const val = document.getElementById(id).value;
+                return val ? val.replace(/\n/g, '<br>') : "&nbsp;";
+            };
 
             // 開啟新視窗寫入最終報告
             const reportWindow = window.open('', '_blank');
@@ -295,17 +300,22 @@
                     <style>
                         body { font-family: 'Segoe UI', Arial, sans-serif; padding: 20px 40px; color: #222; line-height: 1.6; max-width: 900px; margin: 0 auto; }
                         
-                        /* 完美還原標題樣式：左側粗黑線 */
+                        /* 防止區塊跨頁被切斷的關鍵設定 */
+                        .section-block {
+                            page-break-inside: avoid;
+                            break-inside: avoid;
+                            margin-bottom: 20px;
+                        }
+
                         h2 { 
                             font-size: 1.4em; 
                             color: #222; 
                             border-left: 5px solid #333; 
                             padding-left: 12px; 
-                            margin-top: 35px; 
-                            margin-bottom: 20px; 
+                            margin-top: 25px; 
+                            margin-bottom: 15px; 
                         }
                         
-                        /* 1. 與 2. 區塊：無框線的鍵值對齊 (符合截圖) */
                         .info-grid {
                             display: grid;
                             grid-template-columns: 160px 1fr;
@@ -315,64 +325,92 @@
                         }
                         .info-grid .key { font-weight: bold; color: #333; }
                         
-                        /* 3. 規格表格樣式 (符合截圖) */
                         table { width: 100%; border-collapse: collapse; font-size: 0.9em; margin-top: 10px; }
                         th { background-color: #F5F5F5; font-weight: bold; padding: 8px; text-align: left; border: 1px solid #E0E0E0; border-top: 2px solid #ccc;}
                         td { padding: 8px; border: 1px solid #E0E0E0; }
                         
-                        /* 5. 與 6. 結論方塊樣式 (符合截圖) */
+                        /* 表格列防切斷 */
+                        tr {
+                            page-break-inside: avoid;
+                            break-inside: avoid;
+                        }
+                        
                         .text-box {
                             border: 1px solid #E0E0E0;
                             border-radius: 6px;
                             padding: 15px 20px;
                             font-size: 0.95em;
                             background-color: #FFFFFF;
+                            min-height: 20px;
                         }
                         
-                        .report-img { max-width: 100%; margin-top: 15px; }
+                        /* 圖片防切斷，並限制高度以免單張圖超過一頁 */
+                        .report-img { 
+                            max-width: 100%; 
+                            max-height: 85vh; 
+                            margin-top: 15px;
+                            page-break-inside: avoid;
+                            break-inside: avoid;
+                        }
 
-                        @media print { body { padding: 0; } th { -webkit-print-color-adjust: exact; background-color: #F5F5F5 !important; } }
+                        @media print { 
+                            body { padding: 0; } 
+                            th { -webkit-print-color-adjust: exact; background-color: #F5F5F5 !important; color-adjust: exact; } 
+                        }
                     </style>
                 </head>
                 <body>
-                    <h2>1. 專案資訊</h2>
-                    <div class="info-grid">
-                        <div class="key">專案名稱</div><div>${getVal('i_pname')}</div>
-                        <div class="key">板號 / 版本</div><div>${getVal('i_prev')}</div>
-                        <div class="key">客戶 / 內部專案</div><div>${getVal('i_pclient')}</div>
-                        <div class="key">DUT / Sample ID</div><div>${getVal('i_pdut')}</div>
-                        <div class="key">負責人</div><div>${getVal('i_powner')}</div>
-                        <div class="key">報告日期</div><div>${getVal('i_pdate')}</div>
-                        <div class="key">報告版本</div><div>${getVal('i_pver')}</div>
-                        <div class="key">模擬目的</div><div>${getVal('i_ppurpose')}</div>
+                    
+                    <div class="section-block">
+                        <h2>1. 專案資訊</h2>
+                        <div class="info-grid">
+                            <div class="key">專案名稱</div><div>${getVal('i_pname')}</div>
+                            <div class="key">板號 / 版本</div><div>${getVal('i_prev')}</div>
+                            <div class="key">客戶 / 內部專案</div><div>${getVal('i_pclient')}</div>
+                            <div class="key">DUT / Sample ID</div><div>${getVal('i_pdut')}</div>
+                            <div class="key">負責人</div><div>${getVal('i_powner')}</div>
+                            <div class="key">報告日期</div><div>${getVal('i_pdate')}</div>
+                            <div class="key">報告版本</div><div>${getVal('i_pver')}</div>
+                            <div class="key">模擬目的</div><div>${getVal('i_ppurpose')}</div>
+                        </div>
                     </div>
 
-                    <h2>2. 模擬條件與模型設定</h2>
-                    <div class="info-grid">
-                        <div class="key">模擬軟體</div><div>${getVal('i_ssoft')}</div>
-                        <div class="key">Solver</div><div>${getVal('i_ssolver')}</div>
-                        <div class="key">頻率範圍</div><div>${getVal('i_sfreq')}</div>
-                        <div class="key">Port 設定</div><div>${getVal('i_sport')}</div>
-                        <div class="key">Boundary Condition</div><div>${getVal('i_sbound')}</div>
-                        <div class="key">Mesh / Accuracy</div><div>${getVal('i_smesh')}</div>
-                        <div class="key">材料 / Stackup</div><div>${getVal('i_smat')}</div>
-                        <div class="key">模型假設與限制</div><div>${getVal('i_slimit')}</div>
+                    <div class="section-block">
+                        <h2>2. 模擬條件與模型設定</h2>
+                        <div class="info-grid">
+                            <div class="key">模擬軟體</div><div>${getVal('i_ssoft')}</div>
+                            <div class="key">Solver</div><div>${getVal('i_ssolver')}</div>
+                            <div class="key">頻率範圍</div><div>${getVal('i_sfreq')}</div>
+                            <div class="key">Port 設定</div><div>${getVal('i_sport')}</div>
+                            <div class="key">Boundary Condition</div><div>${getVal('i_sbound')}</div>
+                            <div class="key">Mesh / Accuracy</div><div>${getVal('i_smesh')}</div>
+                            <div class="key">材料 / Stackup</div><div>${getVal('i_smat')}</div>
+                            <div class="key">模型假設與限制</div><div>${getVal('i_slimit')}</div>
+                        </div>
                     </div>
 
-                    <h2>3. 規格與判定摘要</h2>
-                    <table>
-                        <tr><th>項目</th><th>規格/條件</th><th>模擬結果</th><th>Margin</th><th>判定</th><th>備註</th></tr>
-                        ${specTableHTML}
-                    </table>
+                    <div class="section-block">
+                        <h2>3. 規格與判定摘要</h2>
+                        <table>
+                            <tr><th>項目</th><th>規格/條件</th><th>模擬結果</th><th>Margin</th><th>判定</th><th>備註</th></tr>
+                            ${specTableHTML}
+                        </table>
+                    </div>
 
-                    <h2>4. 模擬圖與結果</h2>
-                    ${imagesHTML}
+                    <div class="section-block">
+                        <h2>4. 模擬圖與結果</h2>
+                        ${imagesHTML}
+                    </div>
 
-                    <h2>5. 結論</h2>
-                    <div class="text-box">${getVal('i_c_conc')}</div>
+                    <div class="section-block">
+                        <h2>5. 結論</h2>
+                        <div class="text-box">${getVal('i_c_conc')}</div>
+                    </div>
 
-                    <h2>6. 建議後續動作</h2>
-                    <div class="text-box">${getVal('i_c_next')}</div>
+                    <div class="section-block">
+                        <h2>6. 建議後續動作</h2>
+                        <div class="text-box">${getVal('i_c_next')}</div>
+                    </div>
 
                     <script>
                         setTimeout(() => { window.print(); }, 800);
@@ -384,703 +422,4 @@
         });
     </script>
 </body>
-</html>            justify-content: center;
-        }
-
-        /* 雙欄佈局 */
-        .layout-container {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 25px;
-            width: 100%;
-            max-width: 1400px;
-            /* 支援大螢幕 */
-        }
-
-        @media (max-width: 1000px) {
-            .layout-container {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        /* 區塊卡片 UI */
-        .section-card {
-            background-color: var(--bg-sub);
-            margin-bottom: 20px;
-            border-radius: 8px;
-            border: 1px solid var(--border-color);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-            padding: 20px;
-        }
-
-        .section-card h2 {
-            font-size: 1.1em;
-            color: var(--accent);
-            border-bottom: 1px solid var(--border-color);
-            padding-bottom: 10px;
-            margin-top: 0;
-            margin-bottom: 15px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .details-content {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-        }
-
-        .form-group {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .full-width {
-            grid-column: span 2;
-        }
-
-        label {
-            margin-bottom: 5px;
-            font-size: 0.9em;
-            color: var(--text-muted);
-            font-weight: bold;
-        }
-
-        .required {
-            color: var(--fail-color);
-            margin-left: 3px;
-        }
-
-        input[type="text"] {
-            padding: 10px;
-            border: 1px solid #B0BEC5;
-            background-color: #FAFAFA;
-            color: var(--text-main);
-            border-radius: 4px;
-            transition: 0.2s;
-        }
-
-        input:focus {
-            border-color: var(--accent);
-            background-color: #FFF;
-            outline: none;
-            box-shadow: 0 0 0 2px rgba(0, 85, 164, 0.2);
-        }
-
-        /* 拖曳上傳區塊 */
-        .drop-zone {
-            border: 2px dashed #B0BEC5;
-            border-radius: 8px;
-            padding: 30px;
-            text-align: center;
-            background-color: #FAFAFA;
-            cursor: pointer;
-            transition: 0.3s;
-            position: relative;
-        }
-
-        .drop-zone.dragover {
-            background-color: rgba(0, 85, 164, 0.1);
-            border-color: var(--accent);
-        }
-
-        .drop-zone p {
-            margin: 0;
-            color: var(--text-muted);
-            font-weight: bold;
-            pointer-events: none;
-        }
-
-        .drop-zone span {
-            display: block;
-            font-size: 0.8em;
-            color: #999;
-            margin-top: 5px;
-            pointer-events: none;
-        }
-
-        .drop-zone input[type="file"] {
-            display: none;
-        }
-
-        /* 檔案標籤 */
-        .file-badge {
-            display: inline-block;
-            margin-top: 10px;
-            padding: 5px 10px;
-            background: #E3F2FD;
-            color: var(--accent);
-            border-radius: 4px;
-            font-size: 0.85em;
-            font-weight: bold;
-        }
-
-        /* 按鈕設計與 Loading 動畫 */
-        .btn-group {
-            display: flex;
-            gap: 15px;
-            margin-top: 20px;
-        }
-
-        .btn {
-            flex: 1;
-            background-color: var(--accent);
-            color: white;
-            border: none;
-            padding: 14px;
-            font-size: 1.05em;
-            font-weight: bold;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: 0.2s;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .btn:hover:not(:disabled) {
-            background-color: var(--accent-hover);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-        }
-
-        .btn:disabled {
-            opacity: 0.7;
-            cursor: not-allowed;
-        }
-
-        #btn-report {
-            background-color: var(--accent-secondary);
-            flex: 0.5;
-        }
-
-        #btn-report:hover {
-            background-color: #7AB036;
-        }
-
-        .btn-small {
-            padding: 6px 12px;
-            font-size: 0.85em;
-            flex: none;
-            background: #eee;
-            color: #333;
-            box-shadow: none;
-        }
-
-        .btn-small:hover {
-            background: #ddd;
-            transform: none;
-        }
-
-        .spinner {
-            display: none;
-            width: 18px;
-            height: 18px;
-            border: 3px solid rgba(255, 255, 255, 0.3);
-            border-top: 3px solid white;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            0% {
-                transform: rotate(0deg);
-            }
-
-            100% {
-                transform: rotate(360deg);
-            }
-        }
-
-        /* 結果與圖表 */
-        #result-placeholder {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100%;
-            color: #aaa;
-            text-align: center;
-        }
-
-        #result-content {
-            display: none;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .summary-cards {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 20px;
-        }
-
-        .card {
-            flex: 1;
-            background: #F8FAFC;
-            padding: 15px;
-            border-radius: 6px;
-            text-align: center;
-            border: 1px solid var(--border-color);
-        }
-
-        .card span {
-            display: block;
-            font-size: 1.5em;
-            font-weight: bold;
-            margin-top: 5px;
-            color: var(--accent);
-        }
-
-        #pass-fail-badge {
-            font-size: 1em;
-            padding: 5px 12px;
-            border-radius: 20px;
-            color: white;
-            font-weight: bold;
-            letter-spacing: 1px;
-        }
-
-        .badge-pass {
-            background-color: var(--pass-color);
-        }
-
-        .badge-fail {
-            background-color: var(--fail-color);
-        }
-
-        .chart-container {
-            position: relative;
-            flex-grow: 1;
-            min-height: 400px;
-            width: 100%;
-            background: #FFF;
-            padding: 10px;
-            border-radius: 4px;
-            border: 1px solid #eee;
-        }
-
-        /* Toast 提示 */
-        #toast-container {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 9999;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .toast {
-            padding: 15px 25px;
-            border-radius: 6px;
-            color: white;
-            font-weight: bold;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-            transform: translateX(120%);
-            transition: transform 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-        }
-
-        .toast.show {
-            transform: translateX(0);
-        }
-
-        .toast.success {
-            background-color: var(--pass-color);
-        }
-
-        .toast.error {
-            background-color: var(--fail-color);
-        }
-
-        /* 列印隱藏左欄 */
-        @media print {
-            .layout-container {
-                display: block;
-            }
-
-            .col-left,
-            .btn-group {
-                display: none;
-            }
-
-            .section-card {
-                border: none;
-                box-shadow: none;
-            }
-        }
-    </style>
-</head>
-
-<body>
-
-    <div id="toast-container"></div>
-
-    <div class="layout-container">
-        <!-- 左欄：參數與檔案上傳 -->
-        <div class="col-left">
-            <div style="margin-bottom: 20px;">
-                <h1
-                    style="color: var(--accent); border-bottom: 3px solid var(--accent); padding-bottom: 10px; margin:0;">
-                    JPC Simulation Analyzer
-                </h1>
-            </div>
-
-            <form id="analysis-form">
-                <div class="section-card">
-                    <h2>專案資訊</h2>
-                    <div class="details-content">
-                        <div class="form-group"><label>專案名稱 <span class="required">*</span></label><input type="text"
-                                id="proj_name" required></div>
-                        <div class="form-group"><label>DUT</label><input type="text" id="proj_dut"></div>
-                        <div class="form-group"><label>版本</label><input type="text" id="proj_ver"></div>
-                        <div class="form-group"><label>負責人</label><input type="text" id="proj_owner"></div>
-                    </div>
-                </div>
-
-                <div class="section-card">
-                    <h2>模擬條件</h2>
-                    <div class="details-content">
-                        <div class="form-group"><label>Solver</label><input type="text" id="sim_solver"></div>
-                        <div class="form-group"><label>Port</label><input type="text" id="sim_port"></div>
-                        <div class="form-group"><label>Boundary</label><input type="text" id="sim_boundary"></div>
-                        <div class="form-group"><label>Mesh</label><input type="text" id="sim_mesh"></div>
-                        <div class="form-group full-width"><label>Material</label><input type="text" id="sim_material">
-                        </div>
-                    </div>
-                </div>
-
-                <div class="section-card">
-                    <h2>檔案上傳</h2>
-                    <div class="form-group" style="margin-bottom: 15px;">
-                        <label>S-parameter CSV <span class="required">*</span></label>
-                        <div class="drop-zone" id="csv-drop-zone">
-                            <p>📥 將 CSV 檔案拖曳至此處</p>
-                            <span>或點擊選擇檔案</span>
-                            <input type="file" id="csv_file" accept=".csv" required>
-                        </div>
-                        <div id="csv-filename" class="file-badge" style="display:none;"></div>
-                    </div>
-
-                    <div class="form-group">
-                        <label>模擬結果圖 (輔助報告)</label>
-                        <input type="file" id="img_file" accept="image/*"
-                            style="border:none; padding:0; background:transparent;">
-                    </div>
-                </div>
-
-                <div class="btn-group">
-                    <button type="submit" class="btn" id="btn-submit">
-                        <div class="spinner" id="submit-spinner"></div>
-                        <span id="submit-text">開始分析</span>
-                    </button>
-                </div>
-            </form>
-        </div>
-
-        <!-- 右欄：分析結果與圖表 -->
-        <div class="col-right">
-            <div class="section-card" style="height: calc(100% - 40px); display: flex; flex-direction: column;">
-
-                <!-- 初始佔位符 -->
-                <div id="result-placeholder">
-                    <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#ddd" stroke-width="2"
-                        stroke-linecap="round" stroke-linejoin="round">
-                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-                        <line x1="3" y1="9" x2="21" y2="9"></line>
-                        <line x1="9" y1="21" x2="9" y2="9"></line>
-                    </svg>
-                    <h3 style="margin-top:15px; color:#999;">請先在左側輸入參數並分析</h3>
-                </div>
-
-                <!-- 分析結果 (隱藏直到分析完成) -->
-                <div id="result-content" style="display:none;">
-                    <h2>
-                        分析結論
-                        <div>
-                            <span id="pass-fail-badge"></span>
-                            <button class="btn btn-small" id="btn-report" style="margin-left: 10px;">匯出報告</button>
-                        </div>
-                    </h2>
-
-                    <div class="summary-cards">
-                        <div class="card">最大值 (Max dB) <span id="val-max">-</span></div>
-                        <div class="card">最小值 (Min dB) <span id="val-min">-</span></div>
-                    </div>
-
-                    <div
-                        style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 5px;">
-                        <label style="margin:0;">頻率響應圖 (可使用滑鼠滾輪縮放)</label>
-                        <button type="button" class="btn btn-small" onclick="resetZoom()">重設縮放 (Reset Zoom)</button>
-                    </div>
-                    <div class="chart-container">
-                        <canvas id="resultChart"></canvas>
-                    </div>
-                </div>
-
-            </div>
-        </div>
-    </div>
-
-    <script>
-        // === Toast 提示功能 ===
-        function showToast(message, type = 'success') {
-            const container = document.getElementById('toast-container');
-            const toast = document.createElement('div');
-            toast.className = `toast ${type}`;
-            toast.innerText = message;
-            container.appendChild(toast);
-
-            // 觸發進場動畫
-            setTimeout(() => toast.classList.add('show'), 10);
-            // 3秒後離場並刪除
-            setTimeout(() => {
-                toast.classList.remove('show');
-                setTimeout(() => toast.remove(), 300);
-            }, 3000);
-        }
-
-        // === 拖曳上傳功能 (Drag & Drop) ===
-        const dropZone = document.getElementById('csv-drop-zone');
-        const fileInput = document.getElementById('csv_file');
-        const fileNameDisplay = document.getElementById('csv-filename');
-
-        // 點擊區塊觸發 input
-        dropZone.addEventListener('click', () => fileInput.click());
-
-        // 拖曳事件視覺回饋
-        dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('dragover'); });
-        dropZone.addEventListener('dragleave', (e) => { e.preventDefault(); dropZone.classList.remove('dragover'); });
-        dropZone.addEventListener('drop', (e) => {
-            e.preventDefault();
-            dropZone.classList.remove('dragover');
-            if (e.dataTransfer.files.length > 0) {
-                fileInput.files = e.dataTransfer.files; // 將拖曳的檔案塞給 input
-                updateFileName();
-            }
-        });
-
-        // 一般點擊選擇檔案後更新檔名
-        fileInput.addEventListener('change', updateFileName);
-
-        function updateFileName() {
-            if (fileInput.files.length > 0) {
-                fileNameDisplay.style.display = 'inline-block';
-                fileNameDisplay.innerText = "📄 " + fileInput.files[0].name;
-            }
-        }
-
-        // 處理輔助圖片上傳 (Base64)
-        let uploadedImageBase64 = "";
-        document.getElementById('img_file').addEventListener('change', function (e) {
-            if (e.target.files[0]) {
-                const reader = new FileReader();
-                reader.onload = (event) => { uploadedImageBase64 = event.target.result; };
-                reader.readAsDataURL(e.target.files[0]);
-            }
-        });
-
-        // === 表單提交與分析 ===
-        let currentChart = null;
-
-        document.getElementById('analysis-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            if (!fileInput.files[0]) {
-                showToast("請上傳 CSV 檔案", "error");
-                return;
-            }
-
-            // UI Loading 狀態
-            const btnSubmit = document.getElementById('btn-submit');
-            const spinner = document.getElementById('submit-spinner');
-            const btnText = document.getElementById('submit-text');
-
-            btnSubmit.disabled = true;
-            spinner.style.display = 'block';
-            btnText.innerText = '分析運算中...';
-
-            const formData = new FormData();
-            formData.append('csv_file', fileInput.files[0]);
-
-            try {
-                const response = await fetch('/analyze', { method: 'POST', body: formData });
-                const result = await response.json();
-
-                if (result.status === 'error') {
-                    showToast(result.message, "error");
-                } else {
-                    showToast(result.message, "success");
-
-                    // 切換右側顯示
-                    document.getElementById('result-placeholder').style.display = 'none';
-                    document.getElementById('result-content').style.display = 'flex';
-
-                    // 更新數據
-                    document.getElementById('val-max').innerText = result.data.max.toFixed(2);
-                    document.getElementById('val-min').innerText = result.data.min.toFixed(2);
-
-                    const badge = document.getElementById('pass-fail-badge');
-                    if (result.data.is_pass) {
-                        badge.innerText = "PASS";
-                        badge.className = "badge-pass";
-                    } else {
-                        badge.innerText = "FAIL";
-                        badge.className = "badge-fail";
-                    }
-
-                    // 畫圖表
-                    renderChart(result.data);
-                }
-            } catch (error) {
-                console.error("Error:", error);
-                showToast("伺服器連線錯誤", "error");
-            } finally {
-                // 恢復按鈕狀態
-                btnSubmit.disabled = false;
-                spinner.style.display = 'none';
-                btnText.innerText = '開始分析';
-            }
-        });
-
-        // === 繪製 Chart.js (支援縮放) ===
-        function renderChart(data) {
-            const ctx = document.getElementById('resultChart').getContext('2d');
-            if (currentChart) currentChart.destroy();
-
-            currentChart = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: data.freq,
-                    datasets: [
-                        {
-                            label: data.sim_name,
-                            data: data.sim,
-                            borderColor: '#0055A4', // 佳必琪企業藍
-                            backgroundColor: 'rgba(0, 85, 164, 0.1)',
-                            borderWidth: 2,
-                            pointRadius: 0,
-                            tension: 0.1 // 讓線條稍微平滑
-                        },
-                        {
-                            label: data.spec_name,
-                            data: data.spec,
-                            borderColor: '#F44336', // 警示紅
-                            borderDash: [5, 5],
-                            borderWidth: 2,
-                            pointRadius: 0
-                        }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    interaction: {
-                        mode: 'index',
-                        intersect: false,
-                    },
-                    scales: {
-                        x: { title: { display: true, text: 'Frequency (GHz)', color: '#666' }, ticks: { color: '#666' }, grid: { color: '#EEE' } },
-                        y: { title: { display: true, text: 'dB', color: '#666' }, ticks: { color: '#666' }, grid: { color: '#EEE' } }
-                    },
-                    plugins: {
-                        legend: { labels: { color: '#333' } },
-                        tooltip: {
-                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                            titleFont: { size: 14 },
-                            bodyFont: { size: 14 },
-                            padding: 10
-                        },
-                        // 縮放與平移設定 (透過 chartjs-plugin-zoom)
-                        zoom: {
-                            pan: { enabled: true, mode: 'x' }, // 允許左右拖曳
-                            zoom: {
-                                wheel: { enabled: true },      // 允許滑鼠滾輪縮放
-                                pinch: { enabled: true },      // 允許觸控板兩指縮放
-                                mode: 'x'                      // 鎖定只能針對 X軸(頻率)縮放
-                            }
-                        }
-                    }
-                }
-            });
-        }
-
-        // 重設縮放功能
-        function resetZoom() {
-            if (currentChart) {
-                currentChart.resetZoom();
-            }
-        }
-
-        // === 產生報告 ===
-        document.getElementById('btn-report').addEventListener('click', () => {
-            // 先重設縮放，確保印出來是完整的全頻段圖
-            resetZoom();
-
-            // 延遲一下等圖表重繪完畢再抓圖
-            setTimeout(() => {
-                const chartBase64 = document.getElementById('resultChart').toDataURL('image/png');
-                const getValue = (id) => document.getElementById(id).value || "N/A";
-
-                const reportWindow = window.open('', '_blank');
-                reportWindow.document.write(`
-                <html>
-                <head>
-                    <title>JPC Report - ${getValue('proj_name')}</title>
-                    <style>
-                        body { font-family: Arial, sans-serif; padding: 40px; color: #333; line-height: 1.6; max-width: 1000px; margin: 0 auto;}
-                        h1 { color: #0055A4; border-bottom: 2px solid #8CC63F; padding-bottom: 10px; }
-                        h2 { margin-top: 30px; color: #2C2C2C; font-size: 1.2em; border-left: 4px solid #0055A4; padding-left: 10px;}
-                        table { width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 0.95em;}
-                        th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
-                        th { background-color: #F8FAFC; width: 25%; color: #0055A4;}
-                        .pass { color: #2E7D32; font-weight: bold; }
-                        .fail { color: #D32F2F; font-weight: bold; }
-                        img { max-width: 100%; height: auto; margin-top: 15px; border: 1px solid #eee; }
-                        @media print { button { display: none; } }
-                    </style>
-                </head>
-                <body>
-                    <h1>Simulation Analysis Report</h1>
-                    
-                    <h2>Project Information</h2>
-                    <table>
-                        <tr><th>Project Name</th><td>${getValue('proj_name')}</td><th>DUT</th><td>${getValue('proj_dut')}</td></tr>
-                        <tr><th>Version</th><td>${getValue('proj_ver')}</td><th>Owner</th><td>${getValue('proj_owner')}</td></tr>
-                    </table>
-
-                    <h2>Simulation Conditions</h2>
-                    <table>
-                        <tr><th>Solver</th><td>${getValue('sim_solver')}</td><th>Port</th><td>${getValue('sim_port')}</td></tr>
-                        <tr><th>Boundary</th><td>${getValue('sim_boundary')}</td><th>Mesh</th><td>${getValue('sim_mesh')}</td></tr>
-                        <tr><th>Material</th><td colspan="3">${getValue('sim_material')}</td></tr>
-                    </table>
-
-                    <h2>Analysis Result</h2>
-                    <p>Status: <span class="${document.getElementById('pass-fail-badge').innerText.toLowerCase()}">
-                        ${document.getElementById('pass-fail-badge').innerText}
-                    </span></p>
-                    <p>Max Value: ${document.getElementById('val-max').innerText} dB</p>
-                    <p>Min Value: ${document.getElementById('val-min').innerText} dB</p>
-                    
-                    <h2>Frequency Response</h2>
-                    <img src="${chartBase64}" alt="Chart">
-
-                    ${uploadedImageBase64 ? `<h2>Simulation Model</h2><img src="${uploadedImageBase64}" alt="Model" style="max-height: 400px; object-fit: contain;">` : ''}
-
-                    <script>
-                        setTimeout(() => { window.print(); }, 800);
-                    <\/script>
-                </body>
-                </html>
-            `);
-                reportWindow.document.close();
-            }, 100);
-        });
-    </script>
-</body>
-
 </html>
