@@ -71,13 +71,11 @@ def analyze():
 
         plt.tight_layout()
 
-        # 4. 將圖表轉換為 Base64 字串，準備傳給前端
+        # 4. 將圖表轉換為 Base64 字串
         img_io = io.BytesIO()
-        plt.savefig(img_io, format='png', dpi=120)  # dpi=120 確保圖表清晰且檔案不會太大
+        plt.savefig(img_io, format='png', dpi=120, bbox_inches='tight')  
         img_io.seek(0)
         img_base64 = base64.b64encode(img_io.getvalue()).decode('utf-8')
-        
-        # 清除圖表，釋放伺服器記憶體
         plt.close(fig)
 
         # 5. 回傳給前端
