@@ -23,61 +23,99 @@
             padding: 20px;
             display: flex;
             justify-content: center;
+            min-height: 100vh;
         }
 
         /* 控制頁面顯示與隱藏 */
         .page { display: none; width: 100%; max-width: 900px; }
         .page.active { display: block; }
 
-        /* ====== 1. 角色選擇頁面 ====== */
+        /* ====== 1. 首頁 (質感升級版) ====== */
         #page-role {
-            text-align: center;
-            margin-top: 15vh;
+            display: none; /* 由 JS 控制 active 顯示 */
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            width: 100%;
+            margin-top: 10vh;
         }
-        #page-role h1 {
-            font-size: 3em;
-            color: var(--accent);
+        #page-role.active { display: flex; }
+        
+        .hero-title {
+            text-align: center;
             margin-bottom: 50px;
         }
+        .hero-title h1 {
+            font-size: 3.5em;
+            color: var(--accent);
+            margin: 0 0 10px 0;
+            letter-spacing: 2px;
+        }
+        .hero-title p {
+            font-size: 1.2em;
+            color: #666;
+            margin: 0;
+        }
+
         .role-btn-group {
             display: flex;
+            gap: 40px;
             justify-content: center;
-            gap: 30px;
+            flex-wrap: wrap;
         }
-        .role-btn {
-            background-color: var(--bg-sub);
-            color: var(--accent);
-            border: 2px solid var(--accent);
-            padding: 30px 50px;
-            font-size: 1.8em;
-            font-weight: bold;
-            border-radius: 12px;
+        
+        .role-card {
+            background: var(--bg-sub);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 40px 50px;
+            text-align: center;
             cursor: pointer;
-            transition: all 0.3s;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            width: 220px;
         }
-        .role-btn:hover {
-            background-color: var(--accent);
-            color: #fff;
-            transform: translateY(-5px);
-            box-shadow: 0 8px 16px rgba(0,85,164,0.3);
+        
+        .role-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 85, 164, 0.15);
+            border-color: var(--accent);
+        }
+        
+        .role-icon {
+            font-size: 4em;
+            margin-bottom: 20px;
+        }
+        
+        .role-title {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: var(--accent);
+            margin-bottom: 10px;
+        }
+        
+        .role-desc {
+            font-size: 0.9em;
+            color: #777;
+            line-height: 1.5;
         }
 
         /* ====== 2. 表單通用樣式 ====== */
         .form-container {
             background: var(--bg-sub);
             padding: 40px;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
             margin: 20px auto;
         }
         .form-container h1 { color: var(--accent); text-align: center; border-bottom: 2px solid var(--accent); padding-bottom: 15px; margin-bottom: 30px; }
-        h2 { font-size: 1.3em; color: var(--text-main); border-left: 4px solid #333; padding-left: 10px; margin-top: 40px; margin-bottom: 20px; }
+        h2 { font-size: 1.3em; color: var(--text-main); border-left: 4px solid var(--accent); padding-left: 10px; margin-top: 40px; margin-bottom: 20px; }
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
         .full-width { grid-column: span 2; }
         .form-group { display: flex; flex-direction: column; }
         label { margin-bottom: 5px; font-size: 0.9em; font-weight: bold; color: #555; }
-        input[type="text"], input[type="date"], textarea, select { padding: 10px; border: 1px solid #B0BEC5; border-radius: 4px; font-size: 1em; font-family: inherit; }
+        input[type="text"], input[type="date"], textarea, select { padding: 10px; border: 1px solid #B0BEC5; border-radius: 4px; font-size: 1em; font-family: inherit; transition: 0.2s;}
+        input:focus, textarea:focus, select:focus { border-color: var(--accent); outline: none; box-shadow: 0 0 0 2px rgba(0, 85, 164, 0.2); }
         textarea { resize: vertical; min-height: 80px; }
         
         table.input-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
@@ -85,8 +123,8 @@
         table.input-table td { padding: 5px; border-bottom: 1px solid #eee; }
         table.input-table input, table.input-table select { width: 100%; box-sizing: border-box; border: 1px solid #ccc; padding: 8px; }
 
-        .upload-box { border: 2px dashed #B0BEC5; padding: 20px; text-align: center; border-radius: 6px; cursor: pointer; background: #fafafa; margin-bottom: 15px; }
-        .upload-box:hover { border-color: var(--accent); background: #f0f8ff; }
+        .upload-box { border: 2px dashed #B0BEC5; padding: 25px; text-align: center; border-radius: 8px; cursor: pointer; background: #fafafa; margin-bottom: 15px; transition: 0.3s;}
+        .upload-box:hover { border-color: var(--accent); background: #EBF3FA; }
         .upload-box input { display: none; }
 
         /* 動態圖表與備註區塊 */
@@ -101,57 +139,45 @@
         .chart-item .mock-graph { height: 150px; display: flex; align-items: center; justify-content: center; background: #E3F2FD; color: var(--accent); font-weight: bold; border: 1px dashed var(--accent); margin-bottom: 10px; border-radius: 4px;}
         .chart-item textarea { width: 100%; box-sizing: border-box; min-height: 60px; }
 
-        .btn-action { width: 100%; background-color: var(--accent); color: white; border: none; padding: 15px; font-size: 1.2em; font-weight: bold; border-radius: 6px; cursor: pointer; margin-top: 30px; }
-        .btn-action:hover { background-color: #004488; }
+        .btn-action { width: 100%; background-color: var(--accent); color: white; border: none; padding: 15px; font-size: 1.2em; font-weight: bold; border-radius: 6px; cursor: pointer; margin-top: 30px; transition: 0.2s;}
+        .btn-action:hover { background-color: var(--accent-hover); transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.15); }
 
         /* ====== 3. 報告預覽頁面 ====== */
         .report-toolbar {
             display: flex;
             justify-content: space-between;
-            background: #333;
-            padding: 15px 20px;
+            background: #2C2C2C;
+            padding: 15px 25px;
             border-radius: 8px;
             margin-bottom: 20px;
             position: sticky;
             top: 10px;
             z-index: 100;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
         }
         .report-toolbar button {
-            padding: 10px 20px; font-size: 1em; font-weight: bold; cursor: pointer; border-radius: 4px; border: none;
+            padding: 10px 20px; font-size: 1em; font-weight: bold; cursor: pointer; border-radius: 4px; border: none; transition: 0.2s;
         }
-        .btn-back { background: #666; color: #fff; }
-        .btn-back:hover { background: #555; }
+        .btn-back { background: #555; color: #fff; }
+        .btn-back:hover { background: #777; }
+        .btn-dl { background: #8CC63F; color: #fff; }
+        .btn-dl:hover { background: #7AB036; }
         .btn-print { background: var(--accent); color: #fff; }
         .btn-print:hover { background: #004488; }
         
-        #report-content-wrapper {
+        #report-render-area {
             background: #fff;
             padding: 40px;
             border-radius: 8px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
 
-        /* 報告內部排版樣式 */
-        .rpt-section { page-break-inside: avoid; break-inside: avoid; margin-bottom: 20px; }
-        .rpt-title { font-size: 1.4em; color: #222; border-left: 5px solid #333; padding-left: 12px; margin-top: 25px; margin-bottom: 15px; font-weight: bold;}
-        .rpt-grid { display: grid; grid-template-columns: 160px 1fr; row-gap: 12px; font-size: 0.95em; margin-bottom: 10px; }
-        .rpt-key { font-weight: bold; color: #333; }
-        .rpt-table { width: 100%; border-collapse: collapse; font-size: 0.9em; margin-top: 10px; }
-        .rpt-table th { background-color: #F5F5F5; font-weight: bold; padding: 8px; text-align: left; border: 1px solid #E0E0E0; border-top: 2px solid #ccc;}
-        .rpt-table td { padding: 8px; border: 1px solid #E0E0E0; }
-        .rpt-table tr { page-break-inside: avoid; break-inside: avoid; }
-        .rpt-box { border: 1px solid #E0E0E0; border-radius: 6px; padding: 15px 20px; font-size: 0.95em; background-color: #FFFFFF; min-height: 20px; }
-        .rpt-chart-wrapper { margin-top: 15px; page-break-inside: avoid; break-inside: avoid; text-align: center; }
-        .rpt-chart-img { max-width: 100%; max-height: 50vh; border: 1px solid #eee; display: block; margin: 0 auto;}
-        .rpt-chart-remark { font-size: 0.9em; color: #555; margin-top: 8px; text-align: left;}
-
-        /* ====== 列印專用設定 ====== */
+        /* 列印專用設定 */
         @media print {
             body { background: #fff; padding: 0; }
             .no-print { display: none !important; }
-            .page { display: block; max-width: 100%; } /* 解除寬度限制 */
-            #report-content-wrapper { padding: 0; box-shadow: none; }
-            .rpt-table th { -webkit-print-color-adjust: exact; background-color: #F5F5F5 !important; color-adjust: exact; }
+            .page { display: block; max-width: 100%; } 
+            #report-render-area { padding: 0; box-shadow: none; }
             @page { margin: 1.5cm; }
         }
     </style>
@@ -160,15 +186,26 @@
 <body>
 
     <div id="page-role" class="page active">
-        <h1>我是...</h1>
+        <div class="hero-title">
+            <h1>JPC 報告產生器</h1>
+            <p>請選擇您的工程師角色以進入專屬表單</p>
+        </div>
         <div class="role-btn-group">
-            <button class="role-btn" onclick="switchPage('page-test')">測試工程師</button>
-            <button class="role-btn" onclick="switchPage('page-sim')">模擬工程師</button>
+            <div class="role-card" onclick="switchPage('page-test')">
+                <div class="role-icon">🔬</div>
+                <div class="role-title">測試工程師</div>
+                <div class="role-desc">VNA 量測結果、TDR/TDT 測試報告與數據匯整。</div>
+            </div>
+            <div class="role-card" onclick="switchPage('page-sim')">
+                <div class="role-icon">💻</div>
+                <div class="role-title">模擬工程師</div>
+                <div class="role-desc">CST/HFSS 模型設定、S-Parameter 分析與結果匯整。</div>
+            </div>
         </div>
     </div>
 
     <div id="page-sim" class="page form-container">
-        <h1>模擬工程師 報告產生器</h1>
+        <h1>💻 模擬工程師報告產生器</h1>
         <form id="sim-form">
             <h2>1. 專案資訊</h2>
             <div class="grid-2">
@@ -228,7 +265,7 @@
     </div>
 
     <div id="page-test" class="page form-container">
-        <h1>測試工程師 報告產生器</h1>
+        <h1>🔬 測試工程師報告產生器</h1>
         <form id="test-form">
             <h2>1. 專案資訊</h2>
             <div class="grid-2">
@@ -287,14 +324,13 @@
     <div id="page-report" class="page">
         <div class="report-toolbar no-print">
             <button class="btn-back" onclick="backToEdit()">⬅ 回到編輯頁面</button>
-            <div>
-                <button class="btn-print" onclick="window.print()" style="margin-right: 10px;">⬇ 下載報告 (另存 PDF)</button>
-                <button class="btn-print" onclick="window.print()">🖨️ 列印報告</button>
+            <div style="display:flex; gap: 15px;">
+                <button class="btn-dl" onclick="downloadReportHTML()">📥 下載報告 (HTML檔)</button>
+                <button class="btn-print" onclick="window.print()">🖨️ 列印 / 轉存 PDF</button>
             </div>
         </div>
 
-        <div id="report-content-wrapper">
-            </div>
+        <div id="report-render-area"></div>
     </div>
 
     <script>
@@ -311,6 +347,7 @@
         function backToEdit() {
             if (currentRole === 'sim') switchPage('page-sim');
             else if (currentRole === 'test') switchPage('page-test');
+            else switchPage('page-role');
         }
 
         // --- 動態處理檔案上傳與建立圖表備註區塊 ---
@@ -358,11 +395,14 @@
         document.getElementById('t_csv_upload').addEventListener('change', (e) => handleDataFileUpload(e, 't_csv_charts_container', 'CSV'));
         document.getElementById('t_img_upload').addEventListener('change', (e) => handleImageUpload(e, 't_img_charts_container'));
 
-        // --- 產生報告 ---
+        // 儲存產生的最終 HTML 字串供下載使用
+        let finalReportHTML = ""; 
+
+        // --- 產生報告排版 ---
         function generateReport(role) {
             const prefix = role === 'sim' ? 's_' : 't_';
             
-            // 安全抓取文字 (處理空值與換行)
+            // 安全抓取文字
             const getVal = (id) => {
                 const el = document.getElementById(prefix + id);
                 if(!el) return "&nbsp;";
@@ -382,9 +422,9 @@
                 </tr>`;
             }
 
-            // 2. 抓取動態圖表與備註 (包含 Data Placeholder 與 Image)
+            // 2. 抓取動態圖表與備註
             let chartsHTML = '';
-            // 抓取 Data (SNP/CSV) 區塊
+            // 抓取 Data (SNP/CSV)
             const dataContainerId = role === 'sim' ? 's_snp_charts_container' : 't_csv_charts_container';
             const dataItems = document.querySelectorAll(`#${dataContainerId} .chart-item`);
             dataItems.forEach(item => {
@@ -397,8 +437,7 @@
                     </div>
                 `;
             });
-
-            // 抓取圖片區塊
+            // 抓取 Image
             const imgContainerId = role === 'sim' ? 's_img_charts_container' : 't_img_charts_container';
             const imgItems = document.querySelectorAll(`#${imgContainerId} .chart-item`);
             imgItems.forEach(item => {
@@ -411,77 +450,123 @@
                     </div>
                 `;
             });
-
             if (chartsHTML === '') chartsHTML = '<p style="color:#999;">(未上傳任何圖表資料)</p>';
 
-            // 3. 組合 HTML (動態判斷欄位名稱)
+            // 3. 組合報告專屬的 CSS 與 HTML 架構
             const isSim = role === 'sim';
             const envTitle = isSim ? "模擬條件與模型設定" : "測試儀器與環境";
             const softLabel = isSim ? "模擬軟體" : "網路分析儀 (VNA)";
             const solverLabel = isSim ? "Solver" : "測試治具 (Fixture)";
             const freqLabel = isSim ? "頻率範圍" : "校正方式";
+            
+            // 用於下載的獨立完整 HTML 結構
+            finalReportHTML = `
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <title>${getVal('pname')} - ${isSim ? '模擬' : '測試'}報告</title>
+    <style>
+        body { font-family: 'Segoe UI', Arial, sans-serif; padding: 20px 40px; color: #222; line-height: 1.6; max-width: 900px; margin: 0 auto; background: #fff;}
+        .rpt-section { page-break-inside: avoid; break-inside: avoid; margin-bottom: 25px; }
+        .rpt-title { font-size: 1.4em; color: #222; border-left: 5px solid #0055A4; padding-left: 12px; margin-top: 30px; margin-bottom: 15px; font-weight: bold;}
+        .rpt-grid { display: grid; grid-template-columns: 160px 1fr; row-gap: 12px; font-size: 0.95em; margin-bottom: 10px; }
+        .rpt-key { font-weight: bold; color: #333; }
+        .rpt-table { width: 100%; border-collapse: collapse; font-size: 0.9em; margin-top: 10px; }
+        .rpt-table th { background-color: #F5F5F5; font-weight: bold; padding: 10px; text-align: left; border: 1px solid #E0E0E0; border-top: 2px solid #ccc;}
+        .rpt-table td { padding: 10px; border: 1px solid #E0E0E0; }
+        .rpt-table tr { page-break-inside: avoid; break-inside: avoid; }
+        .rpt-box { border: 1px solid #E0E0E0; border-radius: 6px; padding: 15px 20px; font-size: 0.95em; background-color: #FAFAFA; min-height: 20px; }
+        .rpt-chart-wrapper { margin-top: 20px; page-break-inside: avoid; break-inside: avoid; text-align: center; }
+        .rpt-chart-img { max-width: 100%; max-height: 50vh; border: 1px solid #eee; display: block; margin: 0 auto;}
+        .rpt-chart-remark { font-size: 0.95em; color: #444; margin-top: 10px; text-align: left; background: #F9F9F9; padding: 10px; border-left: 3px solid #0055A4;}
+        @media print { 
+            body { padding: 0; }
+            .rpt-table th { -webkit-print-color-adjust: exact; background-color: #F5F5F5 !important; color-adjust: exact; }
+        }
+    </style>
+</head>
+<body>
+    <div style="text-align: center; margin-bottom: 30px; border-bottom: 2px solid #0055A4; padding-bottom: 20px;">
+        <h1 style="color: #0055A4; margin-bottom: 5px;">${isSim ? '模擬' : '測試'}分析報告</h1>
+        <div style="color: #666; font-size: 0.9em;">Generated by JPC Report System</div>
+    </div>
 
-            const html = `
-                <div style="text-align: center; margin-bottom: 30px;">
-                    <h1 style="color: #0055A4; margin-bottom: 5px;">${isSim ? '模擬' : '測試'}分析報告</h1>
-                    <div style="color: #666; font-size: 0.9em;">Generated by JPC Report System</div>
-                </div>
+    <div class="rpt-section">
+        <div class="rpt-title">1. 專案資訊</div>
+        <div class="rpt-grid">
+            <div class="rpt-key">專案名稱</div><div>${getVal('pname')}</div>
+            <div class="rpt-key">${isSim ? '板號 / 版本' : '測試階段'}</div><div>${getVal('prev')}</div>
+            <div class="rpt-key">客戶 / 內部專案</div><div>${getVal('pclient')}</div>
+            <div class="rpt-key">DUT / Sample ID</div><div>${getVal('pdut')}</div>
+            <div class="rpt-key">負責人</div><div>${getVal('powner')}</div>
+            <div class="rpt-key">報告日期</div><div>${getVal('pdate')}</div>
+            <div class="rpt-key">${isSim ? '報告版本' : '測試目的'}</div><div>${isSim ? getVal('pver') : getVal('ppurpose')}</div>
+            ${isSim ? `<div class="rpt-key">模擬目的</div><div>${getVal('ppurpose')}</div>` : ''}
+        </div>
+    </div>
 
-                <div class="rpt-section">
-                    <div class="rpt-title">1. 專案資訊</div>
-                    <div class="rpt-grid">
-                        <div class="rpt-key">專案名稱</div><div>${getVal('pname')}</div>
-                        <div class="rpt-key">${isSim ? '板號 / 版本' : '測試階段'}</div><div>${getVal('prev')}</div>
-                        <div class="rpt-key">客戶 / 內部專案</div><div>${getVal('pclient')}</div>
-                        <div class="rpt-key">DUT / Sample ID</div><div>${getVal('pdut')}</div>
-                        <div class="rpt-key">負責人</div><div>${getVal('powner')}</div>
-                        <div class="rpt-key">報告日期</div><div>${getVal('pdate')}</div>
-                        <div class="rpt-key">${isSim ? '報告版本' : '測試目的'}</div><div>${isSim ? getVal('pver') : getVal('ppurpose')}</div>
-                        ${isSim ? `<div class="rpt-key">模擬目的</div><div>${getVal('ppurpose')}</div>` : ''}
-                    </div>
-                </div>
+    <div class="rpt-section">
+        <div class="rpt-title">2. ${envTitle}</div>
+        <div class="rpt-grid">
+            <div class="rpt-key">${softLabel}</div><div>${getVal('ssoft')}</div>
+            <div class="rpt-key">${solverLabel}</div><div>${getVal('ssolver')}</div>
+            <div class="rpt-key">${freqLabel}</div><div>${getVal('sfreq')}</div>
+            ${isSim ? `
+            <div class="rpt-key">Port 設定</div><div>${getVal('sport')}</div>
+            <div class="rpt-key">材料 / Stackup</div><div>${getVal('smat')}</div>
+            ` : ''}
+        </div>
+    </div>
 
-                <div class="rpt-section">
-                    <div class="rpt-title">2. ${envTitle}</div>
-                    <div class="rpt-grid">
-                        <div class="rpt-key">${softLabel}</div><div>${getVal('ssoft')}</div>
-                        <div class="rpt-key">${solverLabel}</div><div>${getVal('ssolver')}</div>
-                        <div class="rpt-key">${freqLabel}</div><div>${getVal('sfreq')}</div>
-                        ${isSim ? `
-                        <div class="rpt-key">Port 設定</div><div>${getVal('sport')}</div>
-                        <div class="rpt-key">材料 / Stackup</div><div>${getVal('smat')}</div>
-                        ` : ''}
-                    </div>
-                </div>
+    <div class="rpt-section">
+        <div class="rpt-title">3. 規格與判定摘要</div>
+        <table class="rpt-table">
+            <tr><th>測試項目</th><th>規格/條件</th><th>實測結果</th><th>Margin</th><th>判定</th><th>備註</th></tr>
+            ${specTableHTML}
+        </table>
+    </div>
 
-                <div class="rpt-section">
-                    <div class="rpt-title">3. 規格與判定摘要</div>
-                    <table class="rpt-table">
-                        <tr><th>測試項目</th><th>規格/條件</th><th>實測結果</th><th>Margin</th><th>判定</th><th>備註</th></tr>
-                        ${specTableHTML}
-                    </table>
-                </div>
+    <div class="rpt-section">
+        <div class="rpt-title">4. 圖表與數據結果</div>
+        ${chartsHTML}
+    </div>
 
-                <div class="rpt-section">
-                    <div class="rpt-title">4. 圖表與數據結果</div>
-                    ${chartsHTML}
-                </div>
+    <div class="rpt-section">
+        <div class="rpt-title">5. 結論</div>
+        <div class="rpt-box">${getVal('c_conc')}</div>
+    </div>
 
-                <div class="rpt-section">
-                    <div class="rpt-title">5. 結論</div>
-                    <div class="rpt-box">${getVal('c_conc')}</div>
-                </div>
+    <div class="rpt-section">
+        <div class="rpt-title">6. 建議後續動作</div>
+        <div class="rpt-box">${getVal('c_next')}</div>
+    </div>
+</body>
+</html>`;
 
-                <div class="rpt-section">
-                    <div class="rpt-title">6. 建議後續動作</div>
-                    <div class="rpt-box">${getVal('c_next')}</div>
-                </div>
-            `;
-
-            // 將組裝好的 HTML 塞入報告預覽區，並切換頁面
-            document.getElementById('report-content-wrapper').innerHTML = html;
+            // 將 HTML 注入到網頁的渲染區並切換頁面
+            document.getElementById('report-render-area').innerHTML = finalReportHTML;
             switchPage('page-report');
-            window.scrollTo(0, 0); // 捲動到最上方
+            window.scrollTo(0, 0); 
+        }
+
+        // --- 下載 HTML 檔案功能 ---
+        function downloadReportHTML() {
+            // 抓取目前專案名稱當作預設檔名
+            const rolePrefix = currentRole === 'sim' ? 's_' : 't_';
+            const projName = document.getElementById(rolePrefix + 'pname').value.trim() || '未命名專案';
+            const fileName = `${projName}_報告.html`;
+            
+            // 建立 Blob 物件並觸發下載
+            const blob = new Blob([finalReportHTML], { type: 'text/html;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = fileName;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
         }
     </script>
 </body>
