@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JPC 報告產生器</title>
+    <title>RD 報告自動生成系統</title>
     <style>
         :root {
             --bg-main: #F4F7F6;
@@ -187,8 +187,8 @@
 
     <div id="page-role" class="page active">
         <div class="hero-title">
-            <h1>JPC 報告產生器</h1>
-            <p>請選擇您的工程師角色以進入專屬表單</p>
+            <h1>RD 報告自動生成系統</h1>
+            <p>請選擇您的工程師種類</p>
         </div>
         <div class="role-btn-group">
             <div class="role-card" onclick="switchPage('page-test')">
@@ -237,20 +237,20 @@
                 </tr>
             </table>
 
-            <h2>4. 圖表與數據 (含獨立備註)</h2>
+            <h2>4. 圖表與數據</h2>
             <div class="form-group">
-                <label>上傳 SNP 檔 (資料圖表預留)</label>
+                <label>上傳 SNP 檔</label>
                 <div class="upload-box" onclick="document.getElementById('s_snp_upload').click()">
-                    📈 點擊上傳 SNP 檔
+                    點擊上傳 SNP 檔
                     <input type="file" id="s_snp_upload" accept=".snp,.s4p,.s2p" multiple>
                 </div>
                 <div id="s_snp_charts_container"></div>
             </div>
 
             <div class="form-group" style="margin-top: 15px;">
-                <label>上傳視覺化圖表 (截圖)</label>
+                <label>上傳視覺化圖表</label>
                 <div class="upload-box" onclick="document.getElementById('s_img_upload').click()">
-                    🖼️ 點擊上傳圖片 (支援多張)
+                    點擊上傳圖片
                     <input type="file" id="s_img_upload" accept="image/*" multiple>
                 </div>
                 <div id="s_img_charts_container"></div>
@@ -260,7 +260,7 @@
             <div class="form-group" style="margin-bottom: 15px;"><label>結論</label><textarea id="s_c_conc"></textarea></div>
             <div class="form-group"><label>建議後續動作</label><textarea id="s_c_next"></textarea></div>
 
-            <button type="button" class="btn-action" onclick="generateReport('sim')">👁️ 查看報告</button>
+            <button type="button" class="btn-action" onclick="generateReport('sim')">查看報告</button>
         </form>
     </div>
 
@@ -294,20 +294,20 @@
                 </tr>
             </table>
 
-            <h2>4. 測試圖表 (含獨立備註)</h2>
+            <h2>4. 測試圖表</h2>
             <div class="form-group">
-                <label>上傳 CSV 檔 (資料圖表預留)</label>
+                <label>上傳 CSV 檔</label>
                 <div class="upload-box" onclick="document.getElementById('t_csv_upload').click()">
-                    📊 點擊上傳 CSV 檔
+                    點擊上傳 CSV 檔
                     <input type="file" id="t_csv_upload" accept=".csv" multiple>
                 </div>
                 <div id="t_csv_charts_container"></div>
             </div>
 
             <div class="form-group" style="margin-top: 15px;">
-                <label>上傳視覺化圖表 (儀器截圖)</label>
+                <label>上傳視覺化圖表 </label>
                 <div class="upload-box" onclick="document.getElementById('t_img_upload').click()">
-                    🖼️ 點擊上傳圖片 (支援多張)
+                    點擊上傳圖片
                     <input type="file" id="t_img_upload" accept="image/*" multiple>
                 </div>
                 <div id="t_img_charts_container"></div>
@@ -317,7 +317,7 @@
             <div class="form-group" style="margin-bottom: 15px;"><label>結論</label><textarea id="t_c_conc"></textarea></div>
             <div class="form-group"><label>建議後續動作</label><textarea id="t_c_next"></textarea></div>
 
-            <button type="button" class="btn-action" onclick="generateReport('test')">👁️ 查看報告</button>
+            <button type="button" class="btn-action" onclick="generateReport('test')">查看報告</button>
         </form>
     </div>
 
@@ -325,8 +325,8 @@
         <div class="report-toolbar no-print">
             <button class="btn-back" onclick="backToEdit()">⬅ 回到編輯頁面</button>
             <div style="display:flex; gap: 15px;">
-                <button class="btn-dl" onclick="downloadReportHTML()">📥 下載報告 (HTML檔)</button>
-                <button class="btn-print" onclick="window.print()">🖨️ 列印 / 轉存 PDF</button>
+                <button class="btn-dl" onclick="downloadReportHTML()">下載報告 (HTML檔)</button>
+                <button class="btn-print" onclick="window.print()">列印 / 轉存 PDF</button>
             </div>
         </div>
 
@@ -358,8 +358,8 @@
                 const chartId = `chart_${Date.now()}_${index}`;
                 const html = `
                     <div class="chart-item" id="${chartId}">
-                        <div class="mock-graph">📊 ${typeLabel} 數據圖表預留區 (${file.name})</div>
-                        <label>📝 此圖表備註說明：</label>
+                        <div class="mock-graph"> ${typeLabel} 數據圖表預留區 (${file.name})</div>
+                        <label>此圖表備註說明：</label>
                         <textarea class="data-remark" placeholder="請輸入 ${file.name} 的分析備註..."></textarea>
                     </div>
                 `;
