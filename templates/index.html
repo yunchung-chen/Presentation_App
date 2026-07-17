@@ -5,7 +5,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>硬體 RD 模擬報告產生器</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
             --bg-main: #F4F7F6;
@@ -25,7 +24,6 @@
             justify-content: center;
         }
 
-        /* 單欄置中表單 */
         .form-container {
             width: 100%;
             max-width: 900px;
@@ -67,7 +65,6 @@
         }
         textarea { resize: vertical; min-height: 80px; }
 
-        /* 規格判定表格 (表單內) */
         table.input-table {
             width: 100%;
             border-collapse: collapse;
@@ -77,7 +74,6 @@
         table.input-table td { padding: 5px; border-bottom: 1px solid #eee; }
         table.input-table input, table.input-table select { width: 100%; box-sizing: border-box; border: 1px solid #ccc; padding: 8px; }
 
-        /* 上傳區塊 */
         .upload-box {
             border: 2px dashed #B0BEC5;
             padding: 20px;
@@ -86,12 +82,15 @@
             cursor: pointer;
             background: #fafafa;
             margin-bottom: 15px;
+            transition: 0.2s;
         }
         .upload-box:hover { border-color: var(--accent); background: #f0f8ff; }
         .upload-box input { display: none; }
         .file-list { font-size: 0.9em; color: var(--accent); font-weight: bold; margin-top: 5px; }
 
-        /* 按鈕 */
+        /* 預覽圖片容器 */
+        .preview-img { max-width: 100%; margin-top: 10px; border: 1px solid #eee; border-radius: 4px; display: none;}
+
         .btn-generate {
             width: 100%;
             background-color: var(--accent);
@@ -169,25 +168,25 @@
             </table>
 
             <h2>4. 模擬圖與結果</h2>
+            
+            <div class="form-group" style="margin-bottom: 20px;">
+                <label>1. 上傳 CSV 自動繪製 S-Parameter 波形</label>
+                <div class="upload-box" onclick="document.getElementById('csv_upload').click()">
+                    📊 點擊選擇 CSV (S-parameter 格式)
+                    <input type="file" id="csv_upload" accept=".csv">
+                </div>
+                <div id="csv-list" class="file-list"></div>
+                <img id="csv-preview-img" class="preview-img" alt="CSV 繪製預覽">
+            </div>
+
             <div class="form-group">
-                <label>請上傳報告截圖 (如無特殊 CSV 繪圖需求，請優先上傳截圖)</label>
+                <label>2. 補充截圖 (如結構圖、模型圖)</label>
                 <div class="upload-box" onclick="document.getElementById('img_upload').click()">
                     📄 點擊選擇圖片 (支援多張)
                     <input type="file" id="img_upload" accept="image/*" multiple>
                 </div>
                 <div id="img-list" class="file-list"></div>
             </div>
-            
-            <div class="form-group" style="margin-top: 10px;">
-                <label>基礎 CSV 繪圖 (選用)</label>
-                <div class="upload-box" onclick="document.getElementById('csv_upload').click()">
-                    📊 上傳 CSV 自動繪製基礎線圖
-                    <input type="file" id="csv_upload" accept=".csv">
-                </div>
-                <div id="csv-list" class="file-list"></div>
-            </div>
-
-            <canvas id="hiddenCanvas" style="display: none; width: 800px; height: 400px;"></canvas>
 
             <h2>5. 結論</h2>
             <div class="form-group">
@@ -204,8 +203,11 @@
     </div>
 
     <script>
-        // --- 處理圖片上傳 ---
-        let uploadedImagesBase64 = [];
+        // --- 變數初始化 ---
+        let uploadedImagesBase64 = []; // 存放手動上傳的截圖
+        let csvChartBase64 = "";       // 存放 Python 畫好的波形圖
+
+        // --- 處理手動圖片上傳 ---
         document.getElementById('img_upload').addEventListener('change', function(e) {
             uploadedImagesBase64 = [];
             document.getElementById('img-list').innerHTML = '';
@@ -217,51 +219,48 @@
             });
         });
 
-        // --- 處理 CSV 上傳與呼叫 Python 後端繪圖 ---
-        let csvChartBase64 = ""; // 用來儲存 Python 傳回來的圖片
-        
+        // --- 處理 CSV 上傳與呼叫 Python 繪圖 ---
         document.getElementById('csv_upload').addEventListener('change', async function(e) {
             const file = e.target.files[0];
             if (!file) return;
             
             const listDiv = document.getElementById('csv-list');
-            listDiv.innerHTML = `<div>已選取: ${file.name} (請稍候，Python 繪製圖表中...)</div>`;
+            const previewImg = document.getElementById('csv-preview-img');
             
-            // 將檔案打包進 FormData 準備發送給 Flask
+            listDiv.innerHTML = `<div style="color:#0055A4;">已選取: ${file.name} (⏳ 請稍候，Python 正在繪製圖表中...)</div>`;
+            previewImg.style.display = 'none'; // 隱藏舊圖
+            
             const formData = new FormData();
             formData.append('csv_file', file);
 
             try {
-                // 呼叫 Flask 的 /analyze 路由
-                const response = await fetch('/analyze', {
-                    method: 'POST',
-                    body: formData
-                });
-                
+                // 發送給後端 app.py 的 /analyze 路由
+                const response = await fetch('/analyze', { method: 'POST', body: formData });
                 const result = await response.json();
 
                 if (result.status === 'success') {
-                    // 成功拿到圖片
                     csvChartBase64 = result.chart_image;
-                    listDiv.innerHTML = `<div>已選取: ${file.name} <span style="color:green;">(圖表繪製成功！)</span></div>`;
+                    listDiv.innerHTML = `<div style="color:green;">✅ 圖表繪製成功！已加入報告中。</div>`;
+                    
+                    // 顯示預覽圖在前端畫面上
+                    previewImg.src = csvChartBase64;
+                    previewImg.style.display = 'block';
                 } else {
-                    // 發生錯誤
-                    listDiv.innerHTML = `<div style="color:red;">錯誤: ${result.message}</div>`;
+                    listDiv.innerHTML = `<div style="color:red;">❌ 錯誤: ${result.message}</div>`;
                 }
             } catch (error) {
                 console.error("Error:", error);
-                listDiv.innerHTML = `<div style="color:red;">伺服器連線失敗，請確認後端已啟動。</div>`;
+                listDiv.innerHTML = `<div style="color:red;">❌ 伺服器連線失敗，請確認 app.py 是否運作中。</div>`;
             }
         });
 
         // --- 產生報告 HTML 並列印 ---
         document.getElementById('btn-print').addEventListener('click', () => {
-            // 抓取表格資料並產生 HTML
+            // 抓取表格資料
             const specRows = document.querySelectorAll('#specTable tr');
             let specTableHTML = '';
             for(let i = 1; i < specRows.length; i++) {
                 const inputs = specRows[i].querySelectorAll('input, select');
-                // 若為空值，補上空格保持表格排版不跑位
                 const val0 = inputs[0].value || "&nbsp;";
                 const val1 = inputs[1].value || "&nbsp;";
                 const val2 = inputs[2].value || "&nbsp;";
@@ -277,15 +276,16 @@
                 `;
             }
 
-            // 組合圖片 HTML
+            // 組合圖片 HTML (先放 Python 畫的波形，再放手動上傳的圖)
             let imagesHTML = '';
-            if(csvChartBase64) imagesHTML += `<img src="${csvChartBase64}" class="report-img">`;
+            if(csvChartBase64) {
+                imagesHTML += `<img src="${csvChartBase64}" class="report-img" style="margin-bottom: 20px;">`;
+            }
             uploadedImagesBase64.forEach(src => {
                 imagesHTML += `<img src="${src}" class="report-img">`;
             });
-            if(imagesHTML === '') imagesHTML = '<p style="color:#999; font-size:0.9em;">(無圖表資料)</p>';
+            if(imagesHTML === '') imagesHTML = '<p style="color:#999; font-size:0.9em;">(未上傳任何圖表資料)</p>';
 
-            // 抓取文字並處理換行 (若為空值則回傳空格以維持高度)
             const getVal = (id) => {
                 const val = document.getElementById(id).value;
                 return val ? val.replace(/\n/g, '<br>') : "&nbsp;";
@@ -300,58 +300,20 @@
                     <style>
                         body { font-family: 'Segoe UI', Arial, sans-serif; padding: 20px 40px; color: #222; line-height: 1.6; max-width: 900px; margin: 0 auto; }
                         
-                        /* 防止區塊跨頁被切斷的關鍵設定 */
-                        .section-block {
-                            page-break-inside: avoid;
-                            break-inside: avoid;
-                            margin-bottom: 20px;
-                        }
-
-                        h2 { 
-                            font-size: 1.4em; 
-                            color: #222; 
-                            border-left: 5px solid #333; 
-                            padding-left: 12px; 
-                            margin-top: 25px; 
-                            margin-bottom: 15px; 
-                        }
+                        .section-block { page-break-inside: avoid; break-inside: avoid; margin-bottom: 20px; }
+                        h2 { font-size: 1.4em; color: #222; border-left: 5px solid #333; padding-left: 12px; margin-top: 25px; margin-bottom: 15px; }
                         
-                        .info-grid {
-                            display: grid;
-                            grid-template-columns: 160px 1fr;
-                            row-gap: 12px;
-                            font-size: 0.95em;
-                            margin-bottom: 10px;
-                        }
+                        .info-grid { display: grid; grid-template-columns: 160px 1fr; row-gap: 12px; font-size: 0.95em; margin-bottom: 10px; }
                         .info-grid .key { font-weight: bold; color: #333; }
                         
                         table { width: 100%; border-collapse: collapse; font-size: 0.9em; margin-top: 10px; }
                         th { background-color: #F5F5F5; font-weight: bold; padding: 8px; text-align: left; border: 1px solid #E0E0E0; border-top: 2px solid #ccc;}
                         td { padding: 8px; border: 1px solid #E0E0E0; }
+                        tr { page-break-inside: avoid; break-inside: avoid; }
                         
-                        /* 表格列防切斷 */
-                        tr {
-                            page-break-inside: avoid;
-                            break-inside: avoid;
-                        }
+                        .text-box { border: 1px solid #E0E0E0; border-radius: 6px; padding: 15px 20px; font-size: 0.95em; background-color: #FFFFFF; min-height: 20px; }
                         
-                        .text-box {
-                            border: 1px solid #E0E0E0;
-                            border-radius: 6px;
-                            padding: 15px 20px;
-                            font-size: 0.95em;
-                            background-color: #FFFFFF;
-                            min-height: 20px;
-                        }
-                        
-                        /* 圖片防切斷，並限制高度以免單張圖超過一頁 */
-                        .report-img { 
-                            max-width: 100%; 
-                            max-height: 85vh; 
-                            margin-top: 15px;
-                            page-break-inside: avoid;
-                            break-inside: avoid;
-                        }
+                        .report-img { max-width: 100%; max-height: 85vh; margin-top: 15px; page-break-inside: avoid; break-inside: avoid; }
 
                         @media print { 
                             body { padding: 0; } 
