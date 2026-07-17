@@ -217,41 +217,41 @@
             });
         });
 
-        // --- 處理 CSV 上傳與繪圖 (基礎版) ---
-        let csvChartBase64 = "";
-        let tempChart = null;
-        document.getElementById('csv_upload').addEventListener('change', function(e) {
+        // --- 處理 CSV 上傳與呼叫 Python 後端繪圖 ---
+        let csvChartBase64 = ""; // 用來儲存 Python 傳回來的圖片
+        
+        document.getElementById('csv_upload').addEventListener('change', async function(e) {
             const file = e.target.files[0];
             if (!file) return;
-            document.getElementById('csv-list').innerHTML = `<div>已選取: ${file.name} (繪製中...)</div>`;
             
-            const reader = new FileReader();
-            reader.onload = function(event) {
-                const lines = event.target.result.trim().split('\n');
-                const xData = [], yData = [];
-                for (let i = 1; i < lines.length; i++) {
-                    const cols = lines[i].split(',');
-                    if(cols.length >= 2) {
-                        xData.push(cols[0].trim());
-                        yData.push(parseFloat(cols[1].trim()));
-                    }
-                }
-                
-                const ctx = document.getElementById('hiddenCanvas').getContext('2d');
-                if(tempChart) tempChart.destroy();
-                
-                tempChart = new Chart(ctx, {
-                    type: 'line',
-                    data: { labels: xData, datasets: [{ label: 'Data', data: yData, borderColor: 'blue', pointRadius: 0 }] },
-                    options: { animation: false, responsive: false }
+            const listDiv = document.getElementById('csv-list');
+            listDiv.innerHTML = `<div>已選取: ${file.name} (請稍候，Python 繪製圖表中...)</div>`;
+            
+            // 將檔案打包進 FormData 準備發送給 Flask
+            const formData = new FormData();
+            formData.append('csv_file', file);
+
+            try {
+                // 呼叫 Flask 的 /analyze 路由
+                const response = await fetch('/analyze', {
+                    method: 'POST',
+                    body: formData
                 });
                 
-                setTimeout(() => {
-                    csvChartBase64 = document.getElementById('hiddenCanvas').toDataURL('image/png');
-                    document.getElementById('csv-list').innerHTML = `<div>已選取: ${file.name} (圖表產生完成)</div>`;
-                }, 500);
-            };
-            reader.readAsText(file);
+                const result = await response.json();
+
+                if (result.status === 'success') {
+                    // 成功拿到圖片
+                    csvChartBase64 = result.chart_image;
+                    listDiv.innerHTML = `<div>已選取: ${file.name} <span style="color:green;">(圖表繪製成功！)</span></div>`;
+                } else {
+                    // 發生錯誤
+                    listDiv.innerHTML = `<div style="color:red;">錯誤: ${result.message}</div>`;
+                }
+            } catch (error) {
+                console.error("Error:", error);
+                listDiv.innerHTML = `<div style="color:red;">伺服器連線失敗，請確認後端已啟動。</div>`;
+            }
         });
 
         // --- 產生報告 HTML 並列印 ---
