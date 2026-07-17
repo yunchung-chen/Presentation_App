@@ -4,12 +4,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>硬體 RD 模擬報告產生器</title>
+    <title>JPC 報告產生器</title>
     <style>
         :root {
             --bg-main: #F4F7F6;
             --bg-sub: #FFFFFF;
             --accent: #0055A4;
+            --accent-hover: #003F7A;
             --text-main: #333333;
             --border-color: #DDE2E5;
         }
@@ -19,369 +20,469 @@
             color: var(--text-main);
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
-            padding: 40px 20px;
+            padding: 20px;
             display: flex;
             justify-content: center;
         }
 
+        /* 控制頁面顯示與隱藏 */
+        .page { display: none; width: 100%; max-width: 900px; }
+        .page.active { display: block; }
+
+        /* ====== 1. 角色選擇頁面 ====== */
+        #page-role {
+            text-align: center;
+            margin-top: 15vh;
+        }
+        #page-role h1 {
+            font-size: 3em;
+            color: var(--accent);
+            margin-bottom: 50px;
+        }
+        .role-btn-group {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+        }
+        .role-btn {
+            background-color: var(--bg-sub);
+            color: var(--accent);
+            border: 2px solid var(--accent);
+            padding: 30px 50px;
+            font-size: 1.8em;
+            font-weight: bold;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+        .role-btn:hover {
+            background-color: var(--accent);
+            color: #fff;
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0,85,164,0.3);
+        }
+
+        /* ====== 2. 表單通用樣式 ====== */
         .form-container {
-            width: 100%;
-            max-width: 900px;
             background: var(--bg-sub);
             padding: 40px;
             border-radius: 8px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            margin: 20px auto;
         }
-
-        .form-container h1 {
-            color: var(--accent);
-            text-align: center;
-            border-bottom: 2px solid var(--accent);
-            padding-bottom: 15px;
-            margin-bottom: 30px;
-        }
-
-        h2 {
-            font-size: 1.3em;
-            color: var(--text-main);
-            border-left: 4px solid #333;
-            padding-left: 10px;
-            margin-top: 40px;
-            margin-bottom: 20px;
-        }
-
+        .form-container h1 { color: var(--accent); text-align: center; border-bottom: 2px solid var(--accent); padding-bottom: 15px; margin-bottom: 30px; }
+        h2 { font-size: 1.3em; color: var(--text-main); border-left: 4px solid #333; padding-left: 10px; margin-top: 40px; margin-bottom: 20px; }
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
         .full-width { grid-column: span 2; }
-        
         .form-group { display: flex; flex-direction: column; }
         label { margin-bottom: 5px; font-size: 0.9em; font-weight: bold; color: #555; }
-        
-        input[type="text"], input[type="date"], textarea, select {
-            padding: 10px;
-            border: 1px solid #B0BEC5;
-            border-radius: 4px;
-            font-size: 1em;
-            font-family: inherit;
-        }
+        input[type="text"], input[type="date"], textarea, select { padding: 10px; border: 1px solid #B0BEC5; border-radius: 4px; font-size: 1em; font-family: inherit; }
         textarea { resize: vertical; min-height: 80px; }
-
-        table.input-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 20px;
-        }
+        
+        table.input-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
         table.input-table th { background: #f0f0f0; padding: 10px; font-size: 0.9em; text-align: left; }
         table.input-table td { padding: 5px; border-bottom: 1px solid #eee; }
         table.input-table input, table.input-table select { width: 100%; box-sizing: border-box; border: 1px solid #ccc; padding: 8px; }
 
-        .upload-box {
-            border: 2px dashed #B0BEC5;
-            padding: 20px;
-            text-align: center;
-            border-radius: 6px;
-            cursor: pointer;
-            background: #fafafa;
-            margin-bottom: 15px;
-            transition: 0.2s;
-        }
+        .upload-box { border: 2px dashed #B0BEC5; padding: 20px; text-align: center; border-radius: 6px; cursor: pointer; background: #fafafa; margin-bottom: 15px; }
         .upload-box:hover { border-color: var(--accent); background: #f0f8ff; }
         .upload-box input { display: none; }
-        .file-list { font-size: 0.9em; color: var(--accent); font-weight: bold; margin-top: 5px; }
 
-        /* 預覽圖片容器 */
-        .preview-img { max-width: 100%; margin-top: 10px; border: 1px solid #eee; border-radius: 4px; display: none;}
-
-        .btn-generate {
-            width: 100%;
-            background-color: var(--accent);
-            color: white;
-            border: none;
+        /* 動態圖表與備註區塊 */
+        .chart-item {
+            border: 1px solid #eee;
             padding: 15px;
-            font-size: 1.2em;
-            font-weight: bold;
             border-radius: 6px;
-            cursor: pointer;
-            margin-top: 30px;
+            margin-bottom: 15px;
+            background: #FAFAFA;
         }
-        .btn-generate:hover { background-color: #004488; }
+        .chart-item img { max-width: 100%; max-height: 300px; object-fit: contain; margin-bottom: 10px; border: 1px solid #ccc; background: #fff;}
+        .chart-item .mock-graph { height: 150px; display: flex; align-items: center; justify-content: center; background: #E3F2FD; color: var(--accent); font-weight: bold; border: 1px dashed var(--accent); margin-bottom: 10px; border-radius: 4px;}
+        .chart-item textarea { width: 100%; box-sizing: border-box; min-height: 60px; }
+
+        .btn-action { width: 100%; background-color: var(--accent); color: white; border: none; padding: 15px; font-size: 1.2em; font-weight: bold; border-radius: 6px; cursor: pointer; margin-top: 30px; }
+        .btn-action:hover { background-color: #004488; }
+
+        /* ====== 3. 報告預覽頁面 ====== */
+        .report-toolbar {
+            display: flex;
+            justify-content: space-between;
+            background: #333;
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            position: sticky;
+            top: 10px;
+            z-index: 100;
+        }
+        .report-toolbar button {
+            padding: 10px 20px; font-size: 1em; font-weight: bold; cursor: pointer; border-radius: 4px; border: none;
+        }
+        .btn-back { background: #666; color: #fff; }
+        .btn-back:hover { background: #555; }
+        .btn-print { background: var(--accent); color: #fff; }
+        .btn-print:hover { background: #004488; }
+        
+        #report-content-wrapper {
+            background: #fff;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        /* 報告內部排版樣式 */
+        .rpt-section { page-break-inside: avoid; break-inside: avoid; margin-bottom: 20px; }
+        .rpt-title { font-size: 1.4em; color: #222; border-left: 5px solid #333; padding-left: 12px; margin-top: 25px; margin-bottom: 15px; font-weight: bold;}
+        .rpt-grid { display: grid; grid-template-columns: 160px 1fr; row-gap: 12px; font-size: 0.95em; margin-bottom: 10px; }
+        .rpt-key { font-weight: bold; color: #333; }
+        .rpt-table { width: 100%; border-collapse: collapse; font-size: 0.9em; margin-top: 10px; }
+        .rpt-table th { background-color: #F5F5F5; font-weight: bold; padding: 8px; text-align: left; border: 1px solid #E0E0E0; border-top: 2px solid #ccc;}
+        .rpt-table td { padding: 8px; border: 1px solid #E0E0E0; }
+        .rpt-table tr { page-break-inside: avoid; break-inside: avoid; }
+        .rpt-box { border: 1px solid #E0E0E0; border-radius: 6px; padding: 15px 20px; font-size: 0.95em; background-color: #FFFFFF; min-height: 20px; }
+        .rpt-chart-wrapper { margin-top: 15px; page-break-inside: avoid; break-inside: avoid; text-align: center; }
+        .rpt-chart-img { max-width: 100%; max-height: 50vh; border: 1px solid #eee; display: block; margin: 0 auto;}
+        .rpt-chart-remark { font-size: 0.9em; color: #555; margin-top: 8px; text-align: left;}
+
+        /* ====== 列印專用設定 ====== */
+        @media print {
+            body { background: #fff; padding: 0; }
+            .no-print { display: none !important; }
+            .page { display: block; max-width: 100%; } /* 解除寬度限制 */
+            #report-content-wrapper { padding: 0; box-shadow: none; }
+            .rpt-table th { -webkit-print-color-adjust: exact; background-color: #F5F5F5 !important; color-adjust: exact; }
+            @page { margin: 1.5cm; }
+        }
     </style>
 </head>
 
 <body>
 
-    <div class="form-container">
-        <h1>硬體 RD 模擬報告產生器</h1>
-        <p style="text-align: center; color: #666; margin-top: -20px; margin-bottom: 30px;">填寫下方資訊並上傳圖表，一鍵輸出標準格式報告</p>
+    <div id="page-role" class="page active">
+        <h1>我是...</h1>
+        <div class="role-btn-group">
+            <button class="role-btn" onclick="switchPage('page-test')">測試工程師</button>
+            <button class="role-btn" onclick="switchPage('page-sim')">模擬工程師</button>
+        </div>
+    </div>
 
-        <form id="report-form">
+    <div id="page-sim" class="page form-container">
+        <h1>模擬工程師 報告產生器</h1>
+        <form id="sim-form">
             <h2>1. 專案資訊</h2>
             <div class="grid-2">
-                <div class="form-group"><label>專案名稱</label><input type="text" id="i_pname" placeholder="如: PCIe Gen6 CEM to MCIO Cable"></div>
-                <div class="form-group"><label>客戶 / 內部專案</label><input type="text" id="i_pclient" placeholder="如: Internal"></div>
-                <div class="form-group"><label>板號 / 版本</label><input type="text" id="i_prev" placeholder="如: EVT-001 / Rev.A"></div>
-                <div class="form-group"><label>DUT / Sample ID</label><input type="text" id="i_pdut" placeholder="如: Sample-001"></div>
-                <div class="form-group"><label>負責人</label><input type="text" id="i_powner" placeholder="請輸入姓名"></div>
-                <div class="form-group"><label>報告日期</label><input type="date" id="i_pdate"></div>
-                <div class="form-group"><label>報告版本</label><input type="text" id="i_pver" placeholder="如: v0.1"></div>
-                <div class="form-group full-width"><label>模擬目的</label>
-                    <input type="text" id="i_ppurpose" placeholder="確認高速通道 IL / RL / NEXT / FEXT 是否滿足規格...">
-                </div>
+                <div class="form-group"><label>專案名稱</label><input type="text" id="s_pname" placeholder="PCIe Gen6 CEM to MCIO Cable"></div>
+                <div class="form-group"><label>客戶 / 內部專案</label><input type="text" id="s_pclient" placeholder="Internal"></div>
+                <div class="form-group"><label>板號 / 版本</label><input type="text" id="s_prev" placeholder="EVT-001 / Rev.A"></div>
+                <div class="form-group"><label>DUT / Sample ID</label><input type="text" id="s_pdut" placeholder="Sample-001"></div>
+                <div class="form-group"><label>負責人</label><input type="text" id="s_powner"></div>
+                <div class="form-group"><label>報告日期</label><input type="date" id="s_pdate"></div>
+                <div class="form-group"><label>報告版本</label><input type="text" id="s_pver" placeholder="v0.1"></div>
+                <div class="form-group full-width"><label>模擬目的</label><input type="text" id="s_ppurpose" placeholder="確認高速通道..."></div>
             </div>
 
             <h2>2. 模擬條件與模型設定</h2>
             <div class="grid-2">
-                <div class="form-group"><label>模擬軟體</label><input type="text" id="i_ssoft" placeholder="如: CST Studio Suite"></div>
-                <div class="form-group"><label>Solver</label><input type="text" id="i_ssolver" placeholder="如: Frequency Domain Solver"></div>
-                <div class="form-group"><label>頻率範圍</label><input type="text" id="i_sfreq" placeholder="如: 0.01 ~ 40 GHz"></div>
-                <div class="form-group"><label>Port 設定</label><input type="text" id="i_sport" placeholder="如: Differential Port / Waveguide Port"></div>
-                <div class="form-group"><label>Boundary Condition</label><input type="text" id="i_sbound" placeholder="如: Open / PML"></div>
-                <div class="form-group"><label>Mesh / Accuracy</label><input type="text" id="i_smesh" placeholder="如: Adaptive mesh..."></div>
-                <div class="form-group full-width"><label>材料 / Stackup</label><input type="text" id="i_smat" placeholder="如: PCB: ML-4062-HCB1 Contact: C5210..."></div>
-                <div class="form-group full-width"><label>模型假設與限制</label>
-                    <input type="text" id="i_slimit" placeholder="如: 未納入製程公差；fixture loss 需另行確認。">
-                </div>
+                <div class="form-group"><label>模擬軟體</label><input type="text" id="s_ssoft" placeholder="CST Studio Suite"></div>
+                <div class="form-group"><label>Solver</label><input type="text" id="s_ssolver" placeholder="Frequency Domain Solver"></div>
+                <div class="form-group"><label>頻率範圍</label><input type="text" id="s_sfreq" placeholder="0.01 ~ 40 GHz"></div>
+                <div class="form-group"><label>Port 設定</label><input type="text" id="s_sport" placeholder="Differential Port..."></div>
+                <div class="form-group full-width"><label>材料 / Stackup</label><input type="text" id="s_smat" placeholder="PCB: ML-4062..."></div>
             </div>
 
             <h2>3. 規格與判定摘要</h2>
-            <table class="input-table" id="specTable">
+            <table class="input-table" id="s_specTable">
                 <tr><th>項目</th><th>規格/條件</th><th>模擬結果</th><th>Margin</th><th>判定</th><th>備註</th></tr>
                 <tr>
-                    <td><input type="text" placeholder="Insertion Loss / Sdd21"></td><td><input type="text" placeholder="依專案 spec line"></td>
-                    <td><input type="text"></td><td><input type="text"></td>
-                    <td><select><option value="" disabled selected>請選擇</option><option>Pass</option><option>Fail</option></select></td><td><input type="text"></td>
-                </tr>
-                <tr>
-                    <td><input type="text" placeholder="Return Loss / Sdd11"></td><td><input type="text" placeholder="依專案 spec line"></td>
-                    <td><input type="text"></td><td><input type="text"></td>
-                    <td><select><option value="" disabled selected>請選擇</option><option>Pass</option><option>Fail</option></select></td><td><input type="text"></td>
-                </tr>
-                <tr>
-                    <td><input type="text" placeholder="NEXT"></td><td><input type="text" placeholder="依專案 spec line"></td>
-                    <td><input type="text"></td><td><input type="text"></td>
-                    <td><select><option value="" disabled selected>請選擇</option><option>Pass</option><option>Fail</option></select></td><td><input type="text"></td>
-                </tr>
-                <tr>
-                    <td><input type="text" placeholder="FEXT"></td><td><input type="text" placeholder="依專案 spec line"></td>
-                    <td><input type="text"></td><td><input type="text"></td>
-                    <td><select><option value="" disabled selected>請選擇</option><option>Pass</option><option>Fail</option></select></td><td><input type="text"></td>
+                    <td><input type="text" placeholder="Insertion Loss"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td>
+                    <td><select><option value="" selected>請選擇</option><option>Pass</option><option>Fail</option></select></td><td><input type="text"></td>
                 </tr>
             </table>
 
-            <h2>4. 模擬圖與結果</h2>
-            
-            <div class="form-group" style="margin-bottom: 20px;">
-                <label>1. 上傳 CSV 自動繪製 S-Parameter 波形</label>
-                <div class="upload-box" onclick="document.getElementById('csv_upload').click()">
-                    📊 點擊選擇 CSV (S-parameter 格式)
-                    <input type="file" id="csv_upload" accept=".csv">
+            <h2>4. 圖表與數據 (含獨立備註)</h2>
+            <div class="form-group">
+                <label>上傳 SNP 檔 (資料圖表預留)</label>
+                <div class="upload-box" onclick="document.getElementById('s_snp_upload').click()">
+                    📈 點擊上傳 SNP 檔
+                    <input type="file" id="s_snp_upload" accept=".snp,.s4p,.s2p" multiple>
                 </div>
-                <div id="csv-list" class="file-list"></div>
-                <img id="csv-preview-img" class="preview-img" alt="CSV 繪製預覽">
+                <div id="s_snp_charts_container"></div>
             </div>
 
-            <div class="form-group">
-                <label>2. 補充截圖 (如結構圖、模型圖)</label>
-                <div class="upload-box" onclick="document.getElementById('img_upload').click()">
-                    📄 點擊選擇圖片 (支援多張)
-                    <input type="file" id="img_upload" accept="image/*" multiple>
+            <div class="form-group" style="margin-top: 15px;">
+                <label>上傳視覺化圖表 (截圖)</label>
+                <div class="upload-box" onclick="document.getElementById('s_img_upload').click()">
+                    🖼️ 點擊上傳圖片 (支援多張)
+                    <input type="file" id="s_img_upload" accept="image/*" multiple>
                 </div>
-                <div id="img-list" class="file-list"></div>
+                <div id="s_img_charts_container"></div>
             </div>
 
-            <h2>5. 結論</h2>
-            <div class="form-group">
-                <textarea id="i_c_conc" placeholder="請填寫結論與風險提醒..."></textarea>
-            </div>
+            <h2>5. 結論與建議</h2>
+            <div class="form-group" style="margin-bottom: 15px;"><label>結論</label><textarea id="s_c_conc"></textarea></div>
+            <div class="form-group"><label>建議後續動作</label><textarea id="s_c_next"></textarea></div>
 
-            <h2>6. 建議後續動作</h2>
-            <div class="form-group">
-                <textarea id="i_c_next" placeholder="1. 與實測 S-parameter / TDR 進行 correlation。&#10;2. 若 IL 或 RL fail，優先檢查..."></textarea>
-            </div>
-
-            <button type="button" class="btn-generate" id="btn-print">產生報告 (自動開啟列印)</button>
+            <button type="button" class="btn-action" onclick="generateReport('sim')">👁️ 查看報告</button>
         </form>
     </div>
 
-    <script>
-        // --- 變數初始化 ---
-        let uploadedImagesBase64 = []; // 存放手動上傳的截圖
-        let csvChartBase64 = "";       // 存放 Python 畫好的波形圖
+    <div id="page-test" class="page form-container">
+        <h1>測試工程師 報告產生器</h1>
+        <form id="test-form">
+            <h2>1. 專案資訊</h2>
+            <div class="grid-2">
+                <div class="form-group"><label>專案名稱</label><input type="text" id="t_pname" placeholder="專案名稱"></div>
+                <div class="form-group"><label>客戶 / 內部專案</label><input type="text" id="t_pclient"></div>
+                <div class="form-group"><label>測試階段</label><input type="text" id="t_prev" placeholder="EVT / DVT..."></div>
+                <div class="form-group"><label>DUT / Sample ID</label><input type="text" id="t_pdut"></div>
+                <div class="form-group"><label>負責人</label><input type="text" id="t_powner"></div>
+                <div class="form-group"><label>報告日期</label><input type="date" id="t_pdate"></div>
+                <div class="form-group full-width"><label>測試目的</label><input type="text" id="t_ppurpose"></div>
+            </div>
 
-        // --- 處理手動圖片上傳 ---
-        document.getElementById('img_upload').addEventListener('change', function(e) {
-            uploadedImagesBase64 = [];
-            document.getElementById('img-list').innerHTML = '';
-            Array.from(e.target.files).forEach(file => {
-                document.getElementById('img-list').innerHTML += `<div>已選取: ${file.name}</div>`;
+            <h2>2. 測試儀器與環境</h2>
+            <div class="grid-2">
+                <div class="form-group"><label>網路分析儀 (VNA)</label><input type="text" id="t_ssoft" placeholder="如: Keysight N5227B"></div>
+                <div class="form-group"><label>測試治具 (Fixture)</label><input type="text" id="t_ssolver"></div>
+                <div class="form-group"><label>校正方式</label><input type="text" id="t_sfreq" placeholder="ECal / AFR..."></div>
+            </div>
+
+            <h2>3. 規格與判定摘要</h2>
+            <table class="input-table" id="t_specTable">
+                <tr><th>測試項目</th><th>規格要求</th><th>實測結果</th><th>Margin</th><th>判定</th><th>備註</th></tr>
+                <tr>
+                    <td><input type="text" placeholder="Insertion Loss"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td>
+                    <td><select><option value="" selected>請選擇</option><option>Pass</option><option>Fail</option></select></td><td><input type="text"></td>
+                </tr>
+            </table>
+
+            <h2>4. 測試圖表 (含獨立備註)</h2>
+            <div class="form-group">
+                <label>上傳 CSV 檔 (資料圖表預留)</label>
+                <div class="upload-box" onclick="document.getElementById('t_csv_upload').click()">
+                    📊 點擊上傳 CSV 檔
+                    <input type="file" id="t_csv_upload" accept=".csv" multiple>
+                </div>
+                <div id="t_csv_charts_container"></div>
+            </div>
+
+            <div class="form-group" style="margin-top: 15px;">
+                <label>上傳視覺化圖表 (儀器截圖)</label>
+                <div class="upload-box" onclick="document.getElementById('t_img_upload').click()">
+                    🖼️ 點擊上傳圖片 (支援多張)
+                    <input type="file" id="t_img_upload" accept="image/*" multiple>
+                </div>
+                <div id="t_img_charts_container"></div>
+            </div>
+
+            <h2>5. 結論與建議</h2>
+            <div class="form-group" style="margin-bottom: 15px;"><label>結論</label><textarea id="t_c_conc"></textarea></div>
+            <div class="form-group"><label>建議後續動作</label><textarea id="t_c_next"></textarea></div>
+
+            <button type="button" class="btn-action" onclick="generateReport('test')">👁️ 查看報告</button>
+        </form>
+    </div>
+
+    <div id="page-report" class="page">
+        <div class="report-toolbar no-print">
+            <button class="btn-back" onclick="backToEdit()">⬅ 回到編輯頁面</button>
+            <div>
+                <button class="btn-print" onclick="window.print()" style="margin-right: 10px;">⬇ 下載報告 (另存 PDF)</button>
+                <button class="btn-print" onclick="window.print()">🖨️ 列印報告</button>
+            </div>
+        </div>
+
+        <div id="report-content-wrapper">
+            </div>
+    </div>
+
+    <script>
+        // --- 頁面切換控制 ---
+        let currentRole = '';
+
+        function switchPage(pageId) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById(pageId).classList.add('active');
+            if (pageId === 'page-sim') currentRole = 'sim';
+            if (pageId === 'page-test') currentRole = 'test';
+        }
+
+        function backToEdit() {
+            if (currentRole === 'sim') switchPage('page-sim');
+            else if (currentRole === 'test') switchPage('page-test');
+        }
+
+        // --- 動態處理檔案上傳與建立圖表備註區塊 ---
+        function handleDataFileUpload(event, containerId, typeLabel) {
+            const files = event.target.files;
+            const container = document.getElementById(containerId);
+            Array.from(files).forEach((file, index) => {
+                const chartId = `chart_${Date.now()}_${index}`;
+                const html = `
+                    <div class="chart-item" id="${chartId}">
+                        <div class="mock-graph">📊 ${typeLabel} 數據圖表預留區 (${file.name})</div>
+                        <label>📝 此圖表備註說明：</label>
+                        <textarea class="data-remark" placeholder="請輸入 ${file.name} 的分析備註..."></textarea>
+                    </div>
+                `;
+                container.insertAdjacentHTML('beforeend', html);
+            });
+        }
+
+        function handleImageUpload(event, containerId) {
+            const files = event.target.files;
+            const container = document.getElementById(containerId);
+            Array.from(files).forEach((file, index) => {
                 const reader = new FileReader();
-                reader.onload = (event) => uploadedImagesBase64.push(event.target.result);
+                reader.onload = function(e) {
+                    const chartId = `img_${Date.now()}_${index}`;
+                    const html = `
+                        <div class="chart-item img-chart-item" id="${chartId}">
+                            <img src="${e.target.result}" alt="Uploaded Chart">
+                            <label>📝 此圖表備註說明：</label>
+                            <textarea class="data-remark" placeholder="請輸入圖表備註..."></textarea>
+                        </div>
+                    `;
+                    container.insertAdjacentHTML('beforeend', html);
+                }
                 reader.readAsDataURL(file);
             });
-        });
+        }
 
-        // --- 處理 CSV 上傳與呼叫 Python 繪圖 ---
-        document.getElementById('csv_upload').addEventListener('change', async function(e) {
-            const file = e.target.files[0];
-            if (!file) return;
+        // 綁定模擬工程師事件
+        document.getElementById('s_snp_upload').addEventListener('change', (e) => handleDataFileUpload(e, 's_snp_charts_container', 'SNP'));
+        document.getElementById('s_img_upload').addEventListener('change', (e) => handleImageUpload(e, 's_img_charts_container'));
+
+        // 綁定測試工程師事件
+        document.getElementById('t_csv_upload').addEventListener('change', (e) => handleDataFileUpload(e, 't_csv_charts_container', 'CSV'));
+        document.getElementById('t_img_upload').addEventListener('change', (e) => handleImageUpload(e, 't_img_charts_container'));
+
+        // --- 產生報告 ---
+        function generateReport(role) {
+            const prefix = role === 'sim' ? 's_' : 't_';
             
-            const listDiv = document.getElementById('csv-list');
-            const previewImg = document.getElementById('csv-preview-img');
-            
-            listDiv.innerHTML = `<div style="color:#0055A4;">已選取: ${file.name} (⏳ 請稍候，Python 正在繪製圖表中...)</div>`;
-            previewImg.style.display = 'none'; // 隱藏舊圖
-            
-            const formData = new FormData();
-            formData.append('csv_file', file);
-
-            try {
-                // 發送給後端 app.py 的 /analyze 路由
-                const response = await fetch('/analyze', { method: 'POST', body: formData });
-                const result = await response.json();
-
-                if (result.status === 'success') {
-                    csvChartBase64 = result.chart_image;
-                    listDiv.innerHTML = `<div style="color:green;">✅ 圖表繪製成功！已加入報告中。</div>`;
-                    
-                    // 顯示預覽圖在前端畫面上
-                    previewImg.src = csvChartBase64;
-                    previewImg.style.display = 'block';
-                } else {
-                    listDiv.innerHTML = `<div style="color:red;">❌ 錯誤: ${result.message}</div>`;
-                }
-            } catch (error) {
-                console.error("Error:", error);
-                listDiv.innerHTML = `<div style="color:red;">❌ 伺服器連線失敗，請確認 app.py 是否運作中。</div>`;
-            }
-        });
-
-        // --- 產生報告 HTML 並列印 ---
-        document.getElementById('btn-print').addEventListener('click', () => {
-            // 抓取表格資料
-            const specRows = document.querySelectorAll('#specTable tr');
-            let specTableHTML = '';
-            for(let i = 1; i < specRows.length; i++) {
-                const inputs = specRows[i].querySelectorAll('input, select');
-                const val0 = inputs[0].value || "&nbsp;";
-                const val1 = inputs[1].value || "&nbsp;";
-                const val2 = inputs[2].value || "&nbsp;";
-                const val3 = inputs[3].value || "&nbsp;";
-                const val4 = inputs[4].value || "&nbsp;";
-                const val5 = inputs[5].value || "&nbsp;";
-
-                specTableHTML += `
-                    <tr>
-                        <td>${val0}</td><td>${val1}</td><td>${val2}</td>
-                        <td>${val3}</td><td>${val4}</td><td>${val5}</td>
-                    </tr>
-                `;
-            }
-
-            // 組合圖片 HTML (先放 Python 畫的波形，再放手動上傳的圖)
-            let imagesHTML = '';
-            if(csvChartBase64) {
-                imagesHTML += `<img src="${csvChartBase64}" class="report-img" style="margin-bottom: 20px;">`;
-            }
-            uploadedImagesBase64.forEach(src => {
-                imagesHTML += `<img src="${src}" class="report-img">`;
-            });
-            if(imagesHTML === '') imagesHTML = '<p style="color:#999; font-size:0.9em;">(未上傳任何圖表資料)</p>';
-
+            // 安全抓取文字 (處理空值與換行)
             const getVal = (id) => {
-                const val = document.getElementById(id).value;
+                const el = document.getElementById(prefix + id);
+                if(!el) return "&nbsp;";
+                const val = el.value.trim();
                 return val ? val.replace(/\n/g, '<br>') : "&nbsp;";
             };
 
-            // 開啟新視窗寫入最終報告
-            const reportWindow = window.open('', '_blank');
-            reportWindow.document.write(`
-                <html>
-                <head>
-                    <title>模擬報告</title>
-                    <style>
-                        body { font-family: 'Segoe UI', Arial, sans-serif; padding: 20px 40px; color: #222; line-height: 1.6; max-width: 900px; margin: 0 auto; }
-                        
-                        .section-block { page-break-inside: avoid; break-inside: avoid; margin-bottom: 20px; }
-                        h2 { font-size: 1.4em; color: #222; border-left: 5px solid #333; padding-left: 12px; margin-top: 25px; margin-bottom: 15px; }
-                        
-                        .info-grid { display: grid; grid-template-columns: 160px 1fr; row-gap: 12px; font-size: 0.95em; margin-bottom: 10px; }
-                        .info-grid .key { font-weight: bold; color: #333; }
-                        
-                        table { width: 100%; border-collapse: collapse; font-size: 0.9em; margin-top: 10px; }
-                        th { background-color: #F5F5F5; font-weight: bold; padding: 8px; text-align: left; border: 1px solid #E0E0E0; border-top: 2px solid #ccc;}
-                        td { padding: 8px; border: 1px solid #E0E0E0; }
-                        tr { page-break-inside: avoid; break-inside: avoid; }
-                        
-                        .text-box { border: 1px solid #E0E0E0; border-radius: 6px; padding: 15px 20px; font-size: 0.95em; background-color: #FFFFFF; min-height: 20px; }
-                        
-                        .report-img { max-width: 100%; max-height: 85vh; margin-top: 15px; page-break-inside: avoid; break-inside: avoid; }
+            // 1. 抓取表格資料
+            const specRows = document.querySelectorAll(`#${prefix}specTable tr`);
+            let specTableHTML = '';
+            for(let i = 1; i < specRows.length; i++) {
+                const inputs = specRows[i].querySelectorAll('input, select');
+                specTableHTML += `<tr>
+                    <td>${inputs[0]?.value || "&nbsp;"}</td><td>${inputs[1]?.value || "&nbsp;"}</td>
+                    <td>${inputs[2]?.value || "&nbsp;"}</td><td>${inputs[3]?.value || "&nbsp;"}</td>
+                    <td>${inputs[4]?.value || "&nbsp;"}</td><td>${inputs[5]?.value || "&nbsp;"}</td>
+                </tr>`;
+            }
 
-                        @media print { 
-                            body { padding: 0; } 
-                            th { -webkit-print-color-adjust: exact; background-color: #F5F5F5 !important; color-adjust: exact; } 
-                        }
-                    </style>
-                </head>
-                <body>
-                    
-                    <div class="section-block">
-                        <h2>1. 專案資訊</h2>
-                        <div class="info-grid">
-                            <div class="key">專案名稱</div><div>${getVal('i_pname')}</div>
-                            <div class="key">板號 / 版本</div><div>${getVal('i_prev')}</div>
-                            <div class="key">客戶 / 內部專案</div><div>${getVal('i_pclient')}</div>
-                            <div class="key">DUT / Sample ID</div><div>${getVal('i_pdut')}</div>
-                            <div class="key">負責人</div><div>${getVal('i_powner')}</div>
-                            <div class="key">報告日期</div><div>${getVal('i_pdate')}</div>
-                            <div class="key">報告版本</div><div>${getVal('i_pver')}</div>
-                            <div class="key">模擬目的</div><div>${getVal('i_ppurpose')}</div>
-                        </div>
+            // 2. 抓取動態圖表與備註 (包含 Data Placeholder 與 Image)
+            let chartsHTML = '';
+            // 抓取 Data (SNP/CSV) 區塊
+            const dataContainerId = role === 'sim' ? 's_snp_charts_container' : 't_csv_charts_container';
+            const dataItems = document.querySelectorAll(`#${dataContainerId} .chart-item`);
+            dataItems.forEach(item => {
+                const title = item.querySelector('.mock-graph').innerText;
+                const remark = item.querySelector('textarea').value.replace(/\n/g, '<br>');
+                chartsHTML += `
+                    <div class="rpt-chart-wrapper">
+                        <div style="border: 2px dashed #0055A4; color:#0055A4; padding: 40px; margin-bottom:10px; font-weight:bold;">${title}</div>
+                        <div class="rpt-chart-remark">${remark || "無備註"}</div>
                     </div>
+                `;
+            });
 
-                    <div class="section-block">
-                        <h2>2. 模擬條件與模型設定</h2>
-                        <div class="info-grid">
-                            <div class="key">模擬軟體</div><div>${getVal('i_ssoft')}</div>
-                            <div class="key">Solver</div><div>${getVal('i_ssolver')}</div>
-                            <div class="key">頻率範圍</div><div>${getVal('i_sfreq')}</div>
-                            <div class="key">Port 設定</div><div>${getVal('i_sport')}</div>
-                            <div class="key">Boundary Condition</div><div>${getVal('i_sbound')}</div>
-                            <div class="key">Mesh / Accuracy</div><div>${getVal('i_smesh')}</div>
-                            <div class="key">材料 / Stackup</div><div>${getVal('i_smat')}</div>
-                            <div class="key">模型假設與限制</div><div>${getVal('i_slimit')}</div>
-                        </div>
+            // 抓取圖片區塊
+            const imgContainerId = role === 'sim' ? 's_img_charts_container' : 't_img_charts_container';
+            const imgItems = document.querySelectorAll(`#${imgContainerId} .chart-item`);
+            imgItems.forEach(item => {
+                const imgSrc = item.querySelector('img').src;
+                const remark = item.querySelector('textarea').value.replace(/\n/g, '<br>');
+                chartsHTML += `
+                    <div class="rpt-chart-wrapper">
+                        <img src="${imgSrc}" class="rpt-chart-img">
+                        <div class="rpt-chart-remark">${remark || "無備註"}</div>
                     </div>
+                `;
+            });
 
-                    <div class="section-block">
-                        <h2>3. 規格與判定摘要</h2>
-                        <table>
-                            <tr><th>項目</th><th>規格/條件</th><th>模擬結果</th><th>Margin</th><th>判定</th><th>備註</th></tr>
-                            ${specTableHTML}
-                        </table>
+            if (chartsHTML === '') chartsHTML = '<p style="color:#999;">(未上傳任何圖表資料)</p>';
+
+            // 3. 組合 HTML (動態判斷欄位名稱)
+            const isSim = role === 'sim';
+            const envTitle = isSim ? "模擬條件與模型設定" : "測試儀器與環境";
+            const softLabel = isSim ? "模擬軟體" : "網路分析儀 (VNA)";
+            const solverLabel = isSim ? "Solver" : "測試治具 (Fixture)";
+            const freqLabel = isSim ? "頻率範圍" : "校正方式";
+
+            const html = `
+                <div style="text-align: center; margin-bottom: 30px;">
+                    <h1 style="color: #0055A4; margin-bottom: 5px;">${isSim ? '模擬' : '測試'}分析報告</h1>
+                    <div style="color: #666; font-size: 0.9em;">Generated by JPC Report System</div>
+                </div>
+
+                <div class="rpt-section">
+                    <div class="rpt-title">1. 專案資訊</div>
+                    <div class="rpt-grid">
+                        <div class="rpt-key">專案名稱</div><div>${getVal('pname')}</div>
+                        <div class="rpt-key">${isSim ? '板號 / 版本' : '測試階段'}</div><div>${getVal('prev')}</div>
+                        <div class="rpt-key">客戶 / 內部專案</div><div>${getVal('pclient')}</div>
+                        <div class="rpt-key">DUT / Sample ID</div><div>${getVal('pdut')}</div>
+                        <div class="rpt-key">負責人</div><div>${getVal('powner')}</div>
+                        <div class="rpt-key">報告日期</div><div>${getVal('pdate')}</div>
+                        <div class="rpt-key">${isSim ? '報告版本' : '測試目的'}</div><div>${isSim ? getVal('pver') : getVal('ppurpose')}</div>
+                        ${isSim ? `<div class="rpt-key">模擬目的</div><div>${getVal('ppurpose')}</div>` : ''}
                     </div>
+                </div>
 
-                    <div class="section-block">
-                        <h2>4. 模擬圖與結果</h2>
-                        ${imagesHTML}
+                <div class="rpt-section">
+                    <div class="rpt-title">2. ${envTitle}</div>
+                    <div class="rpt-grid">
+                        <div class="rpt-key">${softLabel}</div><div>${getVal('ssoft')}</div>
+                        <div class="rpt-key">${solverLabel}</div><div>${getVal('ssolver')}</div>
+                        <div class="rpt-key">${freqLabel}</div><div>${getVal('sfreq')}</div>
+                        ${isSim ? `
+                        <div class="rpt-key">Port 設定</div><div>${getVal('sport')}</div>
+                        <div class="rpt-key">材料 / Stackup</div><div>${getVal('smat')}</div>
+                        ` : ''}
                     </div>
+                </div>
 
-                    <div class="section-block">
-                        <h2>5. 結論</h2>
-                        <div class="text-box">${getVal('i_c_conc')}</div>
-                    </div>
+                <div class="rpt-section">
+                    <div class="rpt-title">3. 規格與判定摘要</div>
+                    <table class="rpt-table">
+                        <tr><th>測試項目</th><th>規格/條件</th><th>實測結果</th><th>Margin</th><th>判定</th><th>備註</th></tr>
+                        ${specTableHTML}
+                    </table>
+                </div>
 
-                    <div class="section-block">
-                        <h2>6. 建議後續動作</h2>
-                        <div class="text-box">${getVal('i_c_next')}</div>
-                    </div>
+                <div class="rpt-section">
+                    <div class="rpt-title">4. 圖表與數據結果</div>
+                    ${chartsHTML}
+                </div>
 
-                    <script>
-                        setTimeout(() => { window.print(); }, 800);
-                    <\/script>
-                </body>
-                </html>
-            `);
-            reportWindow.document.close();
-        });
+                <div class="rpt-section">
+                    <div class="rpt-title">5. 結論</div>
+                    <div class="rpt-box">${getVal('c_conc')}</div>
+                </div>
+
+                <div class="rpt-section">
+                    <div class="rpt-title">6. 建議後續動作</div>
+                    <div class="rpt-box">${getVal('c_next')}</div>
+                </div>
+            `;
+
+            // 將組裝好的 HTML 塞入報告預覽區，並切換頁面
+            document.getElementById('report-content-wrapper').innerHTML = html;
+            switchPage('page-report');
+            window.scrollTo(0, 0); // 捲動到最上方
+        }
     </script>
 </body>
 </html>
