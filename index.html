@@ -8,7 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            /* Shadcn UI 色板 */
+            /* Light Mode Variables (預設淺色模式) */
             --bg-base: #f6f5f4;
             --bg-card: #ffffff;
             --primary: #d10001;
@@ -18,10 +18,25 @@
             --text-muted: #777777;
             --border: #e9e5e0;
             --input-border: #c9c6c1;
+            
             --radius: 0.75rem; 
             --font-sans: 'Inter', sans-serif;
             --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
             --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+        }
+
+        /* Dark Mode Variables (深色模式) */
+        body.dark {
+            --bg-base: #1D1D1D;
+            --bg-card: #1D1D1D;
+            --primary: #FF4B32;
+            --primary-hover: #D03520;
+            --primary-light: rgba(255, 75, 50, 0.15);
+            --text-main: #FFFFFF;
+            --text-muted: #808080;
+            --border: #333333;
+            --input-border: #333333;
+            color-scheme: dark; /* 讓瀏覽器原生捲軸也變深色 */
         }
 
         * { box-sizing: border-box; }
@@ -31,7 +46,7 @@
             background-color: var(--bg-base); color: var(--text-main);
             font-family: var(--font-sans);
             display: flex; height: 100vh; overflow: hidden;
-            transition: background-color 0.3s ease;
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
 
         /* ====== Sidebar (左側導覽) ====== */
@@ -44,28 +59,11 @@
             transition: all 0.3s ease;
         }
 
-        /* 當進入預覽模式時，隱藏 Sidebar */
-        body.preview-mode #sidebar {
-            display: none;
-        }
+        body.preview-mode #sidebar { display: none; }
 
-        /* 修改側邊欄 Logo 區塊，讓內容完全置中 */
-        .brand-logo {
-            margin-bottom: 32px;
-            display: flex;
-            justify-content: center; /* 置中關鍵 */
-            align-items: center;
-            width: 100%;             /* 確保區塊佔滿寬度 */
-        }
-        
-        /* 確保圖片按比例縮放且置中顯示 */
-        .brand-logo img {
-            width: 130px; /* 這裡可以微調你想要的大小，例如 120px ~ 150px */
-            height: auto;
-            object-fit: contain;
-        }
+        .brand-logo { margin-bottom: 32px; display: flex; justify-content: center; align-items: center; width: 100%; }
+        .brand-logo img { width: 130px; height: auto; object-fit: contain; }
 
-        /* --- 修改點 1: Segmented Control (按鈕切換) --- */
         .role-selector-wrapper { margin-bottom: 32px; padding: 0 8px; }
         .role-label { font-size: 0.75rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px; letter-spacing: 0.05em; }
         
@@ -79,9 +77,8 @@
             cursor: pointer; transition: all 0.2s ease; font-family: var(--font-sans);
         }
         .segment-btn:hover { color: var(--text-main); }
-        .segment-btn.active { background-color: var(--bg-card); color: var(--primary); box-shadow: var(--shadow-sm); }
+        .segment-btn.active { background-color: var(--bg-card); color: var(--primary); box-shadow: var(--shadow-sm); border: 1px solid var(--border);}
 
-        /* 導覽列 */
         .nav-menu { display: flex; flex-direction: column; gap: 4px; flex: 1; }
         .nav-link {
             display: flex; align-items: center; gap: 12px; padding: 10px 12px;
@@ -93,17 +90,19 @@
         .nav-link:hover svg { transform: scale(1.1); color: var(--primary); }
         .nav-link.active { background-color: var(--primary-light); color: var(--primary); }
         
-        .nav-action { margin-top: auto; }
-        .nav-action .nav-link { background-color: var(--text-main); color: #fff; justify-content: center; font-weight: 600; }
-        .nav-action .nav-link:hover { background-color: #333; color: #fff; }
-        .nav-action .nav-link:hover svg { color: #fff; }
-
+        /* 側邊欄底部按鈕設計 */
+        .nav-action { margin-top: auto; display: flex; flex-direction: column; gap: 8px;}
+        .btn-theme { background-color: transparent; border: 1px solid var(--border); color: var(--text-main); justify-content: center; font-weight: 600; }
+        .btn-theme:hover { background-color: var(--bg-base); }
+        
+        .btn-preview { background-color: var(--text-main); color: var(--bg-card); justify-content: center; font-weight: 600; border: none;}
+        .btn-preview:hover { background-color: var(--text-muted); color: var(--bg-card); }
+        
         /* ====== Main Content (右側工作區) ====== */
         #main-content {
             flex: 1; overflow-y: auto; scroll-behavior: smooth;
             padding: 40px 60px; position: relative;
         }
-        /* 預覽模式時，稍微縮減兩側 padding 讓版面更開闊 */
         body.preview-mode #main-content { padding: 40px 20px; }
 
         .workspace { max-width: 800px; margin: 0 auto; padding-bottom: 100px;}
@@ -111,6 +110,7 @@
         section {
             background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius);
             padding: 32px; margin-bottom: 32px; box-shadow: var(--shadow-sm); scroll-margin-top: 40px; 
+            transition: all 0.3s ease;
         }
         .section-header { margin-top: 0; margin-bottom: 24px; font-size: 1.25rem; font-weight: 600; color: var(--text-main); display: flex; align-items: center; justify-content: space-between;}
 
@@ -118,43 +118,33 @@
         .full-width { grid-column: span 2; }
         .form-group { display: flex; flex-direction: column; gap: 6px; }
         label { font-size: 0.875rem; font-weight: 500; color: var(--text-main); }
+        
         input[type="text"], input[type="date"], textarea, select {
             padding: 10px 12px; border: 1px solid var(--input-border); border-radius: 6px;
-            font-size: 0.875rem; font-family: var(--font-sans); transition: all 0.2s; background: var(--bg-card);
+            font-size: 0.875rem; font-family: var(--font-sans); transition: all 0.2s; 
+            background: var(--bg-card); color: var(--text-main);
         }
         input:focus, textarea:focus, select:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 2px var(--primary-light); }
         textarea { resize: vertical; min-height: 80px; }
 
-        /* 表格與按鈕 */
         .spec-table { width: 100%; border-collapse: collapse; }
         .spec-table th { font-size: 0.75rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; text-align: left; padding: 0 0 12px 0; border-bottom: 1px solid var(--border); }
         .spec-table td { padding: 12px 8px 12px 0; border-bottom: 1px solid var(--bg-base); }
         .spec-table input, .spec-table select { width: 100%; }
         
-        .btn { 
-            display: inline-flex; align-items: center; gap: 6px; 
-            padding: 8px 16px; font-size: 0.875rem; font-weight: 500; 
-            border-radius: 6px; cursor: pointer; transition: all 0.2s; 
-            border: none; font-family: var(--font-sans);
-            white-space: nowrap; 
-        }
+        .btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; font-size: 0.875rem; font-weight: 500; border-radius: 6px; cursor: pointer; transition: all 0.2s; border: none; font-family: var(--font-sans); white-space: nowrap; }
+        .btn svg { width: 18px; height: 18px; flex-shrink: 0; }
         .btn-outline { background: var(--bg-card); border: 1px solid var(--input-border); color: var(--text-main); }
         .btn-outline:hover { background: var(--bg-base); border-color: var(--text-muted); }
-        .btn-outline svg { width: 16px; height: 16px; }
         
         .btn-icon { background: transparent; border: none; color: var(--text-muted); cursor: pointer; padding: 6px; border-radius: 4px; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
-        /* 統一設定所有按鈕內的圖示大小，並防止被擠壓到消失 */
-        .btn svg {
-            width: 18px;
-            height: 18px;
-            flex-shrink: 0; /* 這行是關鍵，防止圖示被擠壓 */
-        }
+        .btn-icon svg { width: 18px; height: 18px; }
         .btn-icon:hover { background: var(--bg-base); color: var(--text-main); }
         .btn-icon.danger:hover { background: var(--primary-light); color: var(--primary); }
 
         .upload-zone {
             border: 2px dashed var(--input-border); border-radius: var(--radius); padding: 40px 20px;
-            text-align: center; cursor: pointer; background: #fafafa; transition: all 0.2s ease;
+            text-align: center; cursor: pointer; background: transparent; transition: all 0.2s ease;
             display: flex; flex-direction: column; align-items: center; gap: 12px;
         }
         .upload-zone:hover { border-color: var(--primary); background: var(--primary-light); }
@@ -169,7 +159,7 @@
         .chart-content { flex: 1; display: flex; flex-direction: column; gap: 8px; }
         .chart-controls { display: flex; gap: 4px; position: absolute; right: 16px; top: 16px; }
 
-        /* ====== 修改點 2: 報告預覽區塊 ====== */
+        /* ====== 報告預覽區塊 ====== */
         #preview-workspace { display: none; width: 100%; max-width: 900px; margin: 0 auto; }
         .preview-toolbar { display: flex; justify-content: space-between; margin-bottom: 24px; padding-bottom: 24px; border-bottom: 1px solid var(--border); }
         .btn-primary { background: var(--primary); color: #fff; }
@@ -177,7 +167,7 @@
 
         #report-render-area {
             background: #fff; padding: 60px; border-radius: var(--radius); box-shadow: var(--shadow-md); border: 1px solid var(--border);
-            width: 100%; overflow-x: auto; /* 防止超寬破版 */
+            width: 100%; overflow-x: auto; position: relative;
         }
 
         @media print {
@@ -194,17 +184,15 @@
     <!-- ====== Sidebar (導覽列) ====== -->
     <aside id="sidebar" class="no-print">
         <div class="brand-logo">
-            <img src="jpc_logo.png" alt="JPC Logo">
+            <img src="jpc logo.png" alt="JPC Logo">
         </div>
 
-        <!-- 替換為 Segmented Control -->
         <div class="role-selector-wrapper">
             <div class="role-label">Engineering Role</div>
             <div class="segmented-control">
                 <button type="button" class="segment-btn active" id="btn-role-sim" onclick="switchRole('sim')">Simulation</button>
                 <button type="button" class="segment-btn" id="btn-role-test" onclick="switchRole('test')">Measurement</button>
             </div>
-            <!-- 隱藏的 input 用來記錄目前的狀態，不影響原有資料儲存邏輯 -->
             <input type="hidden" id="role-selector" value="sim">
         </div>
 
@@ -233,7 +221,12 @@
         </nav>
 
         <div class="nav-action">
-            <a class="nav-link" onclick="togglePreviewMode()">
+            <!-- 暗黑模式切換按鈕 (選項A: 底部) -->
+            <a class="nav-link btn-theme" onclick="toggleTheme()">
+                <span id="theme-icon"></span>
+                <span id="theme-text">Dark Mode</span>
+            </a>
+            <a class="nav-link btn-preview" onclick="togglePreviewMode()">
                 <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
                 Preview & Export
             </a>
@@ -242,7 +235,6 @@
 
     <!-- ====== Main Content (工作區) ====== -->
     <main id="main-content">
-        
         <!-- 表單編輯區 -->
         <div id="edit-workspace" class="workspace">
             <section id="sec-info">
@@ -322,7 +314,6 @@
                     </button>
                 </div>
             </div>
-            
             <!-- 生成的報告會塞入這裡 -->
             <div id="report-render-area"></div>
         </div>
@@ -333,60 +324,68 @@
         const iconTrash = `<svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>`;
         const iconUp = `<svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path></svg>`;
         const iconDown = `<svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>`;
+        const iconMoon = `<svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>`;
+        const iconSun = `<svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>`;
 
         document.getElementById('pdate').value = new Date().toISOString().split('T')[0];
         
-        // ====== 1. 無縫角色切換 (更新支援 Button Toggle) ======
+        // ====== 暗黑模式邏輯 ======
+        let isDarkMode = false;
+        function toggleTheme() {
+            isDarkMode = !isDarkMode;
+            applyTheme();
+            localStorage.setItem('jpc_theme', isDarkMode ? 'dark' : 'light');
+        }
+        function applyTheme() {
+            if (isDarkMode) {
+                document.body.classList.add('dark');
+                document.getElementById('theme-icon').innerHTML = iconSun;
+                document.getElementById('theme-text').innerText = "Light Mode";
+            } else {
+                document.body.classList.remove('dark');
+                document.getElementById('theme-icon').innerHTML = iconMoon;
+                document.getElementById('theme-text').innerText = "Dark Mode";
+            }
+        }
+
+        // ====== 角色切換 ======
         function switchRole(roleOverride) {
             const roleInput = document.getElementById('role-selector');
             if(roleOverride) { roleInput.value = roleOverride; }
-            
             const role = roleInput.value;
             const isSim = role === 'sim';
             
-            // 更新按鈕外觀狀態
             document.getElementById('btn-role-sim').classList.toggle('active', isSim);
             document.getElementById('btn-role-test').classList.toggle('active', !isSim);
             
-            // 動態修改表單標籤
             document.getElementById('lbl-rev').innerText = isSim ? 'Version / Revision' : 'Test Stage';
             document.getElementById('lbl-soft').innerText = isSim ? 'Software' : 'VNA Model';
             document.getElementById('lbl-solver').innerText = isSim ? 'Solver' : 'Fixture';
             document.getElementById('lbl-freq').innerText = isSim ? 'Frequency Range' : 'Calibration';
             
-            document.querySelectorAll('.sim-only').forEach(el => {
-                el.style.display = isSim ? 'flex' : 'none';
-            });
+            document.querySelectorAll('.sim-only').forEach(el => { el.style.display = isSim ? 'flex' : 'none'; });
             saveDraft();
         }
 
-        // ====== 2. 平滑滾動與 ScrollSpy ======
-        function scrollToSection(id) {
-            document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
-        }
-
+        // ====== ScrollSpy ======
+        function scrollToSection(id) { document.getElementById(id).scrollIntoView({ behavior: 'smooth' }); }
         const mainContent = document.getElementById('main-content');
         const sections = document.querySelectorAll('section');
         const navLinks = document.querySelectorAll('.nav-menu .nav-link');
 
         mainContent.addEventListener('scroll', () => {
-            if(document.body.classList.contains('preview-mode')) return; // 預覽模式不偵測導覽列
+            if(document.body.classList.contains('preview-mode')) return;
             let current = '';
             sections.forEach(sec => {
-                const secTop = sec.offsetTop;
-                if (mainContent.scrollTop >= (secTop - 150)) {
-                    current = sec.getAttribute('id');
-                }
+                if (mainContent.scrollTop >= (sec.offsetTop - 150)) current = sec.getAttribute('id');
             });
             navLinks.forEach(link => {
                 link.classList.remove('active');
-                if (link.getAttribute('onclick').includes(current)) {
-                    link.classList.add('active');
-                }
+                if (link.getAttribute('onclick').includes(current)) link.classList.add('active');
             });
         });
 
-        // ====== 3. 動態表格 ======
+        // ====== 動態表格 ======
         function getEmptyRowHTML() {
             return `
                 <tr>
@@ -403,9 +402,7 @@
                     </td>
                     <td><input type="text" class="save-target"></td>
                     <td style="text-align:right;">
-                        <button type="button" class="btn-icon danger" onclick="this.closest('tr').remove(); saveDraft();" title="Delete">
-                            ${iconTrash}
-                        </button>
+                        <button type="button" class="btn-icon danger" onclick="this.closest('tr').remove(); saveDraft();">${iconTrash}</button>
                     </td>
                 </tr>
             `;
@@ -413,7 +410,7 @@
         function addRow() { document.getElementById('specTableBody').insertAdjacentHTML('beforeend', getEmptyRowHTML()); saveDraft(); }
         for(let i=0; i<4; i++) addRow();
 
-        // ====== 4. 圖片管理 ======
+        // ====== 圖片管理 ======
         document.getElementById('img_upload').addEventListener('change', function(event) {
             Array.from(event.target.files).forEach((file) => {
                 const reader = new FileReader();
@@ -421,9 +418,9 @@
                     const html = `
                         <div class="chart-card">
                             <div class="chart-controls">
-                                <button type="button" class="btn-icon" onclick="moveUp(this)" title="Move Up">${iconUp}</button>
-                                <button type="button" class="btn-icon" onclick="moveDown(this)" title="Move Down">${iconDown}</button>
-                                <button type="button" class="btn-icon danger" onclick="this.closest('.chart-card').remove()" title="Delete">${iconTrash}</button>
+                                <button type="button" class="btn-icon" onclick="moveUp(this)">${iconUp}</button>
+                                <button type="button" class="btn-icon" onclick="moveDown(this)">${iconDown}</button>
+                                <button type="button" class="btn-icon danger" onclick="this.closest('.chart-card').remove()">${iconTrash}</button>
                             </div>
                             <img src="${e.target.result}" class="chart-img-preview" alt="Chart">
                             <div class="chart-content">
@@ -439,43 +436,32 @@
             event.target.value = '';
         });
 
-        function moveUp(btn) {
-            let item = btn.closest('.chart-card');
-            if(item.previousElementSibling) item.parentNode.insertBefore(item, item.previousElementSibling);
-        }
-        function moveDown(btn) {
-            let item = btn.closest('.chart-card');
-            if(item.nextElementSibling) item.parentNode.insertBefore(item.nextElementSibling, item);
-        }
+        function moveUp(btn) { let item = btn.closest('.chart-card'); if(item.previousElementSibling) item.parentNode.insertBefore(item, item.previousElementSibling); }
+        function moveDown(btn) { let item = btn.closest('.chart-card'); if(item.nextElementSibling) item.parentNode.insertBefore(item.nextElementSibling, item); }
 
-        // ====== 5. 草稿儲存 ======
+        // ====== 草稿儲存 ======
         window.addEventListener('beforeunload', (e) => { e.preventDefault(); e.returnValue = ''; });
-
         function saveDraft() {
             const data = { fields: {}, role: document.getElementById('role-selector').value };
             document.querySelectorAll('#edit-workspace input[id], #edit-workspace textarea[id]').forEach(el => data.fields[el.id] = el.value);
-            
             const rows = [];
             document.querySelectorAll('#specTableBody tr').forEach(tr => {
-                let rowData = [];
-                tr.querySelectorAll('.save-target').forEach(input => rowData.push(input.value));
-                rows.push(rowData);
+                let rowData = []; tr.querySelectorAll('.save-target').forEach(input => rowData.push(input.value)); rows.push(rowData);
             });
             data.table = rows;
             localStorage.setItem('jpc_pro_draft', JSON.stringify(data));
         }
 
         function loadDraft() {
+            const savedTheme = localStorage.getItem('jpc_theme');
+            if(savedTheme === 'dark') { isDarkMode = true; applyTheme(); } else { applyTheme(); }
+
             const draft = localStorage.getItem('jpc_pro_draft');
             if(!draft) return;
             try {
                 const data = JSON.parse(draft);
                 switchRole(data.role || 'sim');
-
-                Object.keys(data.fields).forEach(key => {
-                    if(document.getElementById(key)) document.getElementById(key).value = data.fields[key];
-                });
-
+                Object.keys(data.fields).forEach(key => { if(document.getElementById(key)) document.getElementById(key).value = data.fields[key]; });
                 if(data.table && data.table.length > 0) {
                     const tbody = document.getElementById('specTableBody');
                     tbody.innerHTML = '';
@@ -490,12 +476,27 @@
         document.addEventListener('input', (e) => { if(['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName)) saveDraft(); });
         window.onload = loadDraft;
 
-        // ====== 6. 報告預覽與生成 ======
+        // ====== 報告預覽與生成 (固定為淺色模式 + JPC Logo 浮水印) ======
         let isPreview = false;
         
-        // 為了避免 CSS 衝突，我們將報告專屬的 CSS 與 DOM 結構抽離
         const reportCSS = `
-            .rpt-container { font-family: 'Inter', sans-serif; color: #111; line-height: 1.6; }
+            .rpt-container { font-family: 'Inter', sans-serif; color: #111; line-height: 1.6; position: relative; min-height: 100vh; z-index: 1;}
+            
+            /* 滿版背景浮水印 */
+            .rpt-container::before {
+                content: '';
+                position: fixed; top: 50%; left: 50%;
+                transform: translate(-50%, -50%);
+                width: 80%; height: 80%;
+                background-image: url('jpc logo.png');
+                background-repeat: no-repeat;
+                background-position: center;
+                background-size: contain;
+                opacity: 0.04; /* 透明度設定，確保不會影響文字閱讀 */
+                z-index: -1;
+                pointer-events: none;
+            }
+            
             .rpt-header { border-bottom: 2px solid #d10001; padding-bottom: 24px; margin-bottom: 32px;}
             .rpt-logo-area { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 12px; flex-wrap: wrap;}
             .rpt-logo-text { font-size: 1.5rem; font-weight: 700; color: #d10001; letter-spacing: -0.025em; margin-right: 20px;}
@@ -518,9 +519,11 @@
             .rpt-chart-img { max-width: 100%; max-height: 50vh; border: 1px solid #e9e5e0; border-radius: 6px; display: block; margin: 0 auto;}
             .rpt-chart-remark { font-size: 0.875rem; color: #444; margin-top: 12px; text-align: left; background: #fbe6e6; padding: 12px 16px; border-left: 4px solid #d10001; border-radius: 0 6px 6px 0; white-space: pre-wrap;}
             
+            /* 列印時強制顯示背景浮水印與顏色 */
             @media print { 
                 .rpt-table th { -webkit-print-color-adjust: exact; background-color: #f6f5f4 !important; color-adjust: exact; }
                 .rpt-chart-remark { -webkit-print-color-adjust: exact; background-color: #fbe6e6 !important; color-adjust: exact; }
+                .rpt-container::before { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
             }
         `;
 
@@ -528,25 +531,15 @@
 
         function togglePreviewMode() {
             isPreview = !isPreview;
-            
-            // 透過切換 body class，乾淨俐落地控制 Sidebar 的顯示與隱藏
             document.body.classList.toggle('preview-mode', isPreview);
-            
             document.getElementById('edit-workspace').style.display = isPreview ? 'none' : 'block';
             document.getElementById('preview-workspace').style.display = isPreview ? 'block' : 'none';
-            
-            if (isPreview) {
-                generateReportHTML();
-                document.getElementById('main-content').scrollTop = 0; // 回到頂端
-            }
+            if (isPreview) { generateReportHTML(); document.getElementById('main-content').scrollTop = 0; }
         }
 
         function generateReportHTML() {
             const isSim = document.getElementById('role-selector').value === 'sim';
-            const getVal = (id) => {
-                const val = document.getElementById(id).value.trim();
-                return val ? val : "&nbsp;";
-            };
+            const getVal = (id) => { const val = document.getElementById(id).value.trim(); return val ? val : "&nbsp;"; };
             const escapeHTML = (str) => str.replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
             let specTableHTML = '';
@@ -576,7 +569,6 @@
             });
             if (chartsHTML === '') chartsHTML = '<p style="color:#999; padding-left:12px;">(No Charts Uploaded)</p>';
 
-            // 只產生內容結構，防止匯出時 HTML 標籤打架
             currentReportInnerHTML = `
     <div class="rpt-header">
         <div class="rpt-logo-area">
@@ -636,7 +628,6 @@
     </div>
             `;
             
-            // 將內容注入預覽區塊，並加上專屬 CSS
             document.getElementById('report-render-area').innerHTML = `<style>${reportCSS}</style><div class="rpt-container">${currentReportInnerHTML}</div>`;
         }
 
@@ -645,7 +636,6 @@
             const roleStr = document.getElementById('role-selector').value === 'sim' ? 'Simulation' : 'Measurement';
             const fileName = `JPC_${projName}_${roleStr}_Report.html`;
             
-            // 組合出完整、獨立的 HTML 檔案供下載
             const fullHTMLFile = `<!DOCTYPE html>
 <html lang="en">
 <head>
