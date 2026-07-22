@@ -4,11 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>JPC Report Generator Pro</title>
-    <!-- 引入 Inter 字體以符合設計規範 -->
+    <!-- 引入 Inter 字體 -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            /* Shadcn UI / Radix 風格色板 */
+            /* Shadcn UI 色板 */
             --bg-base: #f6f5f4;
             --bg-card: #ffffff;
             --primary: #d10001;
@@ -18,7 +18,7 @@
             --text-muted: #777777;
             --border: #e9e5e0;
             --input-border: #c9c6c1;
-            --radius: 0.75rem; /* 12px 柔和圓角 */
+            --radius: 0.75rem; 
             --font-sans: 'Inter', sans-serif;
             --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
             --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
@@ -27,14 +27,11 @@
         * { box-sizing: border-box; }
 
         body {
-            margin: 0;
-            padding: 0;
-            background-color: var(--bg-base);
-            color: var(--text-main);
+            margin: 0; padding: 0;
+            background-color: var(--bg-base); color: var(--text-main);
             font-family: var(--font-sans);
-            display: flex;
-            height: 100vh;
-            overflow: hidden;
+            display: flex; height: 100vh; overflow: hidden;
+            transition: background-color 0.3s ease;
         }
 
         /* ====== Sidebar (左側導覽) ====== */
@@ -42,35 +39,40 @@
             width: 260px;
             background-color: var(--bg-card);
             border-right: 1px solid var(--border);
-            display: flex;
-            flex-direction: column;
-            padding: 24px 16px;
-            flex-shrink: 0;
-            z-index: 10;
+            display: flex; flex-direction: column;
+            padding: 24px 16px; flex-shrink: 0; z-index: 10;
+            transition: all 0.3s ease;
+        }
+
+        /* 當進入預覽模式時，隱藏 Sidebar */
+        body.preview-mode #sidebar {
+            display: none;
         }
 
         .brand-logo {
-            font-size: 1.25rem;
-            font-weight: 700;
-            color: var(--text-main);
-            margin-bottom: 32px;
-            padding-left: 12px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            letter-spacing: -0.025em;
+            font-size: 1.25rem; font-weight: 700; color: var(--text-main);
+            margin-bottom: 32px; padding-left: 12px;
+            display: flex; align-items: center; gap: 8px; letter-spacing: -0.025em;
         }
         .brand-logo svg { color: var(--primary); width: 24px; height: 24px; }
 
+        /* --- 修改點 1: Segmented Control (按鈕切換) --- */
         .role-selector-wrapper { margin-bottom: 32px; padding: 0 8px; }
         .role-label { font-size: 0.75rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px; letter-spacing: 0.05em; }
-        .role-select {
-            width: 100%; padding: 10px 12px; font-size: 0.875rem; border: 1px solid var(--input-border);
-            border-radius: 6px; background-color: var(--bg-card); font-family: var(--font-sans);
-            font-weight: 500; cursor: pointer; transition: 0.2s; outline: none;
+        
+        .segmented-control {
+            display: flex; background-color: var(--bg-base);
+            padding: 4px; border-radius: 8px; border: 1px solid var(--border);
         }
-        .role-select:focus { border-color: var(--primary); box-shadow: 0 0 0 2px var(--primary-light); }
+        .segment-btn {
+            flex: 1; padding: 8px 4px; text-align: center; font-size: 0.75rem; font-weight: 600;
+            color: var(--text-muted); background: transparent; border: none; border-radius: 6px;
+            cursor: pointer; transition: all 0.2s ease; font-family: var(--font-sans);
+        }
+        .segment-btn:hover { color: var(--text-main); }
+        .segment-btn.active { background-color: var(--bg-card); color: var(--primary); box-shadow: var(--shadow-sm); }
 
+        /* 導覽列 */
         .nav-menu { display: flex; flex-direction: column; gap: 4px; flex: 1; }
         .nav-link {
             display: flex; align-items: center; gap: 12px; padding: 10px 12px;
@@ -82,7 +84,6 @@
         .nav-link:hover svg { transform: scale(1.1); color: var(--primary); }
         .nav-link.active { background-color: var(--primary-light); color: var(--primary); }
         
-        /* 預覽按鈕置底 */
         .nav-action { margin-top: auto; }
         .nav-action .nav-link { background-color: var(--text-main); color: #fff; justify-content: center; font-weight: 600; }
         .nav-action .nav-link:hover { background-color: #333; color: #fff; }
@@ -90,27 +91,20 @@
 
         /* ====== Main Content (右側工作區) ====== */
         #main-content {
-            flex: 1;
-            overflow-y: auto;
-            scroll-behavior: smooth; /* 平滑滾動 */
-            padding: 40px 60px;
-            position: relative;
+            flex: 1; overflow-y: auto; scroll-behavior: smooth;
+            padding: 40px 60px; position: relative;
         }
+        /* 預覽模式時，稍微縮減兩側 padding 讓版面更開闊 */
+        body.preview-mode #main-content { padding: 40px 20px; }
+
         .workspace { max-width: 800px; margin: 0 auto; padding-bottom: 100px;}
 
-        /* 卡片設計 (Card) */
         section {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            padding: 32px;
-            margin-bottom: 32px;
-            box-shadow: var(--shadow-sm);
-            scroll-margin-top: 40px; /* 滾動定位補償 */
+            background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius);
+            padding: 32px; margin-bottom: 32px; box-shadow: var(--shadow-sm); scroll-margin-top: 40px; 
         }
         .section-header { margin-top: 0; margin-bottom: 24px; font-size: 1.25rem; font-weight: 600; color: var(--text-main); display: flex; align-items: center; justify-content: space-between;}
 
-        /* 表單元素 (Inputs) */
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
         .full-width { grid-column: span 2; }
         .form-group { display: flex; flex-direction: column; gap: 6px; }
@@ -119,18 +113,15 @@
             padding: 10px 12px; border: 1px solid var(--input-border); border-radius: 6px;
             font-size: 0.875rem; font-family: var(--font-sans); transition: all 0.2s; background: var(--bg-card);
         }
-        input:focus, textarea:focus, select:focus {
-            outline: none; border-color: var(--primary); box-shadow: 0 0 0 2px var(--primary-light);
-        }
+        input:focus, textarea:focus, select:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 2px var(--primary-light); }
         textarea { resize: vertical; min-height: 80px; }
 
-        /* 動態表格 (Table) */
+        /* 表格與按鈕 */
         .spec-table { width: 100%; border-collapse: collapse; }
         .spec-table th { font-size: 0.75rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; text-align: left; padding: 0 0 12px 0; border-bottom: 1px solid var(--border); }
         .spec-table td { padding: 12px 8px 12px 0; border-bottom: 1px solid var(--bg-base); }
         .spec-table input, .spec-table select { width: 100%; }
         
-        /* 按鈕設計 */
         .btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; font-size: 0.875rem; font-weight: 500; border-radius: 6px; cursor: pointer; transition: all 0.2s; border: none; font-family: var(--font-sans);}
         .btn-outline { background: var(--bg-card); border: 1px solid var(--input-border); color: var(--text-main); }
         .btn-outline:hover { background: var(--bg-base); border-color: var(--text-muted); }
@@ -141,7 +132,6 @@
         .btn-icon:hover { background: var(--bg-base); color: var(--text-main); }
         .btn-icon.danger:hover { background: var(--primary-light); color: var(--primary); }
 
-        /* 圖片上傳區 */
         .upload-zone {
             border: 2px dashed var(--input-border); border-radius: var(--radius); padding: 40px 20px;
             text-align: center; cursor: pointer; background: #fafafa; transition: all 0.2s ease;
@@ -154,29 +144,27 @@
         .upload-zone input { display: none; }
 
         .chart-list { display: flex; flex-direction: column; gap: 16px; margin-top: 20px; }
-        .chart-card {
-            border: 1px solid var(--border); border-radius: 8px; padding: 16px; background: var(--bg-card);
-            display: flex; gap: 20px; align-items: flex-start; position: relative;
-        }
+        .chart-card { border: 1px solid var(--border); border-radius: 8px; padding: 16px; background: var(--bg-card); display: flex; gap: 20px; align-items: flex-start; position: relative; }
         .chart-img-preview { width: 220px; height: 140px; object-fit: contain; border: 1px solid var(--border); border-radius: 4px; background: #fff;}
         .chart-content { flex: 1; display: flex; flex-direction: column; gap: 8px; }
         .chart-controls { display: flex; gap: 4px; position: absolute; right: 16px; top: 16px; }
 
-        /* ====== 報告預覽區塊 (預設隱藏) ====== */
-        #preview-workspace { display: none; max-width: 900px; margin: 0 auto; }
+        /* ====== 修改點 2: 報告預覽區塊 ====== */
+        #preview-workspace { display: none; width: 100%; max-width: 900px; margin: 0 auto; }
         .preview-toolbar { display: flex; justify-content: space-between; margin-bottom: 24px; padding-bottom: 24px; border-bottom: 1px solid var(--border); }
         .btn-primary { background: var(--primary); color: #fff; }
         .btn-primary:hover { background: var(--primary-hover); }
 
         #report-render-area {
             background: #fff; padding: 60px; border-radius: var(--radius); box-shadow: var(--shadow-md); border: 1px solid var(--border);
+            width: 100%; overflow-x: auto; /* 防止超寬破版 */
         }
 
         @media print {
-            #sidebar, .preview-toolbar { display: none !important; }
+            body.preview-mode #sidebar, .preview-toolbar { display: none !important; }
             #main-content { padding: 0; overflow: visible; }
-            #preview-workspace { max-width: 100%; display: block; }
-            #report-render-area { padding: 0; box-shadow: none; border: none; }
+            #preview-workspace { max-width: 100%; display: block; margin: 0;}
+            #report-render-area { padding: 0; box-shadow: none; border: none; overflow-x: visible; }
             @page { margin: 1.5cm; }
         }
     </style>
@@ -186,16 +174,19 @@
     <!-- ====== Sidebar (導覽列) ====== -->
     <aside id="sidebar" class="no-print">
         <div class="brand-logo">
-            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
             JPC Pro
         </div>
 
+        <!-- 替換為 Segmented Control -->
         <div class="role-selector-wrapper">
             <div class="role-label">Engineering Role</div>
-            <select id="role-selector" class="role-select" onchange="switchRole()">
-                <option value="sim">Simulation Engineer</option>
-                <option value="test">Measurement Engineer</option>
-            </select>
+            <div class="segmented-control">
+                <button type="button" class="segment-btn active" id="btn-role-sim" onclick="switchRole('sim')">Simulation</button>
+                <button type="button" class="segment-btn" id="btn-role-test" onclick="switchRole('test')">Measurement</button>
+            </div>
+            <!-- 隱藏的 input 用來記錄目前的狀態，不影響原有資料儲存邏輯 -->
+            <input type="hidden" id="role-selector" value="sim">
         </div>
 
         <div class="role-label">Navigation</div>
@@ -235,7 +226,6 @@
         
         <!-- 表單編輯區 -->
         <div id="edit-workspace" class="workspace">
-            <!-- 1. 專案資訊 -->
             <section id="sec-info">
                 <h2 class="section-header">Project Information</h2>
                 <div class="grid-2">
@@ -249,7 +239,6 @@
                 </div>
             </section>
 
-            <!-- 2. 環境設定 -->
             <section id="sec-setup">
                 <h2 class="section-header">Environment Setup</h2>
                 <div class="grid-2">
@@ -257,13 +246,11 @@
                     <div class="form-group"><label id="lbl-solver">Solver</label><input type="text" id="ssolver"></div>
                     <div class="form-group"><label id="lbl-freq">Frequency Range</label><input type="text" id="sfreq"></div>
                     
-                    <!-- 模擬工程師專屬欄位 -->
                     <div class="form-group sim-only"><label>Port Setup</label><input type="text" id="sport"></div>
                     <div class="form-group full-width sim-only"><label>Material / Stackup</label><input type="text" id="smat"></div>
                 </div>
             </section>
 
-            <!-- 3. 規格摘要 -->
             <section id="sec-spec">
                 <h2 class="section-header">
                     Specifications
@@ -277,12 +264,10 @@
                         <th>Item</th><th>Spec / Condition</th><th>Result</th><th>Margin</th><th>Status</th><th>Remark</th><th style="width: 40px;"></th>
                     </tr></thead>
                     <tbody id="specTableBody">
-                        <!-- 動態生成 -->
                     </tbody>
                 </table>
             </section>
 
-            <!-- 4. 圖表上傳 -->
             <section id="sec-chart">
                 <h2 class="section-header">Charts & Data</h2>
                 <div class="upload-zone" onclick="document.getElementById('img_upload').click()">
@@ -293,7 +278,6 @@
                 <div id="img_charts_container" class="chart-list"></div>
             </section>
 
-            <!-- 5. 結論 -->
             <section id="sec-conc">
                 <h2 class="section-header">Conclusion</h2>
                 <div class="form-group" style="margin-bottom: 20px;"><label>Summary</label><textarea id="c_conc"></textarea></div>
@@ -301,7 +285,7 @@
             </section>
         </div>
 
-        <!-- 報告預覽區 (點擊左下角切換顯示) -->
+        <!-- 報告預覽區 -->
         <div id="preview-workspace">
             <div class="preview-toolbar">
                 <button class="btn btn-outline" onclick="togglePreviewMode()">
@@ -319,6 +303,7 @@
                     </button>
                 </div>
             </div>
+            
             <!-- 生成的報告會塞入這裡 -->
             <div id="report-render-area"></div>
         </div>
@@ -326,26 +311,30 @@
     </main>
 
     <script>
-        // ====== SVG 圖示庫 ======
         const iconTrash = `<svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>`;
         const iconUp = `<svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path></svg>`;
         const iconDown = `<svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>`;
 
-        // 初始化
         document.getElementById('pdate').value = new Date().toISOString().split('T')[0];
         
-        // ====== 1. 無縫角色切換 (Role Switching) ======
-        function switchRole() {
-            const role = document.getElementById('role-selector').value;
+        // ====== 1. 無縫角色切換 (更新支援 Button Toggle) ======
+        function switchRole(roleOverride) {
+            const roleInput = document.getElementById('role-selector');
+            if(roleOverride) { roleInput.value = roleOverride; }
+            
+            const role = roleInput.value;
             const isSim = role === 'sim';
             
-            // 動態修改 Label 標題
+            // 更新按鈕外觀狀態
+            document.getElementById('btn-role-sim').classList.toggle('active', isSim);
+            document.getElementById('btn-role-test').classList.toggle('active', !isSim);
+            
+            // 動態修改表單標籤
             document.getElementById('lbl-rev').innerText = isSim ? 'Version / Revision' : 'Test Stage';
             document.getElementById('lbl-soft').innerText = isSim ? 'Software' : 'VNA Model';
             document.getElementById('lbl-solver').innerText = isSim ? 'Solver' : 'Fixture';
             document.getElementById('lbl-freq').innerText = isSim ? 'Frequency Range' : 'Calibration';
             
-            // 隱藏/顯示專屬欄位
             document.querySelectorAll('.sim-only').forEach(el => {
                 el.style.display = isSim ? 'flex' : 'none';
             });
@@ -362,6 +351,7 @@
         const navLinks = document.querySelectorAll('.nav-menu .nav-link');
 
         mainContent.addEventListener('scroll', () => {
+            if(document.body.classList.contains('preview-mode')) return; // 預覽模式不偵測導覽列
             let current = '';
             sections.forEach(sec => {
                 const secTop = sec.offsetTop;
@@ -377,7 +367,7 @@
             });
         });
 
-        // ====== 3. 動態表格 (Dynamic Table) ======
+        // ====== 3. 動態表格 ======
         function getEmptyRowHTML() {
             return `
                 <tr>
@@ -401,11 +391,8 @@
                 </tr>
             `;
         }
-        function addRow() {
-            document.getElementById('specTableBody').insertAdjacentHTML('beforeend', getEmptyRowHTML());
-            saveDraft();
-        }
-        for(let i=0; i<4; i++) addRow(); // 預設 4 列
+        function addRow() { document.getElementById('specTableBody').insertAdjacentHTML('beforeend', getEmptyRowHTML()); saveDraft(); }
+        for(let i=0; i<4; i++) addRow();
 
         // ====== 4. 圖片管理 ======
         document.getElementById('img_upload').addEventListener('change', function(event) {
@@ -442,7 +429,7 @@
             if(item.nextElementSibling) item.parentNode.insertBefore(item.nextElementSibling, item);
         }
 
-        // ====== 5. 草稿儲存 (Local Storage) ======
+        // ====== 5. 草稿儲存 ======
         window.addEventListener('beforeunload', (e) => { e.preventDefault(); e.returnValue = ''; });
 
         function saveDraft() {
@@ -464,8 +451,7 @@
             if(!draft) return;
             try {
                 const data = JSON.parse(draft);
-                document.getElementById('role-selector').value = data.role || 'sim';
-                switchRole();
+                switchRole(data.role || 'sim');
 
                 Object.keys(data.fields).forEach(key => {
                     if(document.getElementById(key)) document.getElementById(key).value = data.fields[key];
@@ -487,15 +473,52 @@
 
         // ====== 6. 報告預覽與生成 ======
         let isPreview = false;
-        let finalReportHTML = "";
+        
+        // 為了避免 CSS 衝突，我們將報告專屬的 CSS 與 DOM 結構抽離
+        const reportCSS = `
+            .rpt-container { font-family: 'Inter', sans-serif; color: #111; line-height: 1.6; }
+            .rpt-header { border-bottom: 2px solid #d10001; padding-bottom: 24px; margin-bottom: 32px;}
+            .rpt-logo-area { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 12px; flex-wrap: wrap;}
+            .rpt-logo-text { font-size: 1.5rem; font-weight: 700; color: #d10001; letter-spacing: -0.025em; margin-right: 20px;}
+            .rpt-maintitle { font-size: 2rem; color: #000; margin: 0 0 4px 0; font-weight: 600; word-break: break-word;}
+            .rpt-subtitle { color: #555; font-size: 0.875rem; }
+            
+            .rpt-section { page-break-inside: avoid; margin-bottom: 32px; }
+            .rpt-title { font-size: 1.125rem; color: #d10001; border-left: 4px solid #d10001; padding-left: 12px; margin-bottom: 16px; font-weight: 600;}
+            
+            .rpt-grid { display: grid; grid-template-columns: minmax(140px, 160px) 1fr; row-gap: 12px; font-size: 0.875rem; margin-bottom: 12px; word-break: break-word; }
+            .rpt-key { font-weight: 600; color: #555; }
+            
+            .rpt-table { width: 100%; border-collapse: collapse; font-size: 0.875rem; margin-top: 12px; }
+            .rpt-table th { background-color: #f6f5f4; font-weight: 600; padding: 12px; text-align: left; border: 1px solid #e9e5e0; border-top: 2px solid #d10001;}
+            .rpt-table td { padding: 12px; border: 1px solid #e9e5e0; word-break: break-word; }
+            
+            .rpt-box { border: 1px solid #e9e5e0; border-radius: 8px; padding: 16px 20px; font-size: 0.875rem; background-color: #fafafa; min-height: 20px; white-space: pre-wrap;}
+            
+            .rpt-chart-wrapper { margin-top: 24px; page-break-inside: avoid; text-align: center; }
+            .rpt-chart-img { max-width: 100%; max-height: 50vh; border: 1px solid #e9e5e0; border-radius: 6px; display: block; margin: 0 auto;}
+            .rpt-chart-remark { font-size: 0.875rem; color: #444; margin-top: 12px; text-align: left; background: #fbe6e6; padding: 12px 16px; border-left: 4px solid #d10001; border-radius: 0 6px 6px 0; white-space: pre-wrap;}
+            
+            @media print { 
+                .rpt-table th { -webkit-print-color-adjust: exact; background-color: #f6f5f4 !important; color-adjust: exact; }
+                .rpt-chart-remark { -webkit-print-color-adjust: exact; background-color: #fbe6e6 !important; color-adjust: exact; }
+            }
+        `;
+
+        let currentReportInnerHTML = "";
 
         function togglePreviewMode() {
             isPreview = !isPreview;
+            
+            // 透過切換 body class，乾淨俐落地控制 Sidebar 的顯示與隱藏
+            document.body.classList.toggle('preview-mode', isPreview);
+            
             document.getElementById('edit-workspace').style.display = isPreview ? 'none' : 'block';
             document.getElementById('preview-workspace').style.display = isPreview ? 'block' : 'none';
+            
             if (isPreview) {
                 generateReportHTML();
-                mainContent.scrollTop = 0;
+                document.getElementById('main-content').scrollTop = 0; // 回到頂端
             }
         }
 
@@ -503,8 +526,9 @@
             const isSim = document.getElementById('role-selector').value === 'sim';
             const getVal = (id) => {
                 const val = document.getElementById(id).value.trim();
-                return val ? val.replace(/\n/g, '<br>') : "&nbsp;";
+                return val ? val : "&nbsp;";
             };
+            const escapeHTML = (str) => str.replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
             let specTableHTML = '';
             document.querySelectorAll(`#specTableBody tr`).forEach(tr => {
@@ -512,9 +536,9 @@
                 const isEmpty = Array.from(inputs).every(i => i.value.trim() === '');
                 if(!isEmpty) {
                     specTableHTML += `<tr>
-                        <td>${inputs[0]?.value || "&nbsp;"}</td><td>${inputs[1]?.value || "&nbsp;"}</td>
-                        <td>${inputs[2]?.value || "&nbsp;"}</td><td>${inputs[3]?.value || "&nbsp;"}</td>
-                        <td><b>${inputs[4]?.value || "&nbsp;"}</b></td><td>${inputs[5]?.value || "&nbsp;"}</td>
+                        <td>${escapeHTML(inputs[0]?.value) || "&nbsp;"}</td><td>${escapeHTML(inputs[1]?.value) || "&nbsp;"}</td>
+                        <td>${escapeHTML(inputs[2]?.value) || "&nbsp;"}</td><td>${escapeHTML(inputs[3]?.value) || "&nbsp;"}</td>
+                        <td><b>${inputs[4]?.value || "&nbsp;"}</b></td><td>${escapeHTML(inputs[5]?.value) || "&nbsp;"}</td>
                     </tr>`;
                 }
             });
@@ -523,7 +547,7 @@
             let chartsHTML = '';
             document.querySelectorAll(`.chart-card`).forEach(item => {
                 const imgSrc = item.querySelector('img').src;
-                const remark = item.querySelector('textarea').value.trim().replace(/\n/g, '<br>');
+                const remark = escapeHTML(item.querySelector('textarea').value.trim());
                 chartsHTML += `
                     <div class="rpt-chart-wrapper">
                         <img src="${imgSrc}" class="rpt-chart-img">
@@ -533,74 +557,37 @@
             });
             if (chartsHTML === '') chartsHTML = '<p style="color:#999; padding-left:12px;">(No Charts Uploaded)</p>';
 
-            finalReportHTML = `
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>${getVal('pname')} - ${isSim ? 'Simulation' : 'Measurement'} Report</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        body { font-family: 'Inter', sans-serif; padding: 20px 40px; color: #111; line-height: 1.6; max-width: 900px; margin: 0 auto; background: #fff;}
-        .rpt-header { border-bottom: 2px solid #d10001; padding-bottom: 24px; margin-bottom: 32px;}
-        .rpt-logo-area { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;}
-        .rpt-logo-text { font-size: 1.5rem; font-weight: 700; color: #d10001; letter-spacing: -0.025em;}
-        .rpt-maintitle { font-size: 2rem; color: #000; margin: 0 0 4px 0; font-weight: 600;}
-        .rpt-subtitle { color: #555; font-size: 0.875rem; }
-        
-        .rpt-section { page-break-inside: avoid; margin-bottom: 32px; }
-        .rpt-title { font-size: 1.125rem; color: #d10001; border-left: 4px solid #d10001; padding-left: 12px; margin-bottom: 16px; font-weight: 600;}
-        
-        .rpt-grid { display: grid; grid-template-columns: 160px 1fr; row-gap: 12px; font-size: 0.875rem; margin-bottom: 12px; }
-        .rpt-key { font-weight: 600; color: #555; }
-        
-        .rpt-table { width: 100%; border-collapse: collapse; font-size: 0.875rem; margin-top: 12px; }
-        .rpt-table th { background-color: #f6f5f4; font-weight: 600; padding: 12px; text-align: left; border: 1px solid #e9e5e0; border-top: 2px solid #d10001;}
-        .rpt-table td { padding: 12px; border: 1px solid #e9e5e0; }
-        
-        .rpt-box { border: 1px solid #e9e5e0; border-radius: 8px; padding: 16px 20px; font-size: 0.875rem; background-color: #fafafa; min-height: 20px; }
-        
-        .rpt-chart-wrapper { margin-top: 24px; page-break-inside: avoid; text-align: center; }
-        .rpt-chart-img { max-width: 100%; max-height: 50vh; border: 1px solid #e9e5e0; border-radius: 6px; display: block; margin: 0 auto;}
-        .rpt-chart-remark { font-size: 0.875rem; color: #444; margin-top: 12px; text-align: left; background: #fbe6e6; padding: 12px 16px; border-left: 4px solid #d10001; border-radius: 0 6px 6px 0;}
-        
-        @media print { 
-            body { padding: 0; }
-            .rpt-table th { -webkit-print-color-adjust: exact; background-color: #f6f5f4 !important; color-adjust: exact; }
-            .rpt-chart-remark { -webkit-print-color-adjust: exact; background-color: #fbe6e6 !important; color-adjust: exact; }
-        }
-    </style>
-</head>
-<body>
+            // 只產生內容結構，防止匯出時 HTML 標籤打架
+            currentReportInnerHTML = `
     <div class="rpt-header">
         <div class="rpt-logo-area">
             <div class="rpt-logo-text">JPC CONNECTIVITY</div>
-            <div class="rpt-subtitle">Date: ${getVal('pdate')}</div>
+            <div class="rpt-subtitle">Date: ${escapeHTML(getVal('pdate'))}</div>
         </div>
-        <h1 class="rpt-maintitle">${getVal('pname')}</h1>
-        <div class="rpt-subtitle">${isSim ? 'Simulation' : 'Measurement'} Analysis Report - ${getVal('prev')}</div>
+        <h1 class="rpt-maintitle">${escapeHTML(getVal('pname'))}</h1>
+        <div class="rpt-subtitle">${isSim ? 'Simulation' : 'Measurement'} Analysis Report - ${escapeHTML(getVal('prev'))}</div>
     </div>
 
     <div class="rpt-section">
         <div class="rpt-title">1. Project Information</div>
         <div class="rpt-grid">
-            <div class="rpt-key">Project / Client</div><div>${getVal('pname')} / ${getVal('pclient')}</div>
-            <div class="rpt-key">${isSim ? 'Version / Revision' : 'Test Stage'}</div><div>${getVal('prev')}</div>
-            <div class="rpt-key">DUT / Sample ID</div><div>${getVal('pdut')}</div>
-            <div class="rpt-key">Engineer</div><div>${getVal('powner')}</div>
-            <div class="rpt-key">Objective</div><div>${getVal('ppurpose')}</div>
+            <div class="rpt-key">Project / Client</div><div>${escapeHTML(getVal('pname'))} / ${escapeHTML(getVal('pclient'))}</div>
+            <div class="rpt-key">${isSim ? 'Version / Revision' : 'Test Stage'}</div><div>${escapeHTML(getVal('prev'))}</div>
+            <div class="rpt-key">DUT / Sample ID</div><div>${escapeHTML(getVal('pdut'))}</div>
+            <div class="rpt-key">Engineer</div><div>${escapeHTML(getVal('powner'))}</div>
+            <div class="rpt-key">Objective</div><div>${escapeHTML(getVal('ppurpose'))}</div>
         </div>
     </div>
 
     <div class="rpt-section">
         <div class="rpt-title">2. ${isSim ? 'Simulation Setup' : 'Test Environment'}</div>
         <div class="rpt-grid">
-            <div class="rpt-key">${isSim ? 'Software' : 'VNA Model'}</div><div>${getVal('ssoft')}</div>
-            <div class="rpt-key">${isSim ? 'Solver' : 'Fixture'}</div><div>${getVal('ssolver')}</div>
-            <div class="rpt-key">${isSim ? 'Frequency Range' : 'Calibration'}</div><div>${getVal('sfreq')}</div>
+            <div class="rpt-key">${isSim ? 'Software' : 'VNA Model'}</div><div>${escapeHTML(getVal('ssoft'))}</div>
+            <div class="rpt-key">${isSim ? 'Solver' : 'Fixture'}</div><div>${escapeHTML(getVal('ssolver'))}</div>
+            <div class="rpt-key">${isSim ? 'Frequency Range' : 'Calibration'}</div><div>${escapeHTML(getVal('sfreq'))}</div>
             ${isSim ? `
-            <div class="rpt-key">Port Setup</div><div>${getVal('sport')}</div>
-            <div class="rpt-key">Material / Stackup</div><div>${getVal('smat')}</div>
+            <div class="rpt-key">Port Setup</div><div>${escapeHTML(getVal('sport'))}</div>
+            <div class="rpt-key">Material / Stackup</div><div>${escapeHTML(getVal('smat'))}</div>
             ` : ''}
         </div>
     </div>
@@ -620,16 +607,17 @@
 
     <div class="rpt-section">
         <div class="rpt-title">5. Conclusion</div>
-        <div class="rpt-box">${getVal('c_conc')}</div>
+        <div class="rpt-box">${escapeHTML(getVal('c_conc'))}</div>
     </div>
 
     <div class="rpt-section">
         <div class="rpt-title">6. Next Steps</div>
-        <div class="rpt-box">${getVal('c_next')}</div>
+        <div class="rpt-box">${escapeHTML(getVal('c_next'))}</div>
     </div>
-</body>
-</html>`;
-            document.getElementById('report-render-area').innerHTML = finalReportHTML;
+            `;
+            
+            // 將內容注入預覽區塊，並加上專屬 CSS
+            document.getElementById('report-render-area').innerHTML = `<style>${reportCSS}</style><div class="rpt-container">${currentReportInnerHTML}</div>`;
         }
 
         function downloadReportHTML() {
@@ -637,7 +625,27 @@
             const roleStr = document.getElementById('role-selector').value === 'sim' ? 'Simulation' : 'Measurement';
             const fileName = `JPC_${projName}_${roleStr}_Report.html`;
             
-            const blob = new Blob([finalReportHTML], { type: 'text/html;charset=utf-8' });
+            // 組合出完整、獨立的 HTML 檔案供下載
+            const fullHTMLFile = `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>${projName} - ${roleStr} Report</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { margin: 0; padding: 40px; background: #fff; }
+        .wrapper { max-width: 900px; margin: 0 auto; }
+        ${reportCSS}
+    </style>
+</head>
+<body>
+    <div class="wrapper rpt-container">
+        ${currentReportInnerHTML}
+    </div>
+</body>
+</html>`;
+
+            const blob = new Blob([fullHTMLFile], { type: 'text/html;charset=utf-8' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url; a.download = fileName;
