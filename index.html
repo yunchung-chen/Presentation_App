@@ -54,7 +54,11 @@
             margin-bottom: 32px; padding-left: 12px;
             display: flex; align-items: center; gap: 8px; letter-spacing: -0.025em;
         }
-        .brand-logo svg { color: var(--primary); width: 24px; height: 24px; }
+        .brand-logo img {
+            height: 28px; /* 可以依照你的 Logo 實際視覺大小微調高度 */
+            width: auto;
+            object-fit: contain; /* 確保圖片不變形 */
+        }
 
         /* --- 修改點 1: Segmented Control (按鈕切換) --- */
         .role-selector-wrapper { margin-bottom: 32px; padding: 0 8px; }
@@ -174,8 +178,7 @@
     <!-- ====== Sidebar (導覽列) ====== -->
     <aside id="sidebar" class="no-print">
         <div class="brand-logo">
-            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
-            JPC Pro
+            <img src="jpc_logo.png" alt="JPC Logo">
         </div>
 
         <!-- 替換為 Segmented Control -->
