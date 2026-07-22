@@ -5,10 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>JPC Report Generator Pro</title>
     <!-- 引入 Inter 字體 -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            /* Light Mode Variables (預設淺色模式) */
+            /* Light Mode (預設淺色模式) */
             --bg-base: #f6f5f4;
             --bg-card: #ffffff;
             --primary: #d10001;
@@ -25,7 +25,7 @@
             --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
         }
 
-        /* Dark Mode Variables (深色模式) */
+        /* Dark Mode (深色模式) - 完全符合色板 */
         body.dark {
             --bg-base: #1D1D1D;
             --bg-card: #1D1D1D;
@@ -36,7 +36,7 @@
             --text-muted: #808080;
             --border: #333333;
             --input-border: #333333;
-            color-scheme: dark; /* 讓瀏覽器原生捲軸也變深色 */
+            color-scheme: dark;
         }
 
         * { box-sizing: border-box; }
@@ -51,11 +51,8 @@
 
         /* ====== Sidebar (左側導覽) ====== */
         #sidebar {
-            width: 260px;
-            background-color: var(--bg-card);
-            border-right: 1px solid var(--border);
-            display: flex; flex-direction: column;
-            padding: 24px 16px; flex-shrink: 0; z-index: 10;
+            width: 260px; background-color: var(--bg-card); border-right: 1px solid var(--border);
+            display: flex; flex-direction: column; padding: 24px 16px; flex-shrink: 0; z-index: 10;
             transition: all 0.3s ease;
         }
 
@@ -90,19 +87,14 @@
         .nav-link:hover svg { transform: scale(1.1); color: var(--primary); }
         .nav-link.active { background-color: var(--primary-light); color: var(--primary); }
         
-        /* 側邊欄底部按鈕設計 */
         .nav-action { margin-top: auto; display: flex; flex-direction: column; gap: 8px;}
         .btn-theme { background-color: transparent; border: 1px solid var(--border); color: var(--text-main); justify-content: center; font-weight: 600; }
         .btn-theme:hover { background-color: var(--bg-base); }
-        
         .btn-preview { background-color: var(--text-main); color: var(--bg-card); justify-content: center; font-weight: 600; border: none;}
         .btn-preview:hover { background-color: var(--text-muted); color: var(--bg-card); }
         
         /* ====== Main Content (右側工作區) ====== */
-        #main-content {
-            flex: 1; overflow-y: auto; scroll-behavior: smooth;
-            padding: 40px 60px; position: relative;
-        }
+        #main-content { flex: 1; overflow-y: auto; scroll-behavior: smooth; padding: 40px 60px; position: relative; }
         body.preview-mode #main-content { padding: 40px 20px; }
 
         .workspace { max-width: 800px; margin: 0 auto; padding-bottom: 100px;}
@@ -166,7 +158,7 @@
         .btn-primary:hover { background: var(--primary-hover); }
 
         #report-render-area {
-            background: #fff; padding: 60px; border-radius: var(--radius); box-shadow: var(--shadow-md); border: 1px solid var(--border);
+            background: #fff; padding: 0; border-radius: var(--radius); box-shadow: var(--shadow-md); border: 1px solid var(--border);
             width: 100%; overflow-x: auto; position: relative;
         }
 
@@ -175,7 +167,8 @@
             #main-content { padding: 0; overflow: visible; }
             #preview-workspace { max-width: 100%; display: block; margin: 0;}
             #report-render-area { padding: 0; box-shadow: none; border: none; overflow-x: visible; }
-            @page { margin: 1.5cm; }
+            /* 預留底部 Footer 的空間 */
+            @page { margin: 1.5cm 1.5cm 2cm 1.5cm; }
         }
     </style>
 </head>
@@ -221,7 +214,7 @@
         </nav>
 
         <div class="nav-action">
-            <!-- 暗黑模式切換按鈕 (選項A: 底部) -->
+            <!-- 暗黑模式切換按鈕 -->
             <a class="nav-link btn-theme" onclick="toggleTheme()">
                 <span id="theme-icon"></span>
                 <span id="theme-text">Dark Mode</span>
@@ -244,9 +237,10 @@
                     <div class="form-group"><label>Client / Internal</label><input type="text" id="pclient"></div>
                     <div class="form-group"><label id="lbl-rev">Version / Revision</label><input type="text" id="prev"></div>
                     <div class="form-group"><label>DUT / Sample ID</label><input type="text" id="pdut"></div>
-                    <div class="form-group"><label>Engineer</label><input type="text" id="powner"></div>
+                    <div class="form-group"><label>Prepared by (Engineer)</label><input type="text" id="powner"></div>
+                    <div class="form-group"><label>Approved by (Checker)</label><input type="text" id="pchecker"></div>
                     <div class="form-group"><label>Date</label><input type="date" id="pdate"></div>
-                    <div class="form-group full-width"><label>Objective</label><input type="text" id="ppurpose"></div>
+                    <div class="form-group"><label>Objective</label><input type="text" id="ppurpose"></div>
                 </div>
             </section>
 
@@ -275,6 +269,7 @@
                         <th>Item</th><th>Spec / Condition</th><th>Result</th><th>Margin</th><th>Status</th><th>Remark</th><th style="width: 40px;"></th>
                     </tr></thead>
                     <tbody id="specTableBody">
+                        <!-- JS 預設載入 IL, RL, NEXT, FEXT -->
                     </tbody>
                 </table>
             </section>
@@ -385,11 +380,11 @@
             });
         });
 
-        // ====== 動態表格 ======
-        function getEmptyRowHTML() {
+        // ====== 動態表格 (預載 IL, RL, NEXT, FEXT) ======
+        function getEmptyRowHTML(defaultItem = "") {
             return `
                 <tr>
-                    <td><input type="text" class="save-target" placeholder="Item Name"></td>
+                    <td><input type="text" class="save-target" placeholder="Item Name" value="${defaultItem}"></td>
                     <td><input type="text" class="save-target"></td>
                     <td><input type="text" class="save-target"></td>
                     <td><input type="text" class="save-target"></td>
@@ -407,10 +402,16 @@
                 </tr>
             `;
         }
-        function addRow() { document.getElementById('specTableBody').insertAdjacentHTML('beforeend', getEmptyRowHTML()); saveDraft(); }
-        for(let i=0; i<4; i++) addRow();
+        function addRow(item = "") { document.getElementById('specTableBody').insertAdjacentHTML('beforeend', getEmptyRowHTML(item)); saveDraft(); }
+        
+        function initDefaultRows() {
+            const tbody = document.getElementById('specTableBody');
+            if(tbody.children.length === 0) {
+                addRow("IL"); addRow("RL"); addRow("NEXT"); addRow("FEXT");
+            }
+        }
 
-        // ====== 圖片管理 ======
+        // ====== 雙區塊圖片管理 ======
         document.getElementById('img_upload').addEventListener('change', function(event) {
             Array.from(event.target.files).forEach((file) => {
                 const reader = new FileReader();
@@ -420,12 +421,14 @@
                             <div class="chart-controls">
                                 <button type="button" class="btn-icon" onclick="moveUp(this)">${iconUp}</button>
                                 <button type="button" class="btn-icon" onclick="moveDown(this)">${iconDown}</button>
-                                <button type="button" class="btn-icon danger" onclick="this.closest('.chart-card').remove()">${iconTrash}</button>
+                                <button type="button" class="btn-icon danger" onclick="this.closest('.chart-card').remove(); saveDraft();">${iconTrash}</button>
                             </div>
                             <img src="${e.target.result}" class="chart-img-preview" alt="Chart">
                             <div class="chart-content">
-                                <label>Title & Remark:</label>
-                                <textarea placeholder="Enter chart description..."></textarea>
+                                <label>Chart Title (Auto-numbered in report):</label>
+                                <input type="text" class="chart-title-input" placeholder="e.g. Insertion Loss">
+                                <label>Description:</label>
+                                <textarea class="chart-desc-input" placeholder="Enter chart details..."></textarea>
                             </div>
                         </div>
                     `;
@@ -436,14 +439,15 @@
             event.target.value = '';
         });
 
-        function moveUp(btn) { let item = btn.closest('.chart-card'); if(item.previousElementSibling) item.parentNode.insertBefore(item, item.previousElementSibling); }
-        function moveDown(btn) { let item = btn.closest('.chart-card'); if(item.nextElementSibling) item.parentNode.insertBefore(item.nextElementSibling, item); }
+        function moveUp(btn) { let item = btn.closest('.chart-card'); if(item.previousElementSibling) item.parentNode.insertBefore(item, item.previousElementSibling); saveDraft();}
+        function moveDown(btn) { let item = btn.closest('.chart-card'); if(item.nextElementSibling) item.parentNode.insertBefore(item.nextElementSibling, item); saveDraft();}
 
         // ====== 草稿儲存 ======
         window.addEventListener('beforeunload', (e) => { e.preventDefault(); e.returnValue = ''; });
         function saveDraft() {
             const data = { fields: {}, role: document.getElementById('role-selector').value };
             document.querySelectorAll('#edit-workspace input[id], #edit-workspace textarea[id]').forEach(el => data.fields[el.id] = el.value);
+            
             const rows = [];
             document.querySelectorAll('#specTableBody tr').forEach(tr => {
                 let rowData = []; tr.querySelectorAll('.save-target').forEach(input => rowData.push(input.value)); rows.push(rowData);
@@ -457,7 +461,7 @@
             if(savedTheme === 'dark') { isDarkMode = true; applyTheme(); } else { applyTheme(); }
 
             const draft = localStorage.getItem('jpc_pro_draft');
-            if(!draft) return;
+            if(!draft) { initDefaultRows(); return; }
             try {
                 const data = JSON.parse(draft);
                 switchRole(data.role || 'sim');
@@ -470,61 +474,91 @@
                         let inputs = tbody.lastElementChild.querySelectorAll('.save-target');
                         rowData.forEach((val, index) => { if(inputs[index]) inputs[index].value = val; });
                     });
+                } else {
+                    initDefaultRows();
                 }
-            } catch(e) {}
+            } catch(e) { initDefaultRows(); }
         }
         document.addEventListener('input', (e) => { if(['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName)) saveDraft(); });
         window.onload = loadDraft;
 
-        // ====== 報告預覽與生成 (固定為淺色模式 + JPC Logo 浮水印) ======
+        // ====== 報告預覽與生成 (完美列印版) ======
         let isPreview = false;
         
+        // 使用 SVG 建立斜向陣列的純文字浮水印
+        const watermarkSVG = `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="300" height="300"><text x="20" y="150" transform="rotate(-35 150 150)" fill="rgba(0,0,0,0.04)" font-family="Arial" font-size="22" font-weight="bold">JPC CONFIDENTIAL</text></svg>`;
+        
         const reportCSS = `
-            .rpt-container { font-family: 'Inter', sans-serif; color: #111; line-height: 1.6; position: relative; min-height: 100vh; z-index: 1;}
+            .rpt-wrapper { font-family: 'Inter', sans-serif; color: #111; line-height: 1.6; background: #fff;}
             
-            /* 滿版背景浮水印 */
-            .rpt-container::before {
-                content: '';
-                position: fixed; top: 50%; left: 50%;
-                transform: translate(-50%, -50%);
-                width: 80%; height: 80%;
-                background-image: url('jpc logo.png');
-                background-repeat: no-repeat;
-                background-position: center;
-                background-size: contain;
-                opacity: 0.04; /* 透明度設定，確保不會影響文字閱讀 */
-                z-index: -1;
-                pointer-events: none;
+            /* 滿版斜向文字浮水印 */
+            .rpt-watermark-bg {
+                position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+                background-image: url('${watermarkSVG}');
+                background-repeat: repeat;
+                z-index: 0; pointer-events: none;
             }
             
-            .rpt-header { border-bottom: 2px solid #d10001; padding-bottom: 24px; margin-bottom: 32px;}
-            .rpt-logo-area { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 12px; flex-wrap: wrap;}
-            .rpt-logo-text { font-size: 1.5rem; font-weight: 700; color: #d10001; letter-spacing: -0.025em; margin-right: 20px;}
-            .rpt-maintitle { font-size: 2rem; color: #000; margin: 0 0 4px 0; font-weight: 600; word-break: break-word;}
-            .rpt-subtitle { color: #555; font-size: 0.875rem; }
+            /* 內容層 */
+            .rpt-content { position: relative; z-index: 1; padding: 40px 60px; min-height: 100vh;}
             
-            .rpt-section { page-break-inside: avoid; margin-bottom: 32px; }
-            .rpt-title { font-size: 1.125rem; color: #d10001; border-left: 4px solid #d10001; padding-left: 12px; margin-bottom: 16px; font-weight: 600;}
+            /* 獨立封面頁設計 */
+            .rpt-cover { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 85vh; text-align: center; }
+            .rpt-cover-logo { width: 220px; height: auto; margin-bottom: 40px; }
+            .rpt-cover-title { font-size: 2.5rem; font-weight: 800; color: #000; margin: 0 0 10px 0; word-break: break-word; }
+            .rpt-cover-subtitle { font-size: 1.25rem; font-weight: 500; color: #d10001; margin-bottom: 60px; letter-spacing: 1px;}
             
-            .rpt-grid { display: grid; grid-template-columns: minmax(140px, 160px) 1fr; row-gap: 12px; font-size: 0.875rem; margin-bottom: 12px; word-break: break-word; }
+            .rpt-cover-info { width: 100%; max-width: 500px; text-align: left; background: #fdfdfd; border: 1px solid #e9e5e0; border-radius: 8px; padding: 30px 40px;}
+            .rpt-cover-row { display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 1rem; border-bottom: 1px dashed #eee; padding-bottom: 8px;}
+            .rpt-cover-row:last-child { border: none; margin-bottom: 0; padding-bottom: 0;}
+            .rpt-cover-label { font-weight: 600; color: #555; }
+            .rpt-cover-val { font-weight: 700; color: #111; text-align: right;}
+
+            /* 內容區塊 */
+            .rpt-section { page-break-inside: avoid; margin-bottom: 40px; background: #fff;}
+            .rpt-title { font-size: 1.25rem; color: #d10001; border-bottom: 2px solid #d10001; padding-bottom: 8px; margin-bottom: 20px; font-weight: 700;}
+            
+            .rpt-grid { display: grid; grid-template-columns: minmax(140px, 160px) 1fr; row-gap: 12px; font-size: 0.95rem; margin-bottom: 12px; word-break: break-word; }
             .rpt-key { font-weight: 600; color: #555; }
             
-            .rpt-table { width: 100%; border-collapse: collapse; font-size: 0.875rem; margin-top: 12px; }
-            .rpt-table th { background-color: #f6f5f4; font-weight: 600; padding: 12px; text-align: left; border: 1px solid #e9e5e0; border-top: 2px solid #d10001;}
+            /* 斑馬紋表格設計 */
+            .rpt-table { width: 100%; border-collapse: collapse; font-size: 0.95rem; margin-top: 12px; }
+            .rpt-table th { background-color: #f6f5f4; font-weight: 700; padding: 12px; text-align: left; border: 1px solid #e9e5e0; border-bottom: 2px solid #ccc;}
             .rpt-table td { padding: 12px; border: 1px solid #e9e5e0; word-break: break-word; }
+            .rpt-table tr:nth-child(even) { background-color: #fafafa; }
             
-            .rpt-box { border: 1px solid #e9e5e0; border-radius: 8px; padding: 16px 20px; font-size: 0.875rem; background-color: #fafafa; min-height: 20px; white-space: pre-wrap;}
+            /* 狀態防呆顏色 */
+            .status-pass { color: #16a34a; font-weight: 800; }
+            .status-fail { color: #dc2626; font-weight: 800; }
             
-            .rpt-chart-wrapper { margin-top: 24px; page-break-inside: avoid; text-align: center; }
-            .rpt-chart-img { max-width: 100%; max-height: 50vh; border: 1px solid #e9e5e0; border-radius: 6px; display: block; margin: 0 auto;}
-            .rpt-chart-remark { font-size: 0.875rem; color: #444; margin-top: 12px; text-align: left; background: #fbe6e6; padding: 12px 16px; border-left: 4px solid #d10001; border-radius: 0 6px 6px 0; white-space: pre-wrap;}
+            .rpt-box { border: 1px solid #e9e5e0; border-radius: 8px; padding: 16px 20px; font-size: 0.95rem; background-color: #fafafa; min-height: 20px; white-space: pre-wrap;}
             
-            /* 列印時強制顯示背景浮水印與顏色 */
+            /* 圖表雙區塊排版 */
+            .rpt-chart-wrapper { margin-top: 30px; page-break-inside: avoid; text-align: center; }
+            .rpt-chart-title { font-size: 0.95rem; color: #666; font-style: italic; margin-bottom: 12px; font-weight: 600;}
+            .rpt-chart-box { border: 1px solid #e9e5e0; border-radius: 8px; overflow: hidden; display: inline-block; max-width: 100%; background: #fff;}
+            .rpt-chart-img { max-width: 100%; max-height: 40vh; display: block; margin: 0 auto; border-bottom: 1px solid #e9e5e0;}
+            .rpt-chart-desc { font-size: 0.95rem; color: #333; text-align: left; background: #fafafa; padding: 16px 20px; white-space: pre-wrap; line-height: 1.5;}
+            
+            /* 強制換頁與 Footer 機密宣告 */
+            .page-break { page-break-before: always; break-before: page; }
+            .rpt-footer-text { text-align: center; font-size: 0.75rem; color: #999; margin-top: 50px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;}
+            
+            /* 列印專屬設定 */
             @media print { 
-                .rpt-table th { -webkit-print-color-adjust: exact; background-color: #f6f5f4 !important; color-adjust: exact; }
-                .rpt-chart-remark { -webkit-print-color-adjust: exact; background-color: #fbe6e6 !important; color-adjust: exact; }
-                .rpt-container::before { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+                .rpt-content { padding: 0; }
+                .rpt-table th { -webkit-print-color-adjust: exact; print-color-adjust: exact; background-color: #f6f5f4 !important; }
+                .rpt-table tr:nth-child(even) { -webkit-print-color-adjust: exact; print-color-adjust: exact; background-color: #fafafa !important; }
+                .rpt-chart-desc { -webkit-print-color-adjust: exact; print-color-adjust: exact; background-color: #fafafa !important; }
+                .rpt-watermark-bg { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+                
+                /* 固定 Footer 到每一頁底部 */
+                .print-fixed-footer { position: fixed; bottom: 0; left: 0; width: 100%; text-align: center; font-size: 0.75rem; color: #999; font-weight: 600; padding: 10px 0; background: #fff;}
+                .rpt-footer-text { display: none; } /* 隱藏普通的 footer，改用 fixed footer */
+                
+                @page { margin: 1.5cm 1.5cm 2cm 1.5cm; }
             }
+            @media screen { .print-fixed-footer { display: none; } }
         `;
 
         let currentReportInnerHTML = "";
@@ -539,96 +573,133 @@
 
         function generateReportHTML() {
             const isSim = document.getElementById('role-selector').value === 'sim';
-            const getVal = (id) => { const val = document.getElementById(id).value.trim(); return val ? val : "&nbsp;"; };
+            const getVal = (id) => { const val = document.getElementById(id).value.trim(); return val ? val : "-"; };
             const escapeHTML = (str) => str.replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
+            // 表格生成 (加入 Pass/Fail 顏色)
             let specTableHTML = '';
             document.querySelectorAll(`#specTableBody tr`).forEach(tr => {
                 const inputs = tr.querySelectorAll('.save-target');
                 const isEmpty = Array.from(inputs).every(i => i.value.trim() === '');
                 if(!isEmpty) {
+                    const statusVal = escapeHTML(inputs[4]?.value);
+                    let statusClass = "";
+                    if(statusVal === "Pass") statusClass = "status-pass";
+                    if(statusVal === "Fail") statusClass = "status-fail";
+                    
                     specTableHTML += `<tr>
                         <td>${escapeHTML(inputs[0]?.value) || "&nbsp;"}</td><td>${escapeHTML(inputs[1]?.value) || "&nbsp;"}</td>
                         <td>${escapeHTML(inputs[2]?.value) || "&nbsp;"}</td><td>${escapeHTML(inputs[3]?.value) || "&nbsp;"}</td>
-                        <td><b>${inputs[4]?.value || "&nbsp;"}</b></td><td>${escapeHTML(inputs[5]?.value) || "&nbsp;"}</td>
+                        <td class="${statusClass}">${statusVal || "&nbsp;"}</td><td>${escapeHTML(inputs[5]?.value) || "&nbsp;"}</td>
                     </tr>`;
                 }
             });
             if(specTableHTML === '') specTableHTML = '<tr><td colspan="6" style="text-align:center; color:#999;">(No Specification Data)</td></tr>';
 
+            // 圖表生成 (雙區塊 + 自動編號)
             let chartsHTML = '';
+            let chartIndex = 1;
             document.querySelectorAll(`.chart-card`).forEach(item => {
                 const imgSrc = item.querySelector('img').src;
-                const remark = escapeHTML(item.querySelector('textarea').value.trim());
+                const title = escapeHTML(item.querySelector('.chart-title-input').value.trim());
+                const desc = escapeHTML(item.querySelector('.chart-desc-input').value.trim());
+                
                 chartsHTML += `
                     <div class="rpt-chart-wrapper">
-                        <img src="${imgSrc}" class="rpt-chart-img">
-                        ${remark ? `<div class="rpt-chart-remark">${remark}</div>` : ''}
+                        ${title ? `<div class="rpt-chart-title">Figure ${chartIndex}: ${title}</div>` : `<div class="rpt-chart-title">Figure ${chartIndex}</div>`}
+                        <div class="rpt-chart-box">
+                            <img src="${imgSrc}" class="rpt-chart-img">
+                            ${desc ? `<div class="rpt-chart-desc">${desc}</div>` : ''}
+                        </div>
                     </div>
                 `;
+                chartIndex++;
             });
             if (chartsHTML === '') chartsHTML = '<p style="color:#999; padding-left:12px;">(No Charts Uploaded)</p>';
 
+            const reportTypeStr = isSim ? 'Simulation' : 'Measurement';
+            
+            // 組合完整 HTML (含封面、換頁、內容、Footer)
             currentReportInnerHTML = `
-    <div class="rpt-header">
-        <div class="rpt-logo-area">
-            <div class="rpt-logo-text">JPC CONNECTIVITY</div>
-            <div class="rpt-subtitle">Date: ${escapeHTML(getVal('pdate'))}</div>
+    <!-- 滿版浮水印背景 -->
+    <div class="rpt-watermark-bg"></div>
+    
+    <!-- 列印專用的固定頁尾 -->
+    <div class="print-fixed-footer">JPC Connectivity Confidential - Internal Use Only</div>
+
+    <div class="rpt-content">
+        <!-- 獨立封面頁 -->
+        <div class="rpt-cover">
+            <img src="jpc logo.png" class="rpt-cover-logo" alt="JPC Logo">
+            <h1 class="rpt-cover-title">${escapeHTML(getVal('pname'))}</h1>
+            <div class="rpt-cover-subtitle">${reportTypeStr} Analysis Report</div>
+            
+            <div class="rpt-cover-info">
+                <div class="rpt-cover-row"><span class="rpt-cover-label">Date</span><span class="rpt-cover-val">${escapeHTML(getVal('pdate'))}</span></div>
+                <div class="rpt-cover-row"><span class="rpt-cover-label">Version / Stage</span><span class="rpt-cover-val">${escapeHTML(getVal('prev'))}</span></div>
+                <div class="rpt-cover-row"><span class="rpt-cover-label">Prepared by</span><span class="rpt-cover-val">${escapeHTML(getVal('powner'))}</span></div>
+                <div class="rpt-cover-row"><span class="rpt-cover-label">Approved by</span><span class="rpt-cover-val">${escapeHTML(getVal('pchecker'))}</span></div>
+            </div>
         </div>
-        <h1 class="rpt-maintitle">${escapeHTML(getVal('pname'))}</h1>
-        <div class="rpt-subtitle">${isSim ? 'Simulation' : 'Measurement'} Analysis Report - ${escapeHTML(getVal('prev'))}</div>
-    </div>
+        
+        <!-- 強制換頁 -->
+        <div class="page-break"></div>
 
-    <div class="rpt-section">
-        <div class="rpt-title">1. Project Information</div>
-        <div class="rpt-grid">
-            <div class="rpt-key">Project Name</div><div>${escapeHTML(getVal('pname'))}</div>
-            <div class="rpt-key">Client / Internal</div><div>${escapeHTML(getVal('pclient'))}</div>
-            <div class="rpt-key">${isSim ? 'Version / Revision' : 'Test Stage'}</div><div>${escapeHTML(getVal('prev'))}</div>
-            <div class="rpt-key">DUT / Sample ID</div><div>${escapeHTML(getVal('pdut'))}</div>
-            <div class="rpt-key">Engineer</div><div>${escapeHTML(getVal('powner'))}</div>
-            <div class="rpt-key">Objective</div><div>${escapeHTML(getVal('ppurpose'))}</div>
+        <div class="rpt-section">
+            <div class="rpt-title">1. Project Information</div>
+            <div class="rpt-grid">
+                <div class="rpt-key">Project Name</div><div>${escapeHTML(getVal('pname'))}</div>
+                <div class="rpt-key">Client / Internal</div><div>${escapeHTML(getVal('pclient'))}</div>
+                <div class="rpt-key">DUT / Sample ID</div><div>${escapeHTML(getVal('pdut'))}</div>
+                <div class="rpt-key">Objective</div><div>${escapeHTML(getVal('ppurpose'))}</div>
+            </div>
         </div>
-    </div>
 
-    <div class="rpt-section">
-        <div class="rpt-title">2. ${isSim ? 'Simulation Setup' : 'Test Environment'}</div>
-        <div class="rpt-grid">
-            <div class="rpt-key">${isSim ? 'Software' : 'VNA Model'}</div><div>${escapeHTML(getVal('ssoft'))}</div>
-            <div class="rpt-key">${isSim ? 'Solver' : 'Fixture'}</div><div>${escapeHTML(getVal('ssolver'))}</div>
-            <div class="rpt-key">${isSim ? 'Frequency Range' : 'Calibration'}</div><div>${escapeHTML(getVal('sfreq'))}</div>
-            ${isSim ? `
-            <div class="rpt-key">Port Setup</div><div>${escapeHTML(getVal('sport'))}</div>
-            <div class="rpt-key">Material / Stackup</div><div>${escapeHTML(getVal('smat'))}</div>
-            ` : ''}
+        <div class="rpt-section">
+            <div class="rpt-title">2. ${isSim ? 'Simulation Setup' : 'Test Environment'}</div>
+            <div class="rpt-grid">
+                <div class="rpt-key">${isSim ? 'Software' : 'VNA Model'}</div><div>${escapeHTML(getVal('ssoft'))}</div>
+                <div class="rpt-key">${isSim ? 'Solver' : 'Fixture'}</div><div>${escapeHTML(getVal('ssolver'))}</div>
+                <div class="rpt-key">${isSim ? 'Frequency Range' : 'Calibration'}</div><div>${escapeHTML(getVal('sfreq'))}</div>
+                ${isSim ? `
+                <div class="rpt-key">Port Setup</div><div>${escapeHTML(getVal('sport'))}</div>
+                <div class="rpt-key">Material / Stackup</div><div>${escapeHTML(getVal('smat'))}</div>
+                ` : ''}
+            </div>
         </div>
-    </div>
 
-    <div class="rpt-section">
-        <div class="rpt-title">3. Specifications & Results</div>
-        <table class="rpt-table">
-            <tr><th>Item</th><th>Spec/Condition</th><th>Result</th><th>Margin</th><th>Status</th><th>Remark</th></tr>
-            ${specTableHTML}
-        </table>
-    </div>
+        <div class="rpt-section">
+            <div class="rpt-title">3. Specifications & Results</div>
+            <table class="rpt-table">
+                <tr><th>Item</th><th>Spec / Condition</th><th>Result</th><th>Margin</th><th>Status</th><th>Remark</th></tr>
+                ${specTableHTML}
+            </table>
+        </div>
 
-    <div class="rpt-section">
-        <div class="rpt-title">4. Charts & Data</div>
-        ${chartsHTML}
-    </div>
+        <!-- 確保圖表區塊從新的一頁開始 (若內容過長) -->
+        <div class="page-break"></div>
+        
+        <div class="rpt-section">
+            <div class="rpt-title">4. Charts & Data</div>
+            ${chartsHTML}
+        </div>
 
-    <div class="rpt-section">
-        <div class="rpt-title">5. Conclusion</div>
-        <div class="rpt-box">${escapeHTML(getVal('c_conc'))}</div>
-    </div>
+        <div class="rpt-section" style="page-break-before: auto;">
+            <div class="rpt-title">5. Conclusion</div>
+            <div class="rpt-box">${escapeHTML(getVal('c_conc'))}</div>
+        </div>
 
-    <div class="rpt-section">
-        <div class="rpt-title">6. Next Steps</div>
-        <div class="rpt-box">${escapeHTML(getVal('c_next'))}</div>
+        <div class="rpt-section">
+            <div class="rpt-title">6. Next Steps</div>
+            <div class="rpt-box">${escapeHTML(getVal('c_next'))}</div>
+        </div>
+        
+        <!-- 網頁檢視時的 Footer -->
+        <div class="rpt-footer-text">JPC Connectivity Confidential - Internal Use Only</div>
     </div>
             `;
             
-            document.getElementById('report-render-area').innerHTML = `<style>${reportCSS}</style><div class="rpt-container">${currentReportInnerHTML}</div>`;
+            document.getElementById('report-render-area').innerHTML = `<style>${reportCSS}</style><div class="rpt-wrapper">${currentReportInnerHTML}</div>`;
         }
 
         function downloadReportHTML() {
@@ -641,15 +712,14 @@
 <head>
     <meta charset="UTF-8">
     <title>${projName} - ${roleStr} Report</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        body { margin: 0; padding: 40px; background: #fff; }
-        .wrapper { max-width: 900px; margin: 0 auto; }
+        body { margin: 0; background: #fff; -webkit-print-color-adjust: exact; print-color-adjust: exact;}
         ${reportCSS}
     </style>
 </head>
 <body>
-    <div class="wrapper rpt-container">
+    <div class="rpt-wrapper">
         ${currentReportInnerHTML}
     </div>
 </body>
