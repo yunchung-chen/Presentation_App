@@ -55,9 +55,10 @@
             display: flex; align-items: center; gap: 8px; letter-spacing: -0.025em;
         }
         .brand-logo img {
-            height: 28px; /* 可以依照你的 Logo 實際視覺大小微調高度 */
+            height: 60px; /* 將數值調大，你可以根據感覺在 50px ~ 80px 之間微調 */
             width: auto;
-            object-fit: contain; /* 確保圖片不變形 */
+            max-width: 200px; /* 加上這行，確保 Logo 放再大也不會衝出左側選單的寬度 */
+            object-fit: contain;
         }
 
         /* --- 修改點 1: Segmented Control (按鈕切換) --- */
