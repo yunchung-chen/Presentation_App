@@ -143,7 +143,12 @@
         .btn-outline svg { width: 16px; height: 16px; }
         
         .btn-icon { background: transparent; border: none; color: var(--text-muted); cursor: pointer; padding: 6px; border-radius: 4px; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
-        .btn-icon svg { width: 18px; height: 18px; }
+        /* 統一設定所有按鈕內的圖示大小，並防止被擠壓到消失 */
+        .btn svg {
+            width: 18px;
+            height: 18px;
+            flex-shrink: 0; /* 這行是關鍵，防止圖示被擠壓 */
+        }
         .btn-icon:hover { background: var(--bg-base); color: var(--text-main); }
         .btn-icon.danger:hover { background: var(--primary-light); color: var(--primary); }
 
