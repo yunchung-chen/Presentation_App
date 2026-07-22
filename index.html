@@ -131,7 +131,13 @@
         .spec-table td { padding: 12px 8px 12px 0; border-bottom: 1px solid var(--bg-base); }
         .spec-table input, .spec-table select { width: 100%; }
         
-        .btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; font-size: 0.875rem; font-weight: 500; border-radius: 6px; cursor: pointer; transition: all 0.2s; border: none; font-family: var(--font-sans);}
+        .btn { 
+            display: inline-flex; align-items: center; gap: 6px; 
+            padding: 8px 16px; font-size: 0.875rem; font-weight: 500; 
+            border-radius: 6px; cursor: pointer; transition: all 0.2s; 
+            border: none; font-family: var(--font-sans);
+            white-space: nowrap; 
+        }
         .btn-outline { background: var(--bg-card); border: 1px solid var(--input-border); color: var(--text-main); }
         .btn-outline:hover { background: var(--bg-base); border-color: var(--text-muted); }
         .btn-outline svg { width: 16px; height: 16px; }
@@ -579,7 +585,8 @@
     <div class="rpt-section">
         <div class="rpt-title">1. Project Information</div>
         <div class="rpt-grid">
-            <div class="rpt-key">Project / Client</div><div>${escapeHTML(getVal('pname'))} / ${escapeHTML(getVal('pclient'))}</div>
+            <div class="rpt-key">Project Name</div><div>${escapeHTML(getVal('pname'))}</div>
+            <div class="rpt-key">Client / Internal</div><div>${escapeHTML(getVal('pclient'))}</div>
             <div class="rpt-key">${isSim ? 'Version / Revision' : 'Test Stage'}</div><div>${escapeHTML(getVal('prev'))}</div>
             <div class="rpt-key">DUT / Sample ID</div><div>${escapeHTML(getVal('pdut'))}</div>
             <div class="rpt-key">Engineer</div><div>${escapeHTML(getVal('powner'))}</div>
