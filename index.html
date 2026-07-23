@@ -271,7 +271,7 @@
             <section id="sec-equip" class="test-only">
                 <h2 class="section-header">Test Equipments Information <button type="button" class="btn btn-outline" onclick="addEquipRow()">Add Row</button></h2>
                 <table class="spec-table">
-                    <thead><tr><th>ID</th><th>Instrument</th><th>Description with Instrumentation and software</th><th>Manufacture</th><th style="width: 40px;"></th></tr></thead>
+                    <thead><tr><th>ID</th><th>Instrument</th><th>Instrumentation and software</th><th>Manufacture</th><th style="width: 40px;"></th></tr></thead>
                     <tbody id="equipTableBody"></tbody>
                 </table>
             </section>
@@ -293,7 +293,7 @@
             </section>
             
             <section id="sec-meas-matrix" class="test-only">
-                <h2 class="section-header">TX / RX Data Matrix (Optional) <button type="button" class="btn btn-outline" onclick="addMatrixRow()">Add Row</button></h2>
+                <h2 class="section-header">TX / RX Data Matrix<button type="button" class="btn btn-outline" onclick="addMatrixRow()">Add Row</button></h2>
                 <p style="font-size:0.875rem; color:var(--text-muted); margin-top:-16px;">You can manually input data here, or skip this and paste Excel charts below.</p>
                 <div style="overflow-x: auto;">
                     <table class="spec-table" style="min-width: 700px;">
@@ -305,7 +305,7 @@
 
             <section id="sec-chart">
                 <h2 class="section-header">Charts & Data</h2>
-                <div class="sop-alert"><strong>💡 SOP 圖片擺放順序建議：</strong> 1. IL (Insertion Loss) ➔ 2. RL (Return Loss) ➔ 3. NEXT ➔ 4. FEXT ➔ 5. COM。請盡量依此順序貼上截圖。</div>
+                <div class="sop-alert"><strong>圖片擺放順序建議：</strong> 1. IL (Insertion Loss) ➔ 2. RL (Return Loss) ➔ 3. NEXT ➔ 4. FEXT ➔ 5. COM。請盡量依此順序貼上截圖。</div>
                 <div class="upload-zone" onclick="document.getElementById('img_upload').click()">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
                     <span>Click here or <b style="color:var(--primary);">Press Ctrl+V anywhere</b> to paste chart</span>
