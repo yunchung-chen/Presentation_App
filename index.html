@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>JPC Report Generator Pro</title>
-    <!-- 引入 Inter 字體 -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -52,12 +51,11 @@
         body[data-role="sim"] .test-only { display: none !important; }
         body[data-role="test"] .sim-only { display: none !important; }
 
-        /* Custom Tooltip (滑鼠懸停提示) */
         .has-tooltip { position: relative; }
         .has-tooltip::after {
             content: attr(data-tip);
             position: absolute;
-            bottom: 110%; left: 50%; transform: translateX(-50%); /* 改為在正上方 */
+            bottom: 110%; left: 50%; transform: translateX(-50%); 
             background: rgba(0,0,0,0.85); color: #fff; padding: 8px 12px; border-radius: 6px;
             font-size: 0.75rem; white-space: nowrap; pointer-events: none; font-weight: 500;
             opacity: 0; transition: opacity 0.2s, bottom 0.2s;
@@ -241,7 +239,7 @@
         </nav>
 
         <div class="nav-action">
-            <!-- 1. Save 與 Load 併排 (限制 icon 大小為 18px) -->
+            <!-- 1. Save 與 Load 併排 -->
             <div class="nav-action-row">
                 <button class="btn-theme" onclick="saveProjectFile()" title="將目前的專案與圖片打包成 .jpc 檔案下載，方便日後修改或交接">
                     <svg style="width: 18px; height: 18px; flex-shrink: 0;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg> Save
@@ -252,13 +250,13 @@
                 <input type="file" id="jpc_upload" accept=".jpc" style="display: none;">
             </div>
             
-            <!-- 2. Dark Mode 切換 (限制 icon 容器大小) -->
+            <!-- 2. Dark Mode -->
             <button class="btn-theme" onclick="toggleTheme()">
                 <span id="theme-icon" style="display: flex; align-items: center; justify-content: center; width: 18px; height: 18px; flex-shrink: 0;"></span>
                 <span id="theme-text">Dark Mode</span>
             </button>
             
-            <!-- 3. 預覽與匯出 (維持滿版，限制眼睛圖標為 20px) -->
+            <!-- 3. 預覽與匯出 (滿版醒目黑色) -->
             <button class="btn-preview" onclick="togglePreviewMode()" title="將報告匯出成單一 HTML 網頁檔或列印為 PDF">
                 <svg style="width: 20px; height: 20px; flex-shrink: 0;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg> 
                 Preview & Export
@@ -302,14 +300,12 @@
             <section id="sec-geom" class="sim-only">
                 <h2 class="section-header">Geometry & Requirements</h2>
                 <p style="font-size:0.875rem; color:var(--text-muted); margin-top:-16px;">Please upload or paste your 3D Geometry, PCB Stack-up, and Specification Requirement images here.</p>
-                
                 <div class="upload-zone" onclick="document.getElementById('img_upload_geom').click()">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
-                    <span>Click here to upload Geometry & Spec images</span>
-                    <div class="upload-zone-hint">Support standard image formats</div>
+                    <span>Click here or <b style="color:var(--primary);">Press Ctrl+V anywhere</b> to paste Geometry & Spec images</span>
+                    <div class="upload-zone-hint">Support standard image formats & direct clipboard paste</div>
                     <input type="file" id="img_upload_geom" accept="image/*" multiple>
                 </div>
-                
                 <div id="img_geom_container" class="chart-list"></div>
             </section>
 
@@ -380,8 +376,8 @@
             <div class="preview-toolbar">
                 <button class="btn btn-outline" onclick="togglePreviewMode()"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg> Back to Edit</button>
                 <div style="display: flex; gap: 12px;">
-                    <button class="btn btn-outline has-tooltip" data-tip="Export to standalone HTML" onclick="downloadReportHTML()"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg> Export HTML</button>
-                    <button class="btn btn-primary has-tooltip" data-tip="Print to PDF" onclick="window.print()"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg> Print / PDF</button>
+                    <button class="btn btn-outline" title="Export to standalone HTML" onclick="downloadReportHTML()"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg> Export HTML</button>
+                    <button class="btn btn-primary" title="Print to PDF" onclick="window.print()"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg> Print / PDF</button>
                 </div>
             </div>
             <div id="report-render-area"></div>
@@ -406,7 +402,6 @@
 
         document.getElementById('pdate').value = new Date().toISOString().split('T')[0];
         
-        // Custom Toast Notification
         function showToast(msg, isError = false) {
             const toast = document.createElement('div');
             toast.innerText = msg;
@@ -581,46 +576,12 @@
             }
         }
 
-        // Excel Smart Paste into Matrix
-        document.getElementById('matrixTableBody').addEventListener('paste', function(e) {
-            const target = e.target;
-            if(!target.classList.contains('save-t-mat')) return;
-            
-            const clipboardData = e.clipboardData || window.clipboardData;
-            const pastedText = clipboardData.getData('Text');
-            if(!pastedText) return;
+        // 追蹤滑鼠位置，決定 Ctrl+V 要貼到哪一個區塊 (預設為 Results)
+        let currentPasteTarget = 'img_charts_container'; 
+        document.getElementById('sec-geom').addEventListener('mouseenter', () => { currentPasteTarget = 'img_geom_container'; });
+        document.getElementById('sec-chart').addEventListener('mouseenter', () => { currentPasteTarget = 'img_charts_container'; });
 
-            e.preventDefault(); 
-            const rows = pastedText.trim().split('\n').map(row => row.split('\t'));
-            const tbody = document.getElementById('matrixTableBody');
-            const trs = Array.from(tbody.children);
-            
-            const startTr = target.closest('tr');
-            const startRowIdx = trs.indexOf(startTr);
-            const startTd = target.closest('td');
-            const startColIdx = Array.from(startTr.children).indexOf(startTd);
-
-            while(tbody.children.length < startRowIdx + rows.length) {
-                addMatrixRow();
-            }
-            const updatedTrs = Array.from(tbody.children);
-
-            for(let i=0; i<rows.length; i++) {
-                const tr = updatedTrs[startRowIdx + i];
-                const cells = Array.from(tr.children);
-                for(let j=0; j<rows[i].length; j++) {
-                    const colIdx = startColIdx + j;
-                    if(colIdx < cells.length - 1) { 
-                        const input = cells[colIdx].querySelector('input, select');
-                        if(input) input.value = rows[i][j].trim();
-                    }
-                }
-            }
-            showToast("✅ Excel Data Pasted Successfully!");
-            saveDraft();
-        });
-
-        function appendChartCard(imgSrc, containerId, title='', desc='') {
+        function appendChartCard(imgSrc, containerId = 'img_charts_container', title = '', desc = '') {
             let phTitle = containerId === 'img_geom_container' ? 'e.g. 3D Geometry' : 'e.g. Insertion Loss';
             const html = `
                 <div class="chart-card">
@@ -632,19 +593,17 @@
                     <img src="${imgSrc}" class="chart-img-preview" alt="Chart">
                     <div class="chart-content">
                         <label>Chart Title (Auto-numbered):</label>
-                        <input type="text" class="chart-title-input" placeholder="${phTitle}">
+                        <input type="text" class="chart-title-input" placeholder="${phTitle}" value="${title}">
                         <label>Description:</label>
-                        <textarea class="chart-desc-input" placeholder="Enter details..."></textarea>
+                        <textarea class="chart-desc-input" placeholder="Enter details...">${desc}</textarea>
                     </div>
                 </div>
             `;
             document.getElementById(containerId).insertAdjacentHTML('beforeend', html);
-            const newCard = document.getElementById(containerId).lastElementChild;
-            if(title) newCard.querySelector('.chart-title-input').value = title;
-            if(desc) newCard.querySelector('.chart-desc-input').value = desc;
             saveDraft();
         }
 
+        // Geometry File Input
         document.getElementById('img_upload_geom').addEventListener('change', function(event) {
             Array.from(event.target.files).forEach((file) => {
                 const reader = new FileReader();
@@ -654,6 +613,7 @@
             event.target.value = '';
         });
 
+        // Results File Input
         document.getElementById('img_upload').addEventListener('change', function(event) {
             Array.from(event.target.files).forEach((file) => {
                 const reader = new FileReader();
@@ -663,7 +623,7 @@
             event.target.value = '';
         });
 
-        // Global Paste intercepts images into Results section
+        // 全局 Ctrl+V 貼上圖表 (依照 currentPasteTarget 智慧分發)
         window.addEventListener('paste', function(e) {
             const activeTag = document.activeElement.tagName.toLowerCase();
             if (activeTag === 'input' || activeTag === 'textarea') return;
@@ -675,9 +635,13 @@
                     const blob = item.getAsFile();
                     const reader = new FileReader();
                     reader.onload = function(event) {
-                        appendChartCard(event.target.result, 'img_charts_container');
-                        scrollToSection('sec-chart'); 
-                        showToast("📸 Image Pasted to Results!");
+                        appendChartCard(event.target.result, currentPasteTarget);
+                        // 貼上後自動滾動對齊該區塊
+                        if(currentPasteTarget === 'img_geom_container') {
+                            scrollToSection('sec-geom');
+                        } else {
+                            scrollToSection('sec-chart');
+                        }
                     };
                     reader.readAsDataURL(blob);
                     e.preventDefault(); 
@@ -773,7 +737,6 @@
             this.value = ''; 
         });
 
-        // Drag and Drop Full Screen Overlay
         const dropOverlay = document.getElementById('drop-overlay');
         window.addEventListener('dragover', (e) => {
             e.preventDefault();
@@ -832,7 +795,6 @@
         document.addEventListener('change', (e) => { if(['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName)) saveDraft(); });
         window.onload = loadDraft;
 
-        // ====== 報告預覽與生成 ======
         let isPreview = false;
         
         function getConfidentialityConfig() {
