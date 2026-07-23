@@ -49,7 +49,7 @@
             transition: background-color 0.3s ease, color 0.3s ease;
         }
 
-        /* 雙角色 UI 切換邏輯：非當前角色的元素一律強制隱藏 */
+        /* 雙角色 UI 切換邏輯 */
         body[data-role="sim"] .test-only { display: none !important; }
         body[data-role="test"] .sim-only { display: none !important; }
 
@@ -68,29 +68,15 @@
         .role-selector-wrapper { margin-bottom: 24px; padding: 0 8px; }
         .role-label { font-size: 0.75rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px; letter-spacing: 0.05em; }
         
-        .segmented-control {
-            display: flex; background-color: var(--bg-base);
-            padding: 4px; border-radius: 8px; border: 1px solid var(--border);
-        }
-        .segment-btn {
-            flex: 1; padding: 8px 4px; text-align: center; font-size: 0.75rem; font-weight: 600;
-            color: var(--text-muted); background: transparent; border: none; border-radius: 6px;
-            cursor: pointer; transition: all 0.2s ease; font-family: var(--font-sans);
-        }
+        .segmented-control { display: flex; background-color: var(--bg-base); padding: 4px; border-radius: 8px; border: 1px solid var(--border); }
+        .segment-btn { flex: 1; padding: 8px 4px; text-align: center; font-size: 0.75rem; font-weight: 600; color: var(--text-muted); background: transparent; border: none; border-radius: 6px; cursor: pointer; transition: all 0.2s ease; font-family: var(--font-sans); }
         .segment-btn:hover { color: var(--text-main); }
         .segment-btn.active { background-color: var(--bg-card); color: var(--primary); box-shadow: var(--shadow-sm); border: 1px solid var(--border);}
 
-        .security-select {
-            width: 100%; padding: 8px 10px; border-radius: 6px; border: 1px solid var(--input-border);
-            background: var(--bg-base); color: var(--text-main); font-size: 0.8rem; font-weight: 600; cursor: pointer;
-        }
+        .security-select { width: 100%; padding: 8px 10px; border-radius: 6px; border: 1px solid var(--input-border); background: var(--bg-base); color: var(--text-main); font-size: 0.8rem; font-weight: 600; cursor: pointer; }
 
         .nav-menu { display: flex; flex-direction: column; gap: 4px; flex: 1; margin-bottom: 20px;}
-        .nav-link {
-            display: flex; align-items: center; gap: 12px; padding: 10px 12px;
-            font-size: 0.875rem; font-weight: 500; color: var(--text-muted);
-            border-radius: 6px; cursor: pointer; transition: all 0.2s ease;
-        }
+        .nav-link { display: flex; align-items: center; gap: 12px; padding: 10px 12px; font-size: 0.875rem; font-weight: 500; color: var(--text-muted); border-radius: 6px; cursor: pointer; transition: all 0.2s ease; }
         .nav-link svg { width: 18px; height: 18px; transition: transform 0.2s ease; }
         .nav-link:hover { background-color: var(--bg-base); color: var(--text-main); }
         .nav-link:hover svg { transform: scale(1.1); color: var(--primary); }
@@ -188,6 +174,7 @@
 
     <datalist id="dl-pname"></datalist><datalist id="dl-pclient"></datalist><datalist id="dl-powner"></datalist><datalist id="dl-pchecker"></datalist>
     <datalist id="dl-ssoft"></datalist><datalist id="dl-ssolver"></datalist><datalist id="dl-sfreq"></datalist><datalist id="dl-spec-item"></datalist>
+    <datalist id="dl-sstep"></datalist><datalist id="dl-simp"></datalist>
 
     <aside id="sidebar" class="no-print">
         <div class="brand-logo"><img src="jpc logo.png" alt="JPC Logo"></div>
@@ -211,18 +198,20 @@
 
         <div class="role-label">Navigation</div>
         <nav class="nav-menu">
+            <!-- 共通 -->
             <a class="nav-link active" onclick="scrollToSection('sec-info')"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg> Project Info</a>
             
             <!-- SIM 專屬 -->
-            <a class="nav-link sim-only" onclick="scrollToSection('sec-setup')"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path></svg> Environment Setup</a>
-            <a class="nav-link sim-only" onclick="scrollToSection('sec-spec')"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg> Specifications</a>
+            <a class="nav-link sim-only" onclick="scrollToSection('sec-setup')"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path></svg> Product & Setup</a>
+            <a class="nav-link sim-only" onclick="scrollToSection('sec-geom')"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg> Geometry & Specs</a>
+            <a class="nav-link sim-only" onclick="scrollToSection('sec-spec')"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg> Spec Table</a>
 
             <!-- TEST 專屬 -->
             <a class="nav-link test-only" onclick="scrollToSection('sec-equip')"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg> Test Equipments</a>
             <a class="nav-link test-only" onclick="scrollToSection('sec-dut')"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"></path></svg> DUT Information</a>
             <a class="nav-link test-only" onclick="scrollToSection('sec-summary')"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg> Summary & Matrix</a>
 
-            <a class="nav-link" onclick="scrollToSection('sec-chart')"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"></path></svg> Charts & Data</a>
+            <a class="nav-link" id="nav-chart" onclick="scrollToSection('sec-chart')"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"></path></svg> Simulation Results</a>
             <a class="nav-link" onclick="scrollToSection('sec-conc')"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> Conclusion</a>
         </nav>
 
@@ -237,31 +226,50 @@
             <section id="sec-info">
                 <h2 class="section-header">Project Information</h2>
                 <div class="grid-2">
-                    <div class="form-group"><label>Project Name</label><input type="text" id="pname" list="dl-pname" placeholder="Double click for history"></div>
+                    <div class="form-group"><label>Project Name</label><input type="text" id="pname" list="dl-pname" placeholder="e.g. PCIe Gen6 CEM Connector"></div>
                     <div class="form-group sim-only"><label>Client / Internal</label><input type="text" id="pclient" list="dl-pclient"></div>
-                    <div class="form-group"><label id="lbl-rev">Version / Specification Standard</label><input type="text" id="prev"></div>
+                    <div class="form-group"><label id="lbl-rev">Version / Specification Standard</label><input type="text" id="prev" placeholder="e.g. PCIe Card Electromechanical Spec 6.0"></div>
                     <div class="form-group sim-only"><label>DUT / Sample ID</label><input type="text" id="pdut"></div>
                     <div class="form-group test-only"><label>Report To (Client)</label><input type="text" id="ptarget"></div>
                     <div class="form-group"><label>Prepared by (Engineer)</label><input type="text" id="powner" list="dl-powner"></div>
                     <div class="form-group"><label>Approved by (Checker)</label><input type="text" id="pchecker" list="dl-pchecker"></div>
                     <div class="form-group"><label>Date</label><input type="date" id="pdate"></div>
-                    <div class="form-group sim-only"><label>Objective</label><input type="text" id="ppurpose"></div>
+                    <div class="form-group full-width"><label>Purpose / Objective</label><textarea id="ppurpose" placeholder="e.g. To evaluate the PCIe Gen6 CEM connector design to the PCIe Gen6 SI spec." style="min-height: 50px;"></textarea></div>
                 </div>
             </section>
 
+            <!-- SIM 專屬: Setup 擴充版 -->
             <section id="sec-setup" class="sim-only">
-                <h2 class="section-header">Environment Setup</h2>
+                <h2 class="section-header">Product & Environment Setup</h2>
                 <div class="grid-2">
-                    <div class="form-group"><label id="lbl-soft">Software</label><input type="text" id="ssoft" list="dl-ssoft"></div>
+                    <div class="form-group"><label id="lbl-soft">Software</label><input type="text" id="ssoft" list="dl-ssoft" placeholder="e.g. CST Microwave Studio"></div>
                     <div class="form-group"><label id="lbl-solver">Solver</label><input type="text" id="ssolver" list="dl-ssolver"></div>
-                    <div class="form-group"><label id="lbl-freq">Frequency Range</label><input type="text" id="sfreq" list="dl-sfreq"></div>
+                    <div class="form-group"><label id="lbl-freq">Frequency Range</label><input type="text" id="sfreq" list="dl-sfreq" placeholder="e.g. 0~40GHz"></div>
+                    <div class="form-group sim-only"><label>Sweep Step</label><input type="text" id="sstep" list="dl-sstep" placeholder="e.g. 10MHz"></div>
+                    <div class="form-group sim-only"><label>Connector Impedance</label><input type="text" id="simp" list="dl-simp" placeholder="e.g. Differential 85Ω"></div>
                     <div class="form-group sim-only"><label>Port Setup</label><input type="text" id="sport"></div>
+                    <div class="form-group sim-only"><label>Port Direction</label><input type="text" id="sdir" placeholder="e.g. Odd-Even"></div>
+                    <div class="form-group sim-only"><label>3D Model File</label><input type="text" id="s3d" placeholder="e.g. pcie6-smt-164pin.stp"></div>
+                    <div class="form-group sim-only"><label>sNp File</label><input type="text" id="ssnp" placeholder="e.g. PCIe6_CEM_IM_v9_2.s28p"></div>
                     <div class="form-group full-width sim-only"><label>Material / Stackup</label><input type="text" id="smat"></div>
                 </div>
             </section>
 
+            <!-- SIM 專屬: Geometry & Requirements (新增) -->
+            <section id="sec-geom" class="sim-only">
+                <h2 class="section-header">Geometry & Requirements</h2>
+                <p style="font-size:0.875rem; color:var(--text-muted); margin-top:-16px;">Please upload or paste your 3D Geometry, PCB Stack-up, and Specification Requirement images here.</p>
+                <div class="upload-zone" onclick="document.getElementById('img_upload_geom').click()">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                    <span>Click here to upload Geometry & Spec images</span>
+                    <input type="file" id="img_upload_geom" accept="image/*" multiple>
+                </div>
+                <div id="img_geom_container" class="chart-list"></div>
+            </section>
+
             <section id="sec-spec" class="sim-only">
-                <h2 class="section-header">Specifications <button type="button" class="btn btn-outline" onclick="addRow()">Add Row</button></h2>
+                <h2 class="section-header">Specifications (Text Table) <button type="button" class="btn btn-outline" onclick="addRow()">Add Row</button></h2>
+                <p style="font-size:0.875rem; color:var(--text-muted); margin-top:-16px;">Optional: If you already uploaded Spec images above, you can leave this empty and it will be hidden.</p>
                 <table class="spec-table">
                     <thead><tr><th>Item</th><th>Spec / Condition</th><th>Result</th><th>Margin</th><th>Status</th><th>Remark</th><th style="width: 40px;"></th></tr></thead>
                     <tbody id="specTableBody"></tbody>
@@ -271,7 +279,7 @@
             <section id="sec-equip" class="test-only">
                 <h2 class="section-header">Test Equipments Information <button type="button" class="btn btn-outline" onclick="addEquipRow()">Add Row</button></h2>
                 <table class="spec-table">
-                    <thead><tr><th>ID</th><th>Instrument</th><th>Instrumentation and software</th><th>Manufacture</th><th style="width: 40px;"></th></tr></thead>
+                    <thead><tr><th>ID</th><th>Instrument</th><th>Description with Instrumentation and software</th><th>Manufacture</th><th style="width: 40px;"></th></tr></thead>
                     <tbody id="equipTableBody"></tbody>
                 </table>
             </section>
@@ -293,7 +301,7 @@
             </section>
             
             <section id="sec-meas-matrix" class="test-only">
-                <h2 class="section-header">TX / RX Data Matrix<button type="button" class="btn btn-outline" onclick="addMatrixRow()">Add Row</button></h2>
+                <h2 class="section-header">TX / RX Data Matrix (Optional) <button type="button" class="btn btn-outline" onclick="addMatrixRow()">Add Row</button></h2>
                 <p style="font-size:0.875rem; color:var(--text-muted); margin-top:-16px;">You can manually input data here, or skip this and paste Excel charts below.</p>
                 <div style="overflow-x: auto;">
                     <table class="spec-table" style="min-width: 700px;">
@@ -304,11 +312,11 @@
             </section>
 
             <section id="sec-chart">
-                <h2 class="section-header">Charts & Data</h2>
-                <div class="sop-alert"><strong>圖片擺放順序建議：</strong> 1. IL (Insertion Loss) ➔ 2. RL (Return Loss) ➔ 3. NEXT ➔ 4. FEXT ➔ 5. COM。請盡量依此順序貼上截圖。</div>
+                <h2 class="section-header" id="header-chart">Simulation Results</h2>
+                <div class="sop-alert"><strong>💡 SOP 圖片擺放順序建議：</strong> 1. IL (Insertion Loss) ➔ 2. RL (Return Loss) ➔ 3. NEXT ➔ 4. FEXT ➔ 5. COM。請盡量依此順序貼上截圖。</div>
                 <div class="upload-zone" onclick="document.getElementById('img_upload').click()">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
-                    <span>Click here or <b style="color:var(--primary);">Press Ctrl+V anywhere</b> to paste chart</span>
+                    <span>Click here or <b style="color:var(--primary);">Press Ctrl+V anywhere</b> to paste Results chart</span>
                     <div class="upload-zone-hint">Support standard image formats & direct clipboard paste</div>
                     <input type="file" id="img_upload" accept="image/*" multiple>
                 </div>
@@ -317,7 +325,7 @@
 
             <section id="sec-conc">
                 <h2 class="section-header">Conclusion</h2>
-                <div class="form-group" style="margin-bottom: 20px;"><label>Summary</label><textarea id="c_conc" placeholder="Supports line breaks..."></textarea></div>
+                <div class="form-group" style="margin-bottom: 20px;"><label>Summary</label><textarea id="c_conc" placeholder="Supports line breaks... e.g. All of the s-parameters meets the PCIe Gen6 spec."></textarea></div>
                 <div class="form-group"><label>Next Steps</label><textarea id="c_next"></textarea></div>
             </section>
         </div>
@@ -372,11 +380,13 @@
             
             document.body.setAttribute('data-role', role);
             
-            document.getElementById('lbl-rev').innerText = isSim ? 'Version / Revision' : 'Specification Standard';
+            document.getElementById('lbl-rev').innerText = isSim ? 'Version / Specification Standard' : 'Specification Standard';
             document.getElementById('lbl-soft').innerText = isSim ? 'Software' : 'VNA Model';
             document.getElementById('lbl-solver').innerText = isSim ? 'Solver' : 'Fixture';
             document.getElementById('lbl-freq').innerText = isSim ? 'Frequency Range' : 'Calibration';
             
+            document.getElementById('header-chart').innerText = isSim ? 'Simulation Results' : 'Charts & Data';
+            document.getElementById('nav-chart').innerHTML = `<svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"></path></svg> ${isSim ? 'Simulation Results' : 'Charts & Data'}`;
             saveDraft();
         }
 
@@ -396,7 +406,7 @@
 
         function updateHistoryData() {
             let history = JSON.parse(localStorage.getItem('jpc_autocomplete') || '{}');
-            const trackIds = ['pname', 'pclient', 'powner', 'pchecker', 'ssoft', 'ssolver', 'sfreq'];
+            const trackIds = ['pname', 'pclient', 'powner', 'pchecker', 'ssoft', 'ssolver', 'sfreq', 'sstep', 'simp'];
             
             trackIds.forEach(id => {
                 const val = document.getElementById(id).value.trim();
@@ -506,7 +516,8 @@
             }
         }
 
-        function appendChartCard(imgSrc) {
+        function appendChartCard(imgSrc, containerId) {
+            let phTitle = containerId === 'img_geom_container' ? 'e.g. 3D Geometry' : 'e.g. Insertion Loss';
             const html = `
                 <div class="chart-card">
                     <div class="chart-controls">
@@ -517,25 +528,37 @@
                     <img src="${imgSrc}" class="chart-img-preview" alt="Chart">
                     <div class="chart-content">
                         <label>Chart Title (Auto-numbered):</label>
-                        <input type="text" class="chart-title-input" placeholder="e.g. Insertion Loss">
+                        <input type="text" class="chart-title-input" placeholder="${phTitle}">
                         <label>Description:</label>
-                        <textarea class="chart-desc-input" placeholder="Enter chart details..."></textarea>
+                        <textarea class="chart-desc-input" placeholder="Enter details..."></textarea>
                     </div>
                 </div>
             `;
-            document.getElementById('img_charts_container').insertAdjacentHTML('beforeend', html);
+            document.getElementById(containerId).insertAdjacentHTML('beforeend', html);
             saveDraft();
         }
 
-        document.getElementById('img_upload').addEventListener('change', function(event) {
+        // Geometry File Input
+        document.getElementById('img_upload_geom').addEventListener('change', function(event) {
             Array.from(event.target.files).forEach((file) => {
                 const reader = new FileReader();
-                reader.onload = function(e) { appendChartCard(e.target.result); }
+                reader.onload = function(e) { appendChartCard(e.target.result, 'img_geom_container'); }
                 reader.readAsDataURL(file);
             });
             event.target.value = '';
         });
 
+        // Results File Input
+        document.getElementById('img_upload').addEventListener('change', function(event) {
+            Array.from(event.target.files).forEach((file) => {
+                const reader = new FileReader();
+                reader.onload = function(e) { appendChartCard(e.target.result, 'img_charts_container'); }
+                reader.readAsDataURL(file);
+            });
+            event.target.value = '';
+        });
+
+        // 全局 Ctrl+V 貼上圖表 (預設放在 Results)
         window.addEventListener('paste', function(e) {
             const activeTag = document.activeElement.tagName.toLowerCase();
             if (activeTag === 'input' || activeTag === 'textarea') return;
@@ -547,7 +570,7 @@
                     const blob = item.getAsFile();
                     const reader = new FileReader();
                     reader.onload = function(event) {
-                        appendChartCard(event.target.result);
+                        appendChartCard(event.target.result, 'img_charts_container');
                         scrollToSection('sec-chart'); 
                     };
                     reader.readAsDataURL(blob);
@@ -632,7 +655,7 @@
         document.addEventListener('change', (e) => { if(['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName)) saveDraft(); });
         window.onload = loadDraft;
 
-        // ====== 報告統一預覽與生成 ======
+        // ====== 報告預覽與生成 ======
         let isPreview = false;
         
         function getConfidentialityConfig() {
@@ -675,7 +698,6 @@
             return html;
         }
 
-        // 大一統 CSS (Sim 與 Meas 共用這套現代化排版)
         const sharedReportCSS = `
             .rpt-wrapper { font-family: 'Inter', sans-serif; color: #111; line-height: 1.6; background: #fff;}
             .rpt-watermark-bg { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background-repeat: repeat; z-index: 0; pointer-events: none; }
@@ -739,7 +761,6 @@
             const confCfg = getConfidentialityConfig();
             const watermarkSVG = confCfg.text ? `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="350" height="350"><text x="20" y="175" transform="rotate(-35 175 175)" fill="${confCfg.color}" font-family="Arial" font-size="24" font-weight="bold">${confCfg.text}</text></svg>` : '';
             
-            // 動態生成 CSS 字串 (包含浮水印背景)
             let finalCSS = sharedReportCSS;
             if(!confCfg.text) {
                 finalCSS += `\n.rpt-watermark-bg { display: none; }`;
@@ -747,22 +768,33 @@
                 finalCSS += `\n.rpt-watermark-bg { background-image: url('${watermarkSVG}'); }`;
             }
 
-            let chartsHTML = '';
             let chartIndex = 1;
-            document.querySelectorAll(`.chart-card`).forEach(item => {
+
+            // Geometry 區圖表
+            let geomHTML = '';
+            document.querySelectorAll(`#img_geom_container .chart-card`).forEach(item => {
                 const imgSrc = item.querySelector('img').src;
                 const title = escapeHTML(item.querySelector('.chart-title-input').value.trim());
                 const desc = escapeHTML(item.querySelector('.chart-desc-input').value.trim());
-                
+                geomHTML += `
+                    <div class="rpt-chart-wrapper">
+                        ${title ? `<div class="rpt-chart-title">Figure ${chartIndex}: ${title}</div>` : `<div class="rpt-chart-title">Figure ${chartIndex}</div>`}
+                        <div class="rpt-chart-box"><img src="${imgSrc}" class="rpt-chart-img">${desc ? `<div class="rpt-chart-desc">${desc}</div>` : ''}</div>
+                    </div>`;
+                chartIndex++;
+            });
+
+            // Results 區圖表
+            let chartsHTML = '';
+            document.querySelectorAll(`#img_charts_container .chart-card`).forEach(item => {
+                const imgSrc = item.querySelector('img').src;
+                const title = escapeHTML(item.querySelector('.chart-title-input').value.trim());
+                const desc = escapeHTML(item.querySelector('.chart-desc-input').value.trim());
                 chartsHTML += `
                     <div class="rpt-chart-wrapper">
                         ${title ? `<div class="rpt-chart-title">Figure ${chartIndex}: ${title}</div>` : `<div class="rpt-chart-title">Figure ${chartIndex}</div>`}
-                        <div class="rpt-chart-box">
-                            <img src="${imgSrc}" class="rpt-chart-img">
-                            ${desc ? `<div class="rpt-chart-desc">${desc}</div>` : ''}
-                        </div>
-                    </div>
-                `;
+                        <div class="rpt-chart-box"><img src="${imgSrc}" class="rpt-chart-img">${desc ? `<div class="rpt-chart-desc">${desc}</div>` : ''}</div>
+                    </div>`;
                 chartIndex++;
             });
 
@@ -776,11 +808,10 @@
                     <div class="rpt-cover-subtitle">${isSim ? 'Simulation' : 'SI Measurement'} Analysis Report</div>
                     <div class="rpt-cover-info">`;
 
-            // 封面資訊 (依據角色調整欄位)
             if (isSim) {
                 outHtml += `
                     <div class="rpt-cover-row"><span class="rpt-cover-label">Date</span><span class="rpt-cover-val">${escapeHTML(getValAlways('pdate'))}</span></div>
-                    <div class="rpt-cover-row"><span class="rpt-cover-label">Version / Stage</span><span class="rpt-cover-val">${escapeHTML(getValAlways('prev'))}</span></div>
+                    <div class="rpt-cover-row"><span class="rpt-cover-label">Version / Std.</span><span class="rpt-cover-val">${escapeHTML(getValAlways('prev'))}</span></div>
                     <div class="rpt-cover-row"><span class="rpt-cover-label">Prepared by</span><span class="rpt-cover-val">${escapeHTML(getValAlways('powner'))}</span></div>
                     <div class="rpt-cover-row"><span class="rpt-cover-label">Approved by</span><span class="rpt-cover-val">${escapeHTML(getValAlways('pchecker'))}</span></div>
                 `;
@@ -793,41 +824,63 @@
                     <div class="rpt-cover-row"><span class="rpt-cover-label">Approved by</span><span class="rpt-cover-val">${escapeHTML(getValAlways('pchecker'))}</span></div>
                 `;
             }
-            outHtml += `</div></div>`; // 結束封面區塊
+            outHtml += `</div></div><div class="page-break"></div>`;
 
-            let secIndex = 1; // 統一自動編號
+            let secIndex = 1; 
+
+            // ===================================
+            // 獨立提取 Purpose 區塊 (Simulation Only)
+            // ===================================
+            let purposeText = getVal('ppurpose');
+            if(isSim && purposeText) {
+                outHtml += `
+                <div class="rpt-section">
+                    <div class="rpt-title">${secIndex++}. Purpose</div>
+                    <div class="rpt-box">${escapeHTML(purposeText)}</div>
+                </div>`;
+            }
+
+            // ===================================
+            // Project Information
+            // ===================================
+            outHtml += `
+            <div class="rpt-section">
+                <div class="rpt-title">${secIndex++}. Project Information</div>
+                <div class="rpt-grid">
+                    <div class="rpt-key">Project Name</div><div>${pName}</div>
+                    <div class="rpt-key">Client / Internal</div><div>${escapeHTML(getValAlways('pclient'))}</div>
+                    <div class="rpt-key">DUT / Sample ID</div><div>${escapeHTML(getValAlways('pdut'))}</div>
+                    ${(!isSim && purposeText) ? `<div class="rpt-key">Objective</div><div>${escapeHTML(purposeText)}</div>` : ''}
+                </div>
+            </div>`;
 
             if (isSim) {
                 // =============== SIMULATION 內容 ===============
-                outHtml += `<div class="page-break"></div>`;
-                outHtml += `
-                <div class="rpt-section">
-                    <div class="rpt-title">${secIndex++}. Project Information</div>
-                    <div class="rpt-grid">
-                        <div class="rpt-key">Project Name</div><div>${pName}</div>
-                        <div class="rpt-key">Client / Internal</div><div>${escapeHTML(getValAlways('pclient'))}</div>
-                        <div class="rpt-key">DUT / Sample ID</div><div>${escapeHTML(getValAlways('pdut'))}</div>
-                        <div class="rpt-key">Objective</div><div>${escapeHTML(getValAlways('ppurpose'))}</div>
-                    </div>
-                </div>`;
-
                 let setupGrid = '';
-                const ssoft = getVal('ssoft'), ssolver = getVal('ssolver'), sfreq = getVal('sfreq'), sport = getVal('sport'), smat = getVal('smat');
-                if(ssoft) setupGrid += `<div class="rpt-key">Software</div><div>${escapeHTML(ssoft)}</div>`;
-                if(ssolver) setupGrid += `<div class="rpt-key">Solver</div><div>${escapeHTML(ssolver)}</div>`;
-                if(sfreq) setupGrid += `<div class="rpt-key">Frequency Range</div><div>${escapeHTML(sfreq)}</div>`;
-                if(sport) setupGrid += `<div class="rpt-key">Port Setup</div><div>${escapeHTML(sport)}</div>`;
-                if(smat) setupGrid += `<div class="rpt-key">Material / Stackup</div><div>${escapeHTML(smat)}</div>`;
+                const fields = [
+                    { id: 'ssoft', label: 'Software' }, { id: 'ssolver', label: 'Solver' }, { id: 'sfreq', label: 'Frequency Range' },
+                    { id: 'sstep', label: 'Sweep Step' }, { id: 'simp', label: 'Connector Impedance' }, { id: 'sport', label: 'Port Setup' },
+                    { id: 'sdir', label: 'Port Direction' }, { id: 's3d', label: '3D Model File' }, { id: 'ssnp', label: 'sNp File' },
+                    { id: 'smat', label: 'Material / Stackup' }
+                ];
+                fields.forEach(f => {
+                    const v = getVal(f.id);
+                    if(v) setupGrid += `<div class="rpt-key">${f.label}</div><div>${escapeHTML(v)}</div>`;
+                });
 
                 if(setupGrid) {
-                    outHtml += `<div class="rpt-section"><div class="rpt-title">${secIndex++}. Simulation Setup</div><div class="rpt-grid">${setupGrid}</div></div>`;
+                    outHtml += `<div class="rpt-section"><div class="rpt-title">${secIndex++}. Product & Environment Setup</div><div class="rpt-grid">${setupGrid}</div></div>`;
+                }
+
+                if (geomHTML) {
+                    outHtml += `<div class="page-break"></div><div class="rpt-section"><div class="rpt-title">${secIndex++}. Geometry & Requirements</div>${geomHTML}</div>`;
                 }
 
                 let specTableHTML = buildTableHTML('save-target');
                 if (specTableHTML) {
                     outHtml += `
                     <div class="rpt-section">
-                        <div class="rpt-title">${secIndex++}. Specifications & Results</div>
+                        <div class="rpt-title">${secIndex++}. Specifications (Text Table)</div>
                         <table class="rpt-table"><tr><th>Item</th><th>Spec / Condition</th><th>Result</th><th>Margin</th><th>Status</th><th>Remark</th></tr>${specTableHTML}</table>
                     </div>`;
                 }
@@ -839,31 +892,12 @@
                 let sumHtml = buildTableHTML('save-t-sum');
                 let matrixHtml = buildTableHTML('save-t-mat');
 
-                if(equipHtml || dutHtml || sumHtml || matrixHtml || chartsHTML) {
-                    outHtml += `<div class="page-break"></div>`;
-                }
+                if(equipHtml || dutHtml || sumHtml || matrixHtml) { outHtml += `<div class="page-break"></div>`; }
 
-                if (equipHtml) {
-                    outHtml += `
-                    <div class="rpt-section">
-                        <div class="rpt-title">${secIndex++}. Test Equipments Information</div>
-                        <table class="rpt-table"><tr><th>ID</th><th>Instrument</th><th>Description with Instrumentation and software</th><th>Manufacture</th></tr>${equipHtml}</table>
-                    </div>`;
-                }
-                if (dutHtml) {
-                    outHtml += `
-                    <div class="rpt-section">
-                        <div class="rpt-title">${secIndex++}. Device Under Test (DUT) Information</div>
-                        <table class="rpt-table"><tr><th>Property Name</th><th>Value</th><th>Property Name</th><th>Value</th></tr>${dutHtml}</table>
-                    </div>`;
-                }
-                if (sumHtml) {
-                    outHtml += `
-                    <div class="rpt-section">
-                        <div class="rpt-title">${secIndex++}. Summary of Results</div>
-                        <table class="rpt-table"><tr><th style="width:80%;">Item</th><th>Test Result</th></tr>${sumHtml}</table>
-                    </div>`;
-                }
+                if (equipHtml) outHtml += `<div class="rpt-section"><div class="rpt-title">${secIndex++}. Test Equipments Information</div><table class="rpt-table"><tr><th>ID</th><th>Instrument</th><th>Description with Instrumentation and software</th><th>Manufacture</th></tr>${equipHtml}</table></div>`;
+                if (dutHtml) outHtml += `<div class="rpt-section"><div class="rpt-title">${secIndex++}. Device Under Test (DUT) Information</div><table class="rpt-table"><tr><th>Property Name</th><th>Value</th><th>Property Name</th><th>Value</th></tr>${dutHtml}</table></div>`;
+                if (sumHtml) outHtml += `<div class="rpt-section"><div class="rpt-title">${secIndex++}. Summary of Results</div><table class="rpt-table"><tr><th style="width:80%;">Item</th><th>Test Result</th></tr>${sumHtml}</table></div>`;
+                
                 if (matrixHtml) {
                     outHtml += `
                     <div class="page-break"></div>
@@ -881,30 +915,17 @@
 
             // =============== 共通結尾 (Charts & Conclusion) ===============
             if (chartsHTML) {
-                outHtml += `
-                <div class="page-break"></div>
-                <div class="rpt-section">
-                    <div class="rpt-title">${secIndex++}. Charts & Data</div>
-                    ${chartsHTML}
-                </div>`;
+                outHtml += `<div class="page-break"></div><div class="rpt-section"><div class="rpt-title">${secIndex++}. ${isSim ? 'Simulation Results' : 'Charts & Data'}</div>${chartsHTML}</div>`;
             }
             
             let concText = getVal('c_conc');
             if (concText) {
-                outHtml += `
-                <div class="rpt-section" style="page-break-before: auto;">
-                    <div class="rpt-title">${secIndex++}. Conclusion</div>
-                    <div class="rpt-box">${escapeHTML(concText)}</div>
-                </div>`;
+                outHtml += `<div class="rpt-section" style="page-break-before: auto;"><div class="rpt-title">${secIndex++}. Conclusion</div><div class="rpt-box">${escapeHTML(concText)}</div></div>`;
             }
             
             let nextText = getVal('c_next');
             if (nextText) {
-                outHtml += `
-                <div class="rpt-section">
-                    <div class="rpt-title">${secIndex++}. Next Steps</div>
-                    <div class="rpt-box">${escapeHTML(nextText)}</div>
-                </div>`;
+                outHtml += `<div class="rpt-section"><div class="rpt-title">${secIndex++}. Next Steps</div><div class="rpt-box">${escapeHTML(nextText)}</div></div>`;
             }
 
             outHtml += `${confCfg.footer ? `<div class="rpt-footer-text">${confCfg.footer}</div>` : ''}</div>`;
