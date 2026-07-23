@@ -49,7 +49,7 @@
             transition: background-color 0.3s ease, color 0.3s ease;
         }
 
-        /* 雙角色 UI 切換邏輯：非當前角色的元素一律強制隱藏 (修復排版跑版問題) */
+        /* 雙角色 UI 切換邏輯：非當前角色的元素一律強制隱藏 */
         body[data-role="sim"] .test-only { display: none !important; }
         body[data-role="test"] .sim-only { display: none !important; }
 
@@ -186,22 +186,11 @@
 </head>
 <body data-role="sim">
 
-    <!-- 用來記憶自動填寫歷史紀錄的 DataLists -->
-    <datalist id="dl-pname"></datalist>
-    <datalist id="dl-pclient"></datalist>
-    <datalist id="dl-powner"></datalist>
-    <datalist id="dl-pchecker"></datalist>
-    <datalist id="dl-ssoft"></datalist>
-    <datalist id="dl-ssolver"></datalist>
-    <datalist id="dl-sfreq"></datalist>
-    <datalist id="dl-spec-item"></datalist>
+    <datalist id="dl-pname"></datalist><datalist id="dl-pclient"></datalist><datalist id="dl-powner"></datalist><datalist id="dl-pchecker"></datalist>
+    <datalist id="dl-ssoft"></datalist><datalist id="dl-ssolver"></datalist><datalist id="dl-sfreq"></datalist><datalist id="dl-spec-item"></datalist>
 
-    <!-- ====== Sidebar (導覽列) ====== -->
     <aside id="sidebar" class="no-print">
-        <div class="brand-logo">
-            <img src="jpc logo.png" alt="JPC Logo">
-        </div>
-
+        <div class="brand-logo"><img src="jpc logo.png" alt="JPC Logo"></div>
         <div class="role-selector-wrapper">
             <div class="role-label">Engineering Role</div>
             <div class="segmented-control">
@@ -222,63 +211,29 @@
 
         <div class="role-label">Navigation</div>
         <nav class="nav-menu">
-            <!-- 共通 -->
-            <a class="nav-link active" onclick="scrollToSection('sec-info')">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                Project Info
-            </a>
+            <a class="nav-link active" onclick="scrollToSection('sec-info')"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg> Project Info</a>
             
             <!-- SIM 專屬 -->
-            <a class="nav-link sim-only" onclick="scrollToSection('sec-setup')">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path></svg>
-                Environment Setup
-            </a>
-            <a class="nav-link sim-only" onclick="scrollToSection('sec-spec')">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
-                Specifications
-            </a>
+            <a class="nav-link sim-only" onclick="scrollToSection('sec-setup')"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path></svg> Environment Setup</a>
+            <a class="nav-link sim-only" onclick="scrollToSection('sec-spec')"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg> Specifications</a>
 
             <!-- TEST 專屬 -->
-            <a class="nav-link test-only" onclick="scrollToSection('sec-equip')">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                Test Equipments
-            </a>
-            <a class="nav-link test-only" onclick="scrollToSection('sec-dut')">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"></path></svg>
-                DUT Information
-            </a>
-            <a class="nav-link test-only" onclick="scrollToSection('sec-summary')">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
-                Summary & Matrix
-            </a>
+            <a class="nav-link test-only" onclick="scrollToSection('sec-equip')"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg> Test Equipments</a>
+            <a class="nav-link test-only" onclick="scrollToSection('sec-dut')"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"></path></svg> DUT Information</a>
+            <a class="nav-link test-only" onclick="scrollToSection('sec-summary')"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg> Summary & Matrix</a>
 
-            <!-- 共通 -->
-            <a class="nav-link" onclick="scrollToSection('sec-chart')">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"></path></svg>
-                Charts & Data
-            </a>
-            <a class="nav-link" onclick="scrollToSection('sec-conc')">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                Conclusion
-            </a>
+            <a class="nav-link" onclick="scrollToSection('sec-chart')"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"></path></svg> Charts & Data</a>
+            <a class="nav-link" onclick="scrollToSection('sec-conc')"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> Conclusion</a>
         </nav>
 
         <div class="nav-action">
-            <a class="nav-link btn-theme" onclick="toggleTheme()">
-                <span id="theme-icon"></span>
-                <span id="theme-text">Dark Mode</span>
-            </a>
-            <a class="nav-link btn-preview" onclick="togglePreviewMode()">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
-                Preview & Export
-            </a>
+            <a class="nav-link btn-theme" onclick="toggleTheme()"><span id="theme-icon"></span><span id="theme-text">Dark Mode</span></a>
+            <a class="nav-link btn-preview" onclick="togglePreviewMode()"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg> Preview & Export</a>
         </div>
     </aside>
 
-    <!-- ====== Main Content (工作區) ====== -->
     <main id="main-content">
         <div id="edit-workspace" class="workspace">
-            <!-- 共通 -->
             <section id="sec-info">
                 <h2 class="section-header">Project Information</h2>
                 <div class="grid-2">
@@ -294,7 +249,6 @@
                 </div>
             </section>
 
-            <!-- SIM 專屬 -->
             <section id="sec-setup" class="sim-only">
                 <h2 class="section-header">Environment Setup</h2>
                 <div class="grid-2">
@@ -306,24 +260,14 @@
                 </div>
             </section>
 
-            <!-- SIM 專屬 -->
             <section id="sec-spec" class="sim-only">
-                <h2 class="section-header">
-                    Specifications
-                    <button type="button" class="btn btn-outline" onclick="addRow()">
-                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-                        Add Row
-                    </button>
-                </h2>
+                <h2 class="section-header">Specifications <button type="button" class="btn btn-outline" onclick="addRow()">Add Row</button></h2>
                 <table class="spec-table">
-                    <thead><tr>
-                        <th>Item</th><th>Spec / Condition</th><th>Result</th><th>Margin</th><th>Status</th><th>Remark</th><th style="width: 40px;"></th>
-                    </tr></thead>
+                    <thead><tr><th>Item</th><th>Spec / Condition</th><th>Result</th><th>Margin</th><th>Status</th><th>Remark</th><th style="width: 40px;"></th></tr></thead>
                     <tbody id="specTableBody"></tbody>
                 </table>
             </section>
 
-            <!-- TEST 專屬 -->
             <section id="sec-equip" class="test-only">
                 <h2 class="section-header">Test Equipments Information <button type="button" class="btn btn-outline" onclick="addEquipRow()">Add Row</button></h2>
                 <table class="spec-table">
@@ -343,7 +287,7 @@
             <section id="sec-summary" class="test-only">
                 <h2 class="section-header">Summary of Results <button type="button" class="btn btn-outline" onclick="addSummaryRow()">Add Row</button></h2>
                 <table class="spec-table">
-                    <thead><tr><th style="width: 70%;">Item</th><th>Test Result</th><th style="width: 40px;"></th></tr></thead>
+                    <thead><tr><th style="width: 80%;">Item</th><th>Test Result</th><th style="width: 40px;"></th></tr></thead>
                     <tbody id="summaryTableBody"></tbody>
                 </table>
             </section>
@@ -359,14 +303,9 @@
                 </div>
             </section>
 
-            <!-- 共通 -->
             <section id="sec-chart">
                 <h2 class="section-header">Charts & Data</h2>
-                <!-- SOP 提示框 -->
-                <div class="sop-alert">
-                    <strong>💡 SOP 圖片擺放順序建議：</strong> 1. IL (Insertion Loss) ➔ 2. RL (Return Loss) ➔ 3. NEXT ➔ 4. FEXT ➔ 5. COM。請盡量依此順序貼上截圖。
-                </div>
-
+                <div class="sop-alert"><strong>💡 SOP 圖片擺放順序建議：</strong> 1. IL (Insertion Loss) ➔ 2. RL (Return Loss) ➔ 3. NEXT ➔ 4. FEXT ➔ 5. COM。請盡量依此順序貼上截圖。</div>
                 <div class="upload-zone" onclick="document.getElementById('img_upload').click()">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
                     <span>Click here or <b style="color:var(--primary);">Press Ctrl+V anywhere</b> to paste chart</span>
@@ -383,22 +322,12 @@
             </section>
         </div>
 
-        <!-- 報告預覽區 -->
         <div id="preview-workspace">
             <div class="preview-toolbar">
-                <button class="btn btn-outline" onclick="togglePreviewMode()">
-                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
-                    Back to Edit
-                </button>
+                <button class="btn btn-outline" onclick="togglePreviewMode()"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg> Back to Edit</button>
                 <div style="display: flex; gap: 12px;">
-                    <button class="btn btn-outline" onclick="downloadReportHTML()">
-                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-                        Export HTML
-                    </button>
-                    <button class="btn btn-primary" onclick="window.print()">
-                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
-                        Print / PDF
-                    </button>
+                    <button class="btn btn-outline" onclick="downloadReportHTML()"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg> Export HTML</button>
+                    <button class="btn btn-primary" onclick="window.print()"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg> Print / PDF</button>
                 </div>
             </div>
             <div id="report-render-area"></div>
@@ -414,7 +343,6 @@
 
         document.getElementById('pdate').value = new Date().toISOString().split('T')[0];
         
-        // ====== 暗黑模式邏輯 ======
         let isDarkMode = false;
         function toggleTheme() {
             isDarkMode = !isDarkMode;
@@ -433,7 +361,6 @@
             }
         }
 
-        // ====== 角色切換 ======
         function switchRole(roleOverride) {
             const roleInput = document.getElementById('role-selector');
             if(roleOverride) { roleInput.value = roleOverride; }
@@ -453,7 +380,6 @@
             saveDraft();
         }
 
-        // ====== ScrollSpy ======
         const mainContent = document.getElementById('main-content');
         const sections = document.querySelectorAll('section');
         const navLinks = document.querySelectorAll('.nav-menu .nav-link');
@@ -468,7 +394,6 @@
             });
         });
 
-        // ====== 智慧歷史選單 ======
         function updateHistoryData() {
             let history = JSON.parse(localStorage.getItem('jpc_autocomplete') || '{}');
             const trackIds = ['pname', 'pclient', 'powner', 'pchecker', 'ssoft', 'ssolver', 'sfreq'];
@@ -505,7 +430,6 @@
             });
         }
 
-        // ====== 動態表格生成工具 ======
         function insertRowHTML(tbodyId, colsHTML) {
             const tr = document.createElement('tr');
             tr.innerHTML = colsHTML + `<td style="text-align:right;"><button type="button" class="btn-icon danger" onclick="this.closest('tr').remove(); saveDraft();">${iconTrash}</button></td>`;
@@ -582,7 +506,6 @@
             }
         }
 
-        // ====== 圖表與全局 Ctrl+V 貼上功能 ======
         function appendChartCard(imgSrc) {
             const html = `
                 <div class="chart-card">
@@ -637,7 +560,6 @@
         function moveUp(btn) { let item = btn.closest('.chart-card'); if(item.previousElementSibling) item.parentNode.insertBefore(item, item.previousElementSibling); saveDraft();}
         function moveDown(btn) { let item = btn.closest('.chart-card'); if(item.nextElementSibling) item.parentNode.insertBefore(item.nextElementSibling, item); saveDraft();}
 
-        // ====== 草稿儲存 ======
         window.addEventListener('beforeunload', (e) => { e.preventDefault(); e.returnValue = ''; });
         function saveDraft() {
             const data = { 
@@ -710,7 +632,7 @@
         document.addEventListener('change', (e) => { if(['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName)) saveDraft(); });
         window.onload = loadDraft;
 
-        // ====== 報告預覽與生成 (智慧隱藏邏輯) ======
+        // ====== 報告統一預覽與生成 ======
         let isPreview = false;
         
         function getConfidentialityConfig() {
@@ -732,7 +654,6 @@
             if (isPreview) { generateReportHTML(); document.getElementById('main-content').scrollTop = 0; }
         }
 
-        // 建立表格 HTML，若全空則回傳空字串 (以利系統隱藏該區塊)
         function buildTableHTML(cls) {
             let html = '';
             document.querySelectorAll(`tr`).forEach(tr => {
@@ -754,19 +675,78 @@
             return html;
         }
 
+        // 大一統 CSS (Sim 與 Meas 共用這套現代化排版)
+        const sharedReportCSS = `
+            .rpt-wrapper { font-family: 'Inter', sans-serif; color: #111; line-height: 1.6; background: #fff;}
+            .rpt-watermark-bg { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background-repeat: repeat; z-index: 0; pointer-events: none; }
+            .rpt-content { position: relative; z-index: 1; padding: 40px 60px; min-height: 100vh;}
+            
+            .rpt-cover { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 85vh; text-align: center; }
+            .rpt-cover-logo { width: 320px; height: auto; margin-bottom: 40px; }
+            .rpt-cover-title { font-size: 2.5rem; font-weight: 800; color: #000; margin: 0 0 10px 0; word-break: break-word; }
+            .rpt-cover-subtitle { font-size: 1.25rem; font-weight: 500; color: #d10001; margin-bottom: 60px; letter-spacing: 1px;}
+            
+            .rpt-cover-info { width: 100%; max-width: 500px; text-align: left; background: #fdfdfd; border: 1px solid #e9e5e0; border-radius: 8px; padding: 30px 40px;}
+            .rpt-cover-row { display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 1rem; border-bottom: 1px dashed #eee; padding-bottom: 8px;}
+            .rpt-cover-row:last-child { border: none; margin-bottom: 0; padding-bottom: 0;}
+            .rpt-cover-label { font-weight: 600; color: #555; }
+            .rpt-cover-val { font-weight: 700; color: #111; text-align: right;}
+
+            .rpt-section { page-break-inside: avoid; margin-bottom: 40px; background: #fff;}
+            .rpt-title { font-size: 1.25rem; color: #d10001; border-bottom: 2px solid #d10001; padding-bottom: 8px; margin-bottom: 20px; font-weight: 700;}
+            .rpt-grid { display: grid; grid-template-columns: minmax(140px, 160px) 1fr; row-gap: 12px; font-size: 0.95rem; margin-bottom: 12px; word-break: break-word; }
+            .rpt-key { font-weight: 600; color: #555; }
+            
+            .rpt-table { width: 100%; border-collapse: collapse; font-size: 0.95rem; margin-top: 12px; }
+            .rpt-table th { background-color: #f6f5f4; font-weight: 700; padding: 12px; text-align: left; border: 1px solid #e9e5e0; border-bottom: 2px solid #ccc;}
+            .rpt-table td { padding: 12px; border: 1px solid #e9e5e0; word-break: break-word; }
+            .rpt-table tr:nth-child(even) { background-color: #fafafa; }
+            
+            .status-pass { color: #16a34a; font-weight: 800; }
+            .status-fail { color: #dc2626; font-weight: 800; }
+            
+            .rpt-box { border: 1px solid #e9e5e0; border-radius: 8px; padding: 16px 20px; font-size: 0.95rem; background-color: #fafafa; min-height: 20px; }
+            
+            .rpt-chart-wrapper { margin-top: 30px; page-break-inside: avoid; text-align: center; }
+            .rpt-chart-title { font-size: 0.95rem; color: #666; font-style: italic; margin-bottom: 12px; font-weight: 600;}
+            .rpt-chart-box { border: 1px solid #e9e5e0; border-radius: 8px; overflow: hidden; display: inline-block; max-width: 100%; background: #fff;}
+            .rpt-chart-img { max-width: 100%; max-height: 40vh; display: block; margin: 0 auto; border-bottom: 1px solid #e9e5e0;}
+            .rpt-chart-desc { font-size: 0.95rem; color: #333; text-align: left; background: #fafafa; padding: 16px 20px; line-height: 1.5; }
+            
+            .page-break { page-break-before: always; break-before: page; }
+            .rpt-footer-text { text-align: center; font-size: 0.75rem; color: #999; margin-top: 50px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;}
+            
+            @media print { 
+                .rpt-content { padding: 0; }
+                .rpt-table th { -webkit-print-color-adjust: exact; print-color-adjust: exact; background-color: #f6f5f4 !important; }
+                .rpt-table tr:nth-child(even) { -webkit-print-color-adjust: exact; print-color-adjust: exact; background-color: #fafafa !important; }
+                .rpt-chart-desc { -webkit-print-color-adjust: exact; print-color-adjust: exact; background-color: #fafafa !important; }
+                .rpt-watermark-bg { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+                .print-fixed-footer { position: fixed; bottom: 0; left: 0; width: 100%; text-align: center; font-size: 0.75rem; color: #999; font-weight: 600; padding: 10px 0; background: #fff;}
+                .rpt-footer-text { display: none; }
+                @page { margin: 1.5cm 1.5cm 2cm 1.5cm; }
+            }
+            @media screen { .print-fixed-footer { display: none; } }
+        `;
+
         function generateReportHTML() {
             const isSim = document.getElementById('role-selector').value === 'sim';
-            // getVal：完全無資料時回傳空字串，以利隱藏判斷
             const getVal = (id) => { const val = document.getElementById(id).value.trim(); return val ? val : ""; };
-            // getValAlways：專案資訊必填欄位專用，若無資料補橫槓
             const getValAlways = (id) => { const val = document.getElementById(id).value.trim(); return val ? val : "-"; };
             const escapeHTML = (str) => str.replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/\n/g, '<br>');
 
             const pName = getValAlways('pname');
             const confCfg = getConfidentialityConfig();
             const watermarkSVG = confCfg.text ? `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="350" height="350"><text x="20" y="175" transform="rotate(-35 175 175)" fill="${confCfg.color}" font-family="Arial" font-size="24" font-weight="bold">${confCfg.text}</text></svg>` : '';
+            
+            // 動態生成 CSS 字串 (包含浮水印背景)
+            let finalCSS = sharedReportCSS;
+            if(!confCfg.text) {
+                finalCSS += `\n.rpt-watermark-bg { display: none; }`;
+            } else {
+                finalCSS += `\n.rpt-watermark-bg { background-image: url('${watermarkSVG}'); }`;
+            }
 
-            // 共用：圖片卡片生成
             let chartsHTML = '';
             let chartIndex = 1;
             document.querySelectorAll(`.chart-card`).forEach(item => {
@@ -786,112 +766,51 @@
                 chartIndex++;
             });
 
+            let outHtml = `
+            <div class="rpt-watermark-bg"></div>
+            ${confCfg.footer ? `<div class="print-fixed-footer">${confCfg.footer}</div>` : ''}
+            <div class="rpt-content">
+                <div class="rpt-cover">
+                    <img src="jpc logo.png" class="rpt-cover-logo" alt="JPC Logo">
+                    ${pName !== "-" ? `<h1 class="rpt-cover-title">${pName}</h1>` : ''}
+                    <div class="rpt-cover-subtitle">${isSim ? 'Simulation' : 'SI Measurement'} Analysis Report</div>
+                    <div class="rpt-cover-info">`;
+
+            // 封面資訊 (依據角色調整欄位)
             if (isSim) {
-                // ==========================================
-                // 模擬報告 (Simulation) 智慧隱藏與動態編號
-                // ==========================================
-                let simSecIndex = 2; // Project Info 永遠是第 1 區塊
-
-                let specTableHTML = '';
-                document.querySelectorAll(`#specTableBody tr`).forEach(tr => {
-                    const inputs = tr.querySelectorAll('.save-target');
-                    const isEmpty = Array.from(inputs).every(i => i.value.trim() === '');
-                    if(!isEmpty) {
-                        const statusVal = escapeHTML(inputs[4]?.value);
-                        let statusClass = statusVal === "Pass" ? "status-pass" : (statusVal === "Fail" ? "status-fail" : "");
-                        
-                        specTableHTML += `<tr>
-                            <td>${escapeHTML(inputs[0]?.value) || "&nbsp;"}</td><td>${escapeHTML(inputs[1]?.value) || "&nbsp;"}</td>
-                            <td>${escapeHTML(inputs[2]?.value) || "&nbsp;"}</td><td>${escapeHTML(inputs[3]?.value) || "&nbsp;"}</td>
-                            <td class="${statusClass}">${statusVal || "&nbsp;"}</td><td>${escapeHTML(inputs[5]?.value) || "&nbsp;"}</td>
-                        </tr>`;
-                    }
-                });
-
-                const reportCSS = `
-                    .rpt-wrapper { font-family: 'Inter', sans-serif; color: #111; line-height: 1.6; background: #fff;}
-                    ${confCfg.text ? `.rpt-watermark-bg { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background-image: url('${watermarkSVG}'); background-repeat: repeat; z-index: 0; pointer-events: none; }` : `.rpt-watermark-bg { display: none; }`}
-                    .rpt-content { position: relative; z-index: 1; padding: 40px 60px; min-height: 100vh;}
-                    
-                    .rpt-cover { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 85vh; text-align: center; }
-                    .rpt-cover-logo { width: 320px; height: auto; margin-bottom: 40px; }
-                    .rpt-cover-title { font-size: 2.5rem; font-weight: 800; color: #000; margin: 0 0 10px 0; word-break: break-word; }
-                    .rpt-cover-subtitle { font-size: 1.25rem; font-weight: 500; color: #d10001; margin-bottom: 60px; letter-spacing: 1px;}
-                    
-                    .rpt-cover-info { width: 100%; max-width: 500px; text-align: left; background: #fdfdfd; border: 1px solid #e9e5e0; border-radius: 8px; padding: 30px 40px;}
-                    .rpt-cover-row { display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 1rem; border-bottom: 1px dashed #eee; padding-bottom: 8px;}
-                    .rpt-cover-row:last-child { border: none; margin-bottom: 0; padding-bottom: 0;}
-                    .rpt-cover-label { font-weight: 600; color: #555; }
-                    .rpt-cover-val { font-weight: 700; color: #111; text-align: right;}
-
-                    .rpt-section { page-break-inside: avoid; margin-bottom: 40px; background: #fff;}
-                    .rpt-title { font-size: 1.25rem; color: #d10001; border-bottom: 2px solid #d10001; padding-bottom: 8px; margin-bottom: 20px; font-weight: 700;}
-                    .rpt-grid { display: grid; grid-template-columns: minmax(140px, 160px) 1fr; row-gap: 12px; font-size: 0.95rem; margin-bottom: 12px; word-break: break-word; }
-                    .rpt-key { font-weight: 600; color: #555; }
-                    
-                    .rpt-table { width: 100%; border-collapse: collapse; font-size: 0.95rem; margin-top: 12px; }
-                    .rpt-table th { background-color: #f6f5f4; font-weight: 700; padding: 12px; text-align: left; border: 1px solid #e9e5e0; border-bottom: 2px solid #ccc;}
-                    .rpt-table td { padding: 12px; border: 1px solid #e9e5e0; word-break: break-word; }
-                    .rpt-table tr:nth-child(even) { background-color: #fafafa; }
-                    
-                    .status-pass { color: #16a34a; font-weight: 800; }
-                    .status-fail { color: #dc2626; font-weight: 800; }
-                    
-                    .rpt-box { border: 1px solid #e9e5e0; border-radius: 8px; padding: 16px 20px; font-size: 0.95rem; background-color: #fafafa; min-height: 20px; }
-                    
-                    .rpt-chart-wrapper { margin-top: 30px; page-break-inside: avoid; text-align: center; }
-                    .rpt-chart-title { font-size: 0.95rem; color: #666; font-style: italic; margin-bottom: 12px; font-weight: 600;}
-                    .rpt-chart-box { border: 1px solid #e9e5e0; border-radius: 8px; overflow: hidden; display: inline-block; max-width: 100%; background: #fff;}
-                    .rpt-chart-img { max-width: 100%; max-height: 40vh; display: block; margin: 0 auto; border-bottom: 1px solid #e9e5e0;}
-                    .rpt-chart-desc { font-size: 0.95rem; color: #333; text-align: left; background: #fafafa; padding: 16px 20px; line-height: 1.5; }
-                    
-                    .page-break { page-break-before: always; break-before: page; }
-                    .rpt-footer-text { text-align: center; font-size: 0.75rem; color: #999; margin-top: 50px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;}
-                    
-                    @media print { 
-                        .rpt-content { padding: 0; }
-                        .rpt-table th { -webkit-print-color-adjust: exact; print-color-adjust: exact; background-color: #f6f5f4 !important; }
-                        .rpt-table tr:nth-child(even) { -webkit-print-color-adjust: exact; print-color-adjust: exact; background-color: #fafafa !important; }
-                        .rpt-chart-desc { -webkit-print-color-adjust: exact; print-color-adjust: exact; background-color: #fafafa !important; }
-                        .rpt-watermark-bg { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-                        .print-fixed-footer { position: fixed; bottom: 0; left: 0; width: 100%; text-align: center; font-size: 0.75rem; color: #999; font-weight: 600; padding: 10px 0; background: #fff;}
-                        .rpt-footer-text { display: none; }
-                        @page { margin: 1.5cm 1.5cm 2cm 1.5cm; }
-                    }
-                    @media screen { .print-fixed-footer { display: none; } }
-                `;
-
-                let simHtml = `
-        <div class="rpt-watermark-bg"></div>
-        ${confCfg.footer ? `<div class="print-fixed-footer">${confCfg.footer}</div>` : ''}
-
-        <div class="rpt-content">
-            <div class="rpt-cover">
-                <img src="jpc logo.png" class="rpt-cover-logo" alt="JPC Logo">
-                ${pName ? `<h1 class="rpt-cover-title">${pName}</h1>` : ''}
-                <div class="rpt-cover-subtitle">Simulation Analysis Report</div>
-                
-                <div class="rpt-cover-info">
+                outHtml += `
                     <div class="rpt-cover-row"><span class="rpt-cover-label">Date</span><span class="rpt-cover-val">${escapeHTML(getValAlways('pdate'))}</span></div>
                     <div class="rpt-cover-row"><span class="rpt-cover-label">Version / Stage</span><span class="rpt-cover-val">${escapeHTML(getValAlways('prev'))}</span></div>
                     <div class="rpt-cover-row"><span class="rpt-cover-label">Prepared by</span><span class="rpt-cover-val">${escapeHTML(getValAlways('powner'))}</span></div>
                     <div class="rpt-cover-row"><span class="rpt-cover-label">Approved by</span><span class="rpt-cover-val">${escapeHTML(getValAlways('pchecker'))}</span></div>
-                </div>
-            </div>
-            <div class="page-break"></div>
-
-            <div class="rpt-section">
-                <div class="rpt-title">1. Project Information</div>
-                <div class="rpt-grid">
-                    <div class="rpt-key">Project Name</div><div>${pName}</div>
-                    <div class="rpt-key">Client / Internal</div><div>${escapeHTML(getValAlways('pclient'))}</div>
-                    <div class="rpt-key">DUT / Sample ID</div><div>${escapeHTML(getValAlways('pdut'))}</div>
-                    <div class="rpt-key">Objective</div><div>${escapeHTML(getValAlways('ppurpose'))}</div>
-                </div>
-            </div>
                 `;
+            } else {
+                outHtml += `
+                    <div class="rpt-cover-row"><span class="rpt-cover-label">Report To</span><span class="rpt-cover-val">${escapeHTML(getValAlways('ptarget'))}</span></div>
+                    <div class="rpt-cover-row"><span class="rpt-cover-label">Date</span><span class="rpt-cover-val">${escapeHTML(getValAlways('pdate'))}</span></div>
+                    <div class="rpt-cover-row"><span class="rpt-cover-label">Specification Standard</span><span class="rpt-cover-val">${escapeHTML(getValAlways('prev'))}</span></div>
+                    <div class="rpt-cover-row"><span class="rpt-cover-label">Prepared by</span><span class="rpt-cover-val">${escapeHTML(getValAlways('powner'))}</span></div>
+                    <div class="rpt-cover-row"><span class="rpt-cover-label">Approved by</span><span class="rpt-cover-val">${escapeHTML(getValAlways('pchecker'))}</span></div>
+                `;
+            }
+            outHtml += `</div></div>`; // 結束封面區塊
 
-                // 動態判斷：Setup
+            let secIndex = 1; // 統一自動編號
+
+            if (isSim) {
+                // =============== SIMULATION 內容 ===============
+                outHtml += `<div class="page-break"></div>`;
+                outHtml += `
+                <div class="rpt-section">
+                    <div class="rpt-title">${secIndex++}. Project Information</div>
+                    <div class="rpt-grid">
+                        <div class="rpt-key">Project Name</div><div>${pName}</div>
+                        <div class="rpt-key">Client / Internal</div><div>${escapeHTML(getValAlways('pclient'))}</div>
+                        <div class="rpt-key">DUT / Sample ID</div><div>${escapeHTML(getValAlways('pdut'))}</div>
+                        <div class="rpt-key">Objective</div><div>${escapeHTML(getValAlways('ppurpose'))}</div>
+                    </div>
+                </div>`;
+
                 let setupGrid = '';
                 const ssoft = getVal('ssoft'), ssolver = getVal('ssolver'), sfreq = getVal('sfreq'), sport = getVal('sport'), smat = getVal('smat');
                 if(ssoft) setupGrid += `<div class="rpt-key">Software</div><div>${escapeHTML(ssoft)}</div>`;
@@ -901,218 +820,97 @@
                 if(smat) setupGrid += `<div class="rpt-key">Material / Stackup</div><div>${escapeHTML(smat)}</div>`;
 
                 if(setupGrid) {
-                    simHtml += `
-                    <div class="rpt-section">
-                        <div class="rpt-title">${simSecIndex++}. Simulation Setup</div>
-                        <div class="rpt-grid">${setupGrid}</div>
-                    </div>`;
+                    outHtml += `<div class="rpt-section"><div class="rpt-title">${secIndex++}. Simulation Setup</div><div class="rpt-grid">${setupGrid}</div></div>`;
                 }
 
-                // 動態判斷：Specifications
+                let specTableHTML = buildTableHTML('save-target');
                 if (specTableHTML) {
-                    simHtml += `
+                    outHtml += `
                     <div class="rpt-section">
-                        <div class="rpt-title">${simSecIndex++}. Specifications & Results</div>
-                        <table class="rpt-table">
-                            <tr><th>Item</th><th>Spec / Condition</th><th>Result</th><th>Margin</th><th>Status</th><th>Remark</th></tr>
-                            ${specTableHTML}
-                        </table>
+                        <div class="rpt-title">${secIndex++}. Specifications & Results</div>
+                        <table class="rpt-table"><tr><th>Item</th><th>Spec / Condition</th><th>Result</th><th>Margin</th><th>Status</th><th>Remark</th></tr>${specTableHTML}</table>
                     </div>`;
                 }
 
-                // 動態判斷：Charts
-                if (chartsHTML) {
-                    simHtml += `
-                    <div class="page-break"></div>
-                    <div class="rpt-section">
-                        <div class="rpt-title">${simSecIndex++}. Charts & Data</div>
-                        ${chartsHTML}
-                    </div>`;
-                }
-
-                // 動態判斷：Conclusion
-                let concText = getVal('c_conc');
-                if (concText) {
-                    simHtml += `
-                    <div class="rpt-section" style="page-break-before: auto;">
-                        <div class="rpt-title">${simSecIndex++}. Conclusion</div>
-                        <div class="rpt-box">${escapeHTML(concText)}</div>
-                    </div>`;
-                }
-
-                // 動態判斷：Next Steps
-                let nextText = getVal('c_next');
-                if (nextText) {
-                    simHtml += `
-                    <div class="rpt-section">
-                        <div class="rpt-title">${simSecIndex++}. Next Steps</div>
-                        <div class="rpt-box">${escapeHTML(nextText)}</div>
-                    </div>`;
-                }
-
-                simHtml += `
-                    ${confCfg.footer ? `<div class="rpt-footer-text">${confCfg.footer}</div>` : ''}
-                </div>`;
-
-                currentReportInnerHTML = simHtml;
-                document.getElementById('report-render-area').innerHTML = `<style>${reportCSS}</style><div class="rpt-wrapper">${currentReportInnerHTML}</div>`;
-            } 
-            else {
-                // ==========================================
-                // 量測報告 (Measurement) 智慧隱藏邏輯
-                // ==========================================
+            } else {
+                // =============== MEASUREMENT 內容 ===============
                 let equipHtml = buildTableHTML('save-t-equip');
                 let dutHtml = buildTableHTML('save-t-dut');
                 let sumHtml = buildTableHTML('save-t-sum');
                 let matrixHtml = buildTableHTML('save-t-mat');
-                let concText = getVal('c_conc');
-                let nextText = getVal('c_next');
 
-                const reportCSSMeas = `
-                    .rpt-wrapper { font-family: 'Inter', sans-serif; color: #111; line-height: 1.6; background: #fff;}
-                    ${confCfg.text ? `.rpt-watermark-bg { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background-image: url('${watermarkSVG}'); background-repeat: repeat; z-index: 0; pointer-events: none; }` : `.rpt-watermark-bg { display: none; }`}
-                    .rpt-content { position: relative; z-index: 1; padding: 40px 60px; min-height: 100vh;}
-                    
-                    /* Measurement Cover (Clean Style) */
-                    .rpt-cover-meas { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 85vh; text-align: center; }
-                    .rpt-cover-meas .logo { width: 320px; height: auto; margin-bottom: 20px; }
-                    .rpt-cover-meas .report-type { font-size: 1.5rem; font-weight: 800; color: #000; margin-bottom: 10px; }
-                    .rpt-cover-meas .title { font-size: 1.5rem; font-weight: 700; color: #000; margin-bottom: 5px; }
-                    .rpt-cover-meas .subtitle { font-size: 1.125rem; font-weight: 500; color: #000; margin-bottom: 60px; }
-                    .rpt-cover-meas .info-table { width: 100%; max-width: 500px; border-collapse: collapse; margin-top: 20px;}
-                    .rpt-cover-meas .info-table td { border: 2px solid #000; padding: 12px 20px; font-weight: 700; font-size: 1rem; width: 50%;}
-                    .rpt-cover-meas .info-table td:first-child { text-align: center; background: #fdfdfd; }
-                    .rpt-cover-meas .info-table td:last-child { text-align: center; }
-
-                    /* Sections */
-                    .rpt-section { page-break-inside: avoid; margin-bottom: 40px; background: #fff;}
-                    .rpt-title { font-size: 1.25rem; font-weight: 800; color: #000; margin-bottom: 12px; }
-                    
-                    /* Table (No Grid, Clean Border) */
-                    .rpt-table { width: 100%; border-collapse: collapse; font-size: 0.95rem; margin-top: 8px; border: 1px solid #000; }
-                    .rpt-table th { background-color: #f6f5f4; font-weight: 700; padding: 8px 12px; text-align: left; border: 1px solid #000; }
-                    .rpt-table td { padding: 8px 12px; border: 1px solid #000; word-break: break-word; }
-                    
-                    .status-pass { color: #16a34a; font-weight: 800; }
-                    .status-fail { color: #dc2626; font-weight: 800; }
-                    .rpt-box { border: 1px solid #000; border-radius: 4px; padding: 16px 20px; font-size: 0.95rem; background-color: #fafafa; min-height: 20px; }
-                    
-                    /* Charts */
-                    .rpt-chart-wrapper { margin-top: 30px; page-break-inside: avoid; text-align: center; }
-                    .rpt-chart-title { font-size: 0.95rem; color: #000; margin-bottom: 8px; font-weight: 700; text-align: left;}
-                    .rpt-chart-box { border: 1px solid #000; display: inline-block; max-width: 100%; background: #fff;}
-                    .rpt-chart-img { max-width: 100%; max-height: 40vh; display: block; margin: 0 auto; border-bottom: 1px solid #000;}
-                    .rpt-chart-desc { font-size: 0.95rem; color: #000; text-align: left; background: #fafafa; padding: 12px 16px; line-height: 1.5; }
-                    
-                    .page-break { page-break-before: always; break-before: page; }
-                    .rpt-footer-text { text-align: center; font-size: 0.75rem; color: #999; margin-top: 50px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;}
-                    
-                    @media print { 
-                        .rpt-content { padding: 0; }
-                        .rpt-table th, .rpt-table td { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-                        .rpt-cover-meas .info-table td { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-                        .rpt-watermark-bg { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-                        .print-fixed-footer { position: fixed; bottom: 0; left: 0; width: 100%; text-align: center; font-size: 0.75rem; color: #999; font-weight: 600; padding: 10px 0; background: #fff;}
-                        .rpt-footer-text { display: none; }
-                        @page { margin: 1.5cm 1.5cm 2cm 1.5cm; }
-                    }
-                    @media screen { .print-fixed-footer { display: none; } }
-                `;
-
-                let measHtml = `
-        <div class="rpt-watermark-bg"></div>
-        ${confCfg.footer ? `<div class="print-fixed-footer">${confCfg.footer}</div>` : ''}
-
-        <div class="rpt-content">
-            <div class="rpt-cover-meas">
-                <img src="jpc logo.png" class="logo" alt="JPC Logo">
-                <div class="report-type">SI Measurement Report</div>
-                <div class="title">${pName}</div>
-                <div class="subtitle">(${escapeHTML(getValAlways('prev'))})</div>
-                
-                <table class="info-table">
-                    <tr><td>Report To:</td><td>${escapeHTML(getValAlways('ptarget'))}</td></tr>
-                    <tr><td>Report Date:</td><td>${escapeHTML(getValAlways('pdate'))}</td></tr>
-                    <tr><td>Edited by:</td><td>${escapeHTML(getValAlways('powner'))}</td></tr>
-                    <tr><td>Approved by:</td><td>${escapeHTML(getValAlways('pchecker'))}</td></tr>
-                </table>
-            </div>
-                `;
-
-                if(equipHtml || dutHtml || sumHtml || matrixHtml || chartsHTML || concText || nextText) {
-                    measHtml += `<div class="page-break"></div>`;
+                if(equipHtml || dutHtml || sumHtml || matrixHtml || chartsHTML) {
+                    outHtml += `<div class="page-break"></div>`;
                 }
 
                 if (equipHtml) {
-                    measHtml += `
-            <div class="rpt-section">
-                <div class="rpt-title">Test Equipments Information</div>
-                <table class="rpt-table"><tr><th>ID</th><th>Instrument</th><th>Description with Instrumentation and software</th><th>Manufacture</th></tr>${equipHtml}</table>
-            </div>`;
+                    outHtml += `
+                    <div class="rpt-section">
+                        <div class="rpt-title">${secIndex++}. Test Equipments Information</div>
+                        <table class="rpt-table"><tr><th>ID</th><th>Instrument</th><th>Description with Instrumentation and software</th><th>Manufacture</th></tr>${equipHtml}</table>
+                    </div>`;
                 }
-
                 if (dutHtml) {
-                    measHtml += `
-            <div class="rpt-section">
-                <div class="rpt-title">Device Under Test (DUT) Information</div>
-                <table class="rpt-table"><tr><th>Property Name</th><th>Value</th><th>Property Name</th><th>Value</th></tr>${dutHtml}</table>
-            </div>`;
+                    outHtml += `
+                    <div class="rpt-section">
+                        <div class="rpt-title">${secIndex++}. Device Under Test (DUT) Information</div>
+                        <table class="rpt-table"><tr><th>Property Name</th><th>Value</th><th>Property Name</th><th>Value</th></tr>${dutHtml}</table>
+                    </div>`;
                 }
-
                 if (sumHtml) {
-                    measHtml += `
-            <div class="rpt-section">
-                <div class="rpt-title">Summary of Results</div>
-                <table class="rpt-table" style="max-width:600px;"><tr><th style="width:70%;">Item</th><th>Test Result</th></tr>${sumHtml}</table>
-            </div>`;
+                    outHtml += `
+                    <div class="rpt-section">
+                        <div class="rpt-title">${secIndex++}. Summary of Results</div>
+                        <table class="rpt-table"><tr><th style="width:80%;">Item</th><th>Test Result</th></tr>${sumHtml}</table>
+                    </div>`;
                 }
-                
                 if (matrixHtml) {
-                    measHtml += `
-            <div class="page-break"></div>
-            <div class="rpt-section">
-                <div class="rpt-title">Summary of Results for the DUT</div>
-                <div style="overflow-x:auto;">
-                <table class="rpt-table" style="font-size: 0.85rem; text-align:center;">
-                    <tr><th>Item / Freq</th><th>Limit</th><th>TX/RX 1</th><th>TX/RX 2</th><th>TX/RX 3</th><th>TX/RX 4</th><th>TX/RX 5</th><th>TX/RX 6</th><th>TX/RX 7</th><th>TX/RX 8</th><th>Result</th></tr>
-                    ${matrixHtml}
-                </table>
-                </div>
-            </div>`;
+                    outHtml += `
+                    <div class="page-break"></div>
+                    <div class="rpt-section">
+                        <div class="rpt-title">${secIndex++}. Summary of Results for the DUT</div>
+                        <div style="overflow-x:auto;">
+                        <table class="rpt-table" style="font-size: 0.85rem; text-align:center;">
+                            <tr><th>Item / Freq</th><th>Limit</th><th>TX/RX 1</th><th>TX/RX 2</th><th>TX/RX 3</th><th>TX/RX 4</th><th>TX/RX 5</th><th>TX/RX 6</th><th>TX/RX 7</th><th>TX/RX 8</th><th>Result</th></tr>
+                            ${matrixHtml}
+                        </table>
+                        </div>
+                    </div>`;
                 }
-
-                if (chartsHTML) {
-                    measHtml += `
-            <div class="page-break"></div>
-            <div class="rpt-section">
-                <div class="rpt-title">Charts & Data</div>
-                ${chartsHTML}
-            </div>`;
-                }
-
-                if (concText) {
-                    measHtml += `
-            <div class="rpt-section" style="page-break-before: auto;">
-                <div class="rpt-title">Conclusion</div>
-                <div class="rpt-box">${escapeHTML(concText)}</div>
-            </div>`;
-                }
-
-                if (nextText) {
-                    measHtml += `
-            <div class="rpt-section">
-                <div class="rpt-title">Next Steps</div>
-                <div class="rpt-box">${escapeHTML(nextText)}</div>
-            </div>`;
-                }
-                
-                measHtml += `
-            ${confCfg.footer ? `<div class="rpt-footer-text">${confCfg.footer}</div>` : ''}
-        </div>`;
-
-                currentReportInnerHTML = measHtml;
-                document.getElementById('report-render-area').innerHTML = `<style>${reportCSSMeas}</style><div class="rpt-wrapper">${currentReportInnerHTML}</div>`;
             }
+
+            // =============== 共通結尾 (Charts & Conclusion) ===============
+            if (chartsHTML) {
+                outHtml += `
+                <div class="page-break"></div>
+                <div class="rpt-section">
+                    <div class="rpt-title">${secIndex++}. Charts & Data</div>
+                    ${chartsHTML}
+                </div>`;
+            }
+            
+            let concText = getVal('c_conc');
+            if (concText) {
+                outHtml += `
+                <div class="rpt-section" style="page-break-before: auto;">
+                    <div class="rpt-title">${secIndex++}. Conclusion</div>
+                    <div class="rpt-box">${escapeHTML(concText)}</div>
+                </div>`;
+            }
+            
+            let nextText = getVal('c_next');
+            if (nextText) {
+                outHtml += `
+                <div class="rpt-section">
+                    <div class="rpt-title">${secIndex++}. Next Steps</div>
+                    <div class="rpt-box">${escapeHTML(nextText)}</div>
+                </div>`;
+            }
+
+            outHtml += `${confCfg.footer ? `<div class="rpt-footer-text">${confCfg.footer}</div>` : ''}</div>`;
+
+            currentReportInnerHTML = outHtml;
+            document.getElementById('report-render-area').innerHTML = `<style>${finalCSS}</style><div class="rpt-wrapper">${currentReportInnerHTML}</div>`;
         }
 
         function downloadReportHTML() {
@@ -1128,7 +926,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         body { margin: 0; background: #fff; -webkit-print-color-adjust: exact; print-color-adjust: exact;}
-        /* 注入動態生成的 CSS */
         ${document.getElementById('report-render-area').querySelector('style').innerHTML}
     </style>
 </head>
