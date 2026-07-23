@@ -49,7 +49,7 @@
             transition: background-color 0.3s ease, color 0.3s ease;
         }
 
-        /* 雙角色 UI 切換邏輯：非當前角色的元素一律強制隱藏 */
+        /* 雙角色 UI 切換邏輯：非當前角色的元素一律強制隱藏 (修復排版跑版問題) */
         body[data-role="sim"] .test-only { display: none !important; }
         body[data-role="test"] .sim-only { display: none !important; }
 
@@ -155,7 +155,7 @@
         .upload-zone-hint { font-size: 0.75rem; color: var(--text-muted); opacity: 0.8; margin-top: -6px;}
         .upload-zone input { display: none; }
 
-        /* SOP Alert (新增) */
+        /* SOP 提示框 */
         .sop-alert { background-color: var(--primary-light); border-left: 4px solid var(--primary); padding: 12px 16px; border-radius: 4px; margin-bottom: 20px; font-size: 0.875rem; color: var(--text-main); }
 
         .chart-list { display: flex; flex-direction: column; gap: 16px; margin-top: 20px; }
@@ -238,7 +238,7 @@
                 Specifications
             </a>
 
-            <!-- TEST 專屬 (新增) -->
+            <!-- TEST 專屬 -->
             <a class="nav-link test-only" onclick="scrollToSection('sec-equip')">
                 <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                 Test Equipments
@@ -323,7 +323,7 @@
                 </table>
             </section>
 
-            <!-- TEST 專屬 (新增) -->
+            <!-- TEST 專屬 -->
             <section id="sec-equip" class="test-only">
                 <h2 class="section-header">Test Equipments Information <button type="button" class="btn btn-outline" onclick="addEquipRow()">Add Row</button></h2>
                 <table class="spec-table">
@@ -433,7 +433,7 @@
             }
         }
 
-        // ====== 角色切換 (改用 data-role 控制，完美相容原版面) ======
+        // ====== 角色切換 ======
         function switchRole(roleOverride) {
             const roleInput = document.getElementById('role-selector');
             if(roleOverride) { roleInput.value = roleOverride; }
@@ -443,7 +443,6 @@
             document.getElementById('btn-role-sim').classList.toggle('active', isSim);
             document.getElementById('btn-role-test').classList.toggle('active', !isSim);
             
-            // 設定 body 的屬性，讓 CSS 自動隱藏/顯示區塊
             document.body.setAttribute('data-role', role);
             
             document.getElementById('lbl-rev').innerText = isSim ? 'Version / Revision' : 'Specification Standard';
@@ -514,7 +513,6 @@
             saveDraft();
         }
 
-        // 1. 原版 Sim Spec 表格
         function addRow(defaultItem = "") {
             insertRowHTML('specTableBody', `
                 <td><input type="text" class="save-target spec-item-input" list="dl-spec-item" placeholder="Item Name" value="${defaultItem}"></td>
@@ -524,7 +522,6 @@
             `);
         }
         
-        // 2. Test Equipments 表格
         function addEquipRow(v1='', v2='', v3='', v4='') {
             insertRowHTML('equipTableBody', `
                 <td><input type="text" class="save-t-equip" value="${v1}" style="width:60px; text-align:center;"></td>
@@ -533,7 +530,6 @@
                 <td><input type="text" class="save-t-equip" value="${v4}"></td>`);
         }
         
-        // 3. DUT Information 表格
         function addDutRow(k1='', v1='', k2='', v2='') {
             insertRowHTML('dutTableBody', `
                 <td><input type="text" class="save-t-dut" value="${k1}" style="background:var(--bg-base); font-weight:600;"></td>
@@ -542,14 +538,12 @@
                 <td><input type="text" class="save-t-dut" value="${v2}"></td>`);
         }
 
-        // 4. Summary of Results 表格
         function addSummaryRow(k='', v='') {
             insertRowHTML('summaryTableBody', `
                 <td><input type="text" class="save-t-sum" value="${k}"></td>
                 <td><select class="save-t-sum"><option value="">-</option><option value="Pass" ${v==='Pass'?'selected':''}>Pass</option><option value="Fail" ${v==='Fail'?'selected':''}>Fail</option></select></td>`);
         }
         
-        // 5. Matrix 表格
         function addMatrixRow(v1='', v2='', c1='', c2='', c3='', c4='', c5='', c6='', c7='', c8='', r='') {
             insertRowHTML('matrixTableBody', `
                 <td><input type="text" class="save-t-mat" value="${v1}" style="width:80px"></td><td><input type="text" class="save-t-mat" value="${v2}" style="width:60px"></td>
@@ -651,12 +645,10 @@
                 role: document.getElementById('role-selector').value,
                 conf: document.getElementById('conf-level').value
             };
-            // 儲存文字與選擇框
             document.querySelectorAll('#edit-workspace input[type="text"], #edit-workspace input[type="date"], #edit-workspace textarea').forEach(el => {
                 if(el.id) data.fields[el.id] = el.value;
             });
             
-            // 儲存各個動態表格
             const extractTable = (cls) => {
                 let rows = [];
                 document.querySelectorAll(`#edit-workspace tr`).forEach(tr => {
@@ -670,7 +662,7 @@
                 return rows;
             };
             
-            data.table = extractTable('save-target'); // 原本的 Spec 表格
+            data.table = extractTable('save-target');
             data.tblEquip = extractTable('save-t-equip');
             data.tblDut = extractTable('save-t-dut');
             data.tblSum = extractTable('save-t-sum');
@@ -693,7 +685,6 @@
                 if(data.conf) document.getElementById('conf-level').value = data.conf;
                 Object.keys(data.fields).forEach(key => { if(document.getElementById(key)) document.getElementById(key).value = data.fields[key]; });
                 
-                // 還原原本的 Spec 表格
                 if(data.table && data.table.length > 0) {
                     const tbody = document.getElementById('specTableBody');
                     tbody.innerHTML = '';
@@ -704,7 +695,6 @@
                     });
                 }
                 
-                // 還原新的 Measurement 表格
                 const restoreTable = (dataArr, addFn) => {
                     if(dataArr && dataArr.length) { dataArr.forEach(row => addFn(...row)); }
                 };
@@ -713,7 +703,6 @@
                 restoreTable(data.tblSum, addSummaryRow);
                 restoreTable(data.tblMat, addMatrixRow);
                 
-                // 如果是舊版資料沒有這些表，補上預設值
                 if(!data.tblEquip) initDefaultRows();
                 
             } catch(e) { initDefaultRows(); }
@@ -721,7 +710,7 @@
         document.addEventListener('change', (e) => { if(['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName)) saveDraft(); });
         window.onload = loadDraft;
 
-        // ====== 報告預覽與生成 ======
+        // ====== 報告預覽與生成 (智慧隱藏邏輯) ======
         let isPreview = false;
         
         function getConfidentialityConfig() {
@@ -743,7 +732,8 @@
             if (isPreview) { generateReportHTML(); document.getElementById('main-content').scrollTop = 0; }
         }
 
-        function buildMeasTableHTML(cls) {
+        // 建立表格 HTML，若全空則回傳空字串 (以利系統隱藏該區塊)
+        function buildTableHTML(cls) {
             let html = '';
             document.querySelectorAll(`tr`).forEach(tr => {
                 const inputs = tr.querySelectorAll('.' + cls);
@@ -761,15 +751,18 @@
                     html += '</tr>';
                 }
             });
-            return html || '<tr><td colspan="10" style="text-align:center; color:#999;">(No Data)</td></tr>';
+            return html;
         }
 
         function generateReportHTML() {
             const isSim = document.getElementById('role-selector').value === 'sim';
+            // getVal：完全無資料時回傳空字串，以利隱藏判斷
             const getVal = (id) => { const val = document.getElementById(id).value.trim(); return val ? val : ""; };
+            // getValAlways：專案資訊必填欄位專用，若無資料補橫槓
+            const getValAlways = (id) => { const val = document.getElementById(id).value.trim(); return val ? val : "-"; };
             const escapeHTML = (str) => str.replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/\n/g, '<br>');
 
-            const pName = getVal('pname');
+            const pName = getValAlways('pname');
             const confCfg = getConfidentialityConfig();
             const watermarkSVG = confCfg.text ? `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="350" height="350"><text x="20" y="175" transform="rotate(-35 175 175)" fill="${confCfg.color}" font-family="Arial" font-size="24" font-weight="bold">${confCfg.text}</text></svg>` : '';
 
@@ -792,13 +785,13 @@
                 `;
                 chartIndex++;
             });
-            if (chartsHTML === '') chartsHTML = '<p style="color:#999; padding-left:12px;">(No Charts Uploaded)</p>';
-
 
             if (isSim) {
                 // ==========================================
-                // 模擬報告 (Simulation) 完全保留原本的樣式輸出
+                // 模擬報告 (Simulation) 智慧隱藏與動態編號
                 // ==========================================
+                let simSecIndex = 2; // Project Info 永遠是第 1 區塊
+
                 let specTableHTML = '';
                 document.querySelectorAll(`#specTableBody tr`).forEach(tr => {
                     const inputs = tr.querySelectorAll('.save-target');
@@ -814,7 +807,6 @@
                         </tr>`;
                     }
                 });
-                if(specTableHTML === '') specTableHTML = '<tr><td colspan="6" style="text-align:center; color:#999;">(No Specification Data)</td></tr>';
 
                 const reportCSS = `
                     .rpt-wrapper { font-family: 'Inter', sans-serif; color: #111; line-height: 1.6; background: #fff;}
@@ -869,7 +861,7 @@
                     @media screen { .print-fixed-footer { display: none; } }
                 `;
 
-                currentReportInnerHTML = `
+                let simHtml = `
         <div class="rpt-watermark-bg"></div>
         ${confCfg.footer ? `<div class="print-fixed-footer">${confCfg.footer}</div>` : ''}
 
@@ -880,10 +872,10 @@
                 <div class="rpt-cover-subtitle">Simulation Analysis Report</div>
                 
                 <div class="rpt-cover-info">
-                    <div class="rpt-cover-row"><span class="rpt-cover-label">Date</span><span class="rpt-cover-val">${escapeHTML(getVal('pdate')) || "-"}</span></div>
-                    <div class="rpt-cover-row"><span class="rpt-cover-label">Version / Stage</span><span class="rpt-cover-val">${escapeHTML(getVal('prev')) || "-"}</span></div>
-                    <div class="rpt-cover-row"><span class="rpt-cover-label">Prepared by</span><span class="rpt-cover-val">${escapeHTML(getVal('powner')) || "-"}</span></div>
-                    <div class="rpt-cover-row"><span class="rpt-cover-label">Approved by</span><span class="rpt-cover-val">${escapeHTML(getVal('pchecker')) || "-"}</span></div>
+                    <div class="rpt-cover-row"><span class="rpt-cover-label">Date</span><span class="rpt-cover-val">${escapeHTML(getValAlways('pdate'))}</span></div>
+                    <div class="rpt-cover-row"><span class="rpt-cover-label">Version / Stage</span><span class="rpt-cover-val">${escapeHTML(getValAlways('prev'))}</span></div>
+                    <div class="rpt-cover-row"><span class="rpt-cover-label">Prepared by</span><span class="rpt-cover-val">${escapeHTML(getValAlways('powner'))}</span></div>
+                    <div class="rpt-cover-row"><span class="rpt-cover-label">Approved by</span><span class="rpt-cover-val">${escapeHTML(getValAlways('pchecker'))}</span></div>
                 </div>
             </div>
             <div class="page-break"></div>
@@ -891,60 +883,90 @@
             <div class="rpt-section">
                 <div class="rpt-title">1. Project Information</div>
                 <div class="rpt-grid">
-                    <div class="rpt-key">Project Name</div><div>${pName || "-"}</div>
-                    <div class="rpt-key">Client / Internal</div><div>${escapeHTML(getVal('pclient')) || "-"}</div>
-                    <div class="rpt-key">DUT / Sample ID</div><div>${escapeHTML(getVal('pdut')) || "-"}</div>
-                    <div class="rpt-key">Objective</div><div>${escapeHTML(getVal('ppurpose')) || "-"}</div>
+                    <div class="rpt-key">Project Name</div><div>${pName}</div>
+                    <div class="rpt-key">Client / Internal</div><div>${escapeHTML(getValAlways('pclient'))}</div>
+                    <div class="rpt-key">DUT / Sample ID</div><div>${escapeHTML(getValAlways('pdut'))}</div>
+                    <div class="rpt-key">Objective</div><div>${escapeHTML(getValAlways('ppurpose'))}</div>
                 </div>
             </div>
-
-            <div class="rpt-section">
-                <div class="rpt-title">2. Simulation Setup</div>
-                <div class="rpt-grid">
-                    <div class="rpt-key">Software</div><div>${escapeHTML(getVal('ssoft')) || "-"}</div>
-                    <div class="rpt-key">Solver</div><div>${escapeHTML(getVal('ssolver')) || "-"}</div>
-                    <div class="rpt-key">Frequency Range</div><div>${escapeHTML(getVal('sfreq')) || "-"}</div>
-                    <div class="rpt-key">Port Setup</div><div>${escapeHTML(getVal('sport')) || "-"}</div>
-                    <div class="rpt-key">Material / Stackup</div><div>${escapeHTML(getVal('smat')) || "-"}</div>
-                </div>
-            </div>
-
-            <div class="rpt-section">
-                <div class="rpt-title">3. Specifications & Results</div>
-                <table class="rpt-table">
-                    <tr><th>Item</th><th>Spec / Condition</th><th>Result</th><th>Margin</th><th>Status</th><th>Remark</th></tr>
-                    ${specTableHTML}
-                </table>
-            </div>
-
-            <div class="page-break"></div>
-            
-            <div class="rpt-section">
-                <div class="rpt-title">4. Charts & Data</div>
-                ${chartsHTML}
-            </div>
-
-            <div class="rpt-section" style="page-break-before: auto;">
-                <div class="rpt-title">5. Conclusion</div>
-                <div class="rpt-box">${escapeHTML(getVal('c_conc')) || "-"}</div>
-            </div>
-
-            <div class="rpt-section">
-                <div class="rpt-title">6. Next Steps</div>
-                <div class="rpt-box">${escapeHTML(getVal('c_next')) || "-"}</div>
-            </div>
-            
-            ${confCfg.footer ? `<div class="rpt-footer-text">${confCfg.footer}</div>` : ''}
-        </div>
                 `;
+
+                // 動態判斷：Setup
+                let setupGrid = '';
+                const ssoft = getVal('ssoft'), ssolver = getVal('ssolver'), sfreq = getVal('sfreq'), sport = getVal('sport'), smat = getVal('smat');
+                if(ssoft) setupGrid += `<div class="rpt-key">Software</div><div>${escapeHTML(ssoft)}</div>`;
+                if(ssolver) setupGrid += `<div class="rpt-key">Solver</div><div>${escapeHTML(ssolver)}</div>`;
+                if(sfreq) setupGrid += `<div class="rpt-key">Frequency Range</div><div>${escapeHTML(sfreq)}</div>`;
+                if(sport) setupGrid += `<div class="rpt-key">Port Setup</div><div>${escapeHTML(sport)}</div>`;
+                if(smat) setupGrid += `<div class="rpt-key">Material / Stackup</div><div>${escapeHTML(smat)}</div>`;
+
+                if(setupGrid) {
+                    simHtml += `
+                    <div class="rpt-section">
+                        <div class="rpt-title">${simSecIndex++}. Simulation Setup</div>
+                        <div class="rpt-grid">${setupGrid}</div>
+                    </div>`;
+                }
+
+                // 動態判斷：Specifications
+                if (specTableHTML) {
+                    simHtml += `
+                    <div class="rpt-section">
+                        <div class="rpt-title">${simSecIndex++}. Specifications & Results</div>
+                        <table class="rpt-table">
+                            <tr><th>Item</th><th>Spec / Condition</th><th>Result</th><th>Margin</th><th>Status</th><th>Remark</th></tr>
+                            ${specTableHTML}
+                        </table>
+                    </div>`;
+                }
+
+                // 動態判斷：Charts
+                if (chartsHTML) {
+                    simHtml += `
+                    <div class="page-break"></div>
+                    <div class="rpt-section">
+                        <div class="rpt-title">${simSecIndex++}. Charts & Data</div>
+                        ${chartsHTML}
+                    </div>`;
+                }
+
+                // 動態判斷：Conclusion
+                let concText = getVal('c_conc');
+                if (concText) {
+                    simHtml += `
+                    <div class="rpt-section" style="page-break-before: auto;">
+                        <div class="rpt-title">${simSecIndex++}. Conclusion</div>
+                        <div class="rpt-box">${escapeHTML(concText)}</div>
+                    </div>`;
+                }
+
+                // 動態判斷：Next Steps
+                let nextText = getVal('c_next');
+                if (nextText) {
+                    simHtml += `
+                    <div class="rpt-section">
+                        <div class="rpt-title">${simSecIndex++}. Next Steps</div>
+                        <div class="rpt-box">${escapeHTML(nextText)}</div>
+                    </div>`;
+                }
+
+                simHtml += `
+                    ${confCfg.footer ? `<div class="rpt-footer-text">${confCfg.footer}</div>` : ''}
+                </div>`;
+
+                currentReportInnerHTML = simHtml;
                 document.getElementById('report-render-area').innerHTML = `<style>${reportCSS}</style><div class="rpt-wrapper">${currentReportInnerHTML}</div>`;
             } 
             else {
                 // ==========================================
-                // 量測報告 (Measurement) 專屬的現代化排版
+                // 量測報告 (Measurement) 智慧隱藏邏輯
                 // ==========================================
-                const matrixHtml = buildMeasTableHTML('save-t-mat');
-                const hasMatrix = !matrixHtml.includes('(No Data)');
+                let equipHtml = buildTableHTML('save-t-equip');
+                let dutHtml = buildTableHTML('save-t-dut');
+                let sumHtml = buildTableHTML('save-t-sum');
+                let matrixHtml = buildTableHTML('save-t-mat');
+                let concText = getVal('c_conc');
+                let nextText = getVal('c_next');
 
                 const reportCSSMeas = `
                     .rpt-wrapper { font-family: 'Inter', sans-serif; color: #111; line-height: 1.6; background: #fff;}
@@ -997,7 +1019,7 @@
                     @media screen { .print-fixed-footer { display: none; } }
                 `;
 
-                currentReportInnerHTML = `
+                let measHtml = `
         <div class="rpt-watermark-bg"></div>
         ${confCfg.footer ? `<div class="print-fixed-footer">${confCfg.footer}</div>` : ''}
 
@@ -1005,35 +1027,48 @@
             <div class="rpt-cover-meas">
                 <img src="jpc logo.png" class="logo" alt="JPC Logo">
                 <div class="report-type">SI Measurement Report</div>
-                <div class="title">${pName || "-"}</div>
-                <div class="subtitle">(${escapeHTML(getVal('prev')) || "-"})</div>
+                <div class="title">${pName}</div>
+                <div class="subtitle">(${escapeHTML(getValAlways('prev'))})</div>
                 
                 <table class="info-table">
-                    <tr><td>Report To:</td><td>${escapeHTML(getVal('ptarget')) || "-"}</td></tr>
-                    <tr><td>Report Date:</td><td>${escapeHTML(getVal('pdate')) || "-"}</td></tr>
-                    <tr><td>Edited by:</td><td>${escapeHTML(getVal('powner')) || "-"}</td></tr>
-                    <tr><td>Approved by:</td><td>${escapeHTML(getVal('pchecker')) || "-"}</td></tr>
+                    <tr><td>Report To:</td><td>${escapeHTML(getValAlways('ptarget'))}</td></tr>
+                    <tr><td>Report Date:</td><td>${escapeHTML(getValAlways('pdate'))}</td></tr>
+                    <tr><td>Edited by:</td><td>${escapeHTML(getValAlways('powner'))}</td></tr>
+                    <tr><td>Approved by:</td><td>${escapeHTML(getValAlways('pchecker'))}</td></tr>
                 </table>
             </div>
-            
-            <div class="page-break"></div>
+                `;
 
+                if(equipHtml || dutHtml || sumHtml || matrixHtml || chartsHTML || concText || nextText) {
+                    measHtml += `<div class="page-break"></div>`;
+                }
+
+                if (equipHtml) {
+                    measHtml += `
             <div class="rpt-section">
                 <div class="rpt-title">Test Equipments Information</div>
-                <table class="rpt-table"><tr><th>ID</th><th>Instrument</th><th>Description with Instrumentation and software</th><th>Manufacture</th></tr>${buildMeasTableHTML('save-t-equip')}</table>
-            </div>
+                <table class="rpt-table"><tr><th>ID</th><th>Instrument</th><th>Description with Instrumentation and software</th><th>Manufacture</th></tr>${equipHtml}</table>
+            </div>`;
+                }
 
+                if (dutHtml) {
+                    measHtml += `
             <div class="rpt-section">
                 <div class="rpt-title">Device Under Test (DUT) Information</div>
-                <table class="rpt-table"><tr><th>Property Name</th><th>Value</th><th>Property Name</th><th>Value</th></tr>${buildMeasTableHTML('save-t-dut')}</table>
-            </div>
+                <table class="rpt-table"><tr><th>Property Name</th><th>Value</th><th>Property Name</th><th>Value</th></tr>${dutHtml}</table>
+            </div>`;
+                }
 
+                if (sumHtml) {
+                    measHtml += `
             <div class="rpt-section">
                 <div class="rpt-title">Summary of Results</div>
-                <table class="rpt-table" style="max-width:600px;"><tr><th style="width:70%;">Item</th><th>Test Result</th></tr>${buildMeasTableHTML('save-t-sum')}</table>
-            </div>
-            
-            ${hasMatrix ? `
+                <table class="rpt-table" style="max-width:600px;"><tr><th style="width:70%;">Item</th><th>Test Result</th></tr>${sumHtml}</table>
+            </div>`;
+                }
+                
+                if (matrixHtml) {
+                    measHtml += `
             <div class="page-break"></div>
             <div class="rpt-section">
                 <div class="rpt-title">Summary of Results for the DUT</div>
@@ -1043,23 +1078,39 @@
                     ${matrixHtml}
                 </table>
                 </div>
-            </div>` : ''}
+            </div>`;
+                }
 
+                if (chartsHTML) {
+                    measHtml += `
             <div class="page-break"></div>
-            
             <div class="rpt-section">
                 <div class="rpt-title">Charts & Data</div>
                 ${chartsHTML}
-            </div>
+            </div>`;
+                }
 
+                if (concText) {
+                    measHtml += `
             <div class="rpt-section" style="page-break-before: auto;">
                 <div class="rpt-title">Conclusion</div>
-                <div class="rpt-box">${escapeHTML(getVal('c_conc')) || "-"}</div>
-            </div>
-            
+                <div class="rpt-box">${escapeHTML(concText)}</div>
+            </div>`;
+                }
+
+                if (nextText) {
+                    measHtml += `
+            <div class="rpt-section">
+                <div class="rpt-title">Next Steps</div>
+                <div class="rpt-box">${escapeHTML(nextText)}</div>
+            </div>`;
+                }
+                
+                measHtml += `
             ${confCfg.footer ? `<div class="rpt-footer-text">${confCfg.footer}</div>` : ''}
-        </div>
-                `;
+        </div>`;
+
+                currentReportInnerHTML = measHtml;
                 document.getElementById('report-render-area').innerHTML = `<style>${reportCSSMeas}</style><div class="rpt-wrapper">${currentReportInnerHTML}</div>`;
             }
         }
