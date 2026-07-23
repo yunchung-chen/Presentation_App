@@ -4,123 +4,72 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>JPC Report Generator Pro</title>
-    <!-- 引入 Inter 字體 -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
             /* Light Mode */
-            --bg-base: #f6f5f4;
-            --bg-card: #ffffff;
-            --primary: #d10001;
-            --primary-hover: #a80001;
-            --primary-light: #fbe6e6;
-            --text-main: #000000;
-            --text-muted: #777777;
-            --border: #e9e5e0;
-            --input-border: #c9c6c1;
-            
-            --radius: 0.75rem; 
-            --font-sans: 'Inter', sans-serif;
+            --bg-base: #f6f5f4; --bg-card: #ffffff;
+            --primary: #d10001; --primary-hover: #a80001; --primary-light: #fbe6e6;
+            --text-main: #000000; --text-muted: #777777;
+            --border: #e9e5e0; --input-border: #c9c6c1;
+            --radius: 0.75rem; --font-sans: 'Inter', sans-serif;
             --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
             --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
         }
-
-        /* Dark Mode */
         body.dark {
-            --bg-base: #1D1D1D;
-            --bg-card: #1D1D1D;
-            --primary: #FF4B32;
-            --primary-hover: #D03520;
-            --primary-light: rgba(255, 75, 50, 0.15);
-            --text-main: #FFFFFF;
-            --text-muted: #808080;
-            --border: #333333;
-            --input-border: #333333;
-            color-scheme: dark;
+            --bg-base: #1D1D1D; --bg-card: #1D1D1D;
+            --primary: #FF4B32; --primary-hover: #D03520; --primary-light: rgba(255, 75, 50, 0.15);
+            --text-main: #FFFFFF; --text-muted: #808080;
+            --border: #333333; --input-border: #333333; color-scheme: dark;
         }
-
         * { box-sizing: border-box; }
-
-        body {
-            margin: 0; padding: 0;
-            background-color: var(--bg-base); color: var(--text-main);
-            font-family: var(--font-sans);
-            display: flex; height: 100vh; overflow: hidden;
-            transition: background-color 0.3s ease, color 0.3s ease;
-        }
+        body { margin: 0; padding: 0; background-color: var(--bg-base); color: var(--text-main); font-family: var(--font-sans); display: flex; height: 100vh; overflow: hidden; transition: background-color 0.3s ease, color 0.3s ease; }
 
         /* ====== Sidebar ====== */
-        #sidebar {
-            width: 260px; background-color: var(--bg-card); border-right: 1px solid var(--border);
-            display: flex; flex-direction: column; padding: 24px 16px; flex-shrink: 0; z-index: 10;
-            transition: all 0.3s ease; overflow-y: auto;
-        }
-
+        #sidebar { width: 260px; background-color: var(--bg-card); border-right: 1px solid var(--border); display: flex; flex-direction: column; padding: 24px 16px; flex-shrink: 0; z-index: 10; transition: all 0.3s ease; overflow-y: auto; }
         body.preview-mode #sidebar { display: none; }
-
         .brand-logo { margin-bottom: 24px; display: flex; justify-content: center; align-items: center; width: 100%; }
         .brand-logo img { width: 130px; height: auto; object-fit: contain; }
-
+        
         .role-selector-wrapper { margin-bottom: 24px; padding: 0 8px; }
         .role-label { font-size: 0.75rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px; letter-spacing: 0.05em; }
-        
-        .segmented-control {
-            display: flex; background-color: var(--bg-base);
-            padding: 4px; border-radius: 8px; border: 1px solid var(--border);
-        }
-        .segment-btn {
-            flex: 1; padding: 8px 4px; text-align: center; font-size: 0.75rem; font-weight: 600;
-            color: var(--text-muted); background: transparent; border: none; border-radius: 6px;
-            cursor: pointer; transition: all 0.2s ease; font-family: var(--font-sans);
-        }
+        .segmented-control { display: flex; background-color: var(--bg-base); padding: 4px; border-radius: 8px; border: 1px solid var(--border); }
+        .segment-btn { flex: 1; padding: 8px 4px; text-align: center; font-size: 0.75rem; font-weight: 600; color: var(--text-muted); background: transparent; border: none; border-radius: 6px; cursor: pointer; transition: all 0.2s ease; font-family: var(--font-sans); }
         .segment-btn:hover { color: var(--text-main); }
         .segment-btn.active { background-color: var(--bg-card); color: var(--primary); box-shadow: var(--shadow-sm); border: 1px solid var(--border);}
-
-        .security-select {
-            width: 100%; padding: 8px 10px; border-radius: 6px; border: 1px solid var(--input-border);
-            background: var(--bg-base); color: var(--text-main); font-size: 0.8rem; font-weight: 600; cursor: pointer;
-        }
+        .security-select { width: 100%; padding: 8px 10px; border-radius: 6px; border: 1px solid var(--input-border); background: var(--bg-base); color: var(--text-main); font-size: 0.8rem; font-weight: 600; cursor: pointer; }
 
         .nav-menu { display: flex; flex-direction: column; gap: 4px; flex: 1; margin-bottom: 20px;}
-        .nav-link {
-            display: flex; align-items: center; gap: 12px; padding: 10px 12px;
-            font-size: 0.875rem; font-weight: 500; color: var(--text-muted);
-            border-radius: 6px; cursor: pointer; transition: all 0.2s ease;
-        }
+        .nav-link { display: flex; align-items: center; gap: 12px; padding: 10px 12px; font-size: 0.875rem; font-weight: 500; color: var(--text-muted); border-radius: 6px; cursor: pointer; transition: all 0.2s ease; }
         .nav-link svg { width: 18px; height: 18px; transition: transform 0.2s ease; }
         .nav-link:hover { background-color: var(--bg-base); color: var(--text-main); }
         .nav-link:hover svg { transform: scale(1.1); color: var(--primary); }
         .nav-link.active { background-color: var(--primary-light); color: var(--primary); }
-        
         .nav-action { margin-top: auto; display: flex; flex-direction: column; gap: 8px;}
         .btn-theme { background-color: transparent; border: 1px solid var(--border); color: var(--text-main); justify-content: center; font-weight: 600; }
         .btn-theme:hover { background-color: var(--bg-base); }
         .btn-preview { background-color: var(--text-main); color: var(--bg-card); justify-content: center; font-weight: 600; border: none;}
         .btn-preview:hover { background-color: var(--text-muted); color: var(--bg-card); }
         
+        /* 動態隱藏類別 */
+        .sim-only, .test-only { display: none; }
+        body[data-role="sim"] .sim-only { display: flex; }
+        body[data-role="test"] .test-only { display: flex; }
+        
         /* ====== Main Content ====== */
         #main-content { flex: 1; overflow-y: auto; scroll-behavior: smooth; padding: 40px 60px; position: relative; }
         body.preview-mode #main-content { padding: 40px 20px; }
+        .workspace { max-width: 900px; margin: 0 auto; padding-bottom: 100px;}
+        section { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 32px; margin-bottom: 32px; box-shadow: var(--shadow-sm); scroll-margin-top: 40px; transition: all 0.3s ease; }
+        /* Role 控制 section 顯示 */
+        body[data-role="sim"] section.test-only { display: none; }
+        body[data-role="test"] section.sim-only { display: none; }
 
-        .workspace { max-width: 800px; margin: 0 auto; padding-bottom: 100px;}
-
-        section {
-            background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius);
-            padding: 32px; margin-bottom: 32px; box-shadow: var(--shadow-sm); scroll-margin-top: 40px; 
-            transition: all 0.3s ease;
-        }
         .section-header { margin-top: 0; margin-bottom: 24px; font-size: 1.25rem; font-weight: 600; color: var(--text-main); display: flex; align-items: center; justify-content: space-between;}
-
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-        .full-width { grid-column: span 2; }
         .form-group { display: flex; flex-direction: column; gap: 6px; }
         label { font-size: 0.875rem; font-weight: 500; color: var(--text-main); }
-        
-        input[type="text"], input[type="date"], textarea, select {
-            padding: 10px 12px; border: 1px solid var(--input-border); border-radius: 6px;
-            font-size: 0.875rem; font-family: var(--font-sans); transition: all 0.2s; 
-            background: var(--bg-card); color: var(--text-main);
-        }
+        input[type="text"], input[type="date"], textarea, select { padding: 10px 12px; border: 1px solid var(--input-border); border-radius: 6px; font-size: 0.875rem; font-family: var(--font-sans); transition: all 0.2s; background: var(--bg-card); color: var(--text-main); }
         input:focus, textarea:focus, select:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 2px var(--primary-light); }
         textarea { resize: vertical; min-height: 80px; }
 
@@ -133,17 +82,12 @@
         .btn svg { width: 18px; height: 18px; flex-shrink: 0; }
         .btn-outline { background: var(--bg-card); border: 1px solid var(--input-border); color: var(--text-main); }
         .btn-outline:hover { background: var(--bg-base); border-color: var(--text-muted); }
-        
         .btn-icon { background: transparent; border: none; color: var(--text-muted); cursor: pointer; padding: 6px; border-radius: 4px; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
         .btn-icon svg { width: 18px; height: 18px; }
         .btn-icon:hover { background: var(--bg-base); color: var(--text-main); }
         .btn-icon.danger:hover { background: var(--primary-light); color: var(--primary); }
 
-        .upload-zone {
-            border: 2px dashed var(--input-border); border-radius: var(--radius); padding: 40px 20px;
-            text-align: center; cursor: pointer; background: transparent; transition: all 0.2s ease;
-            display: flex; flex-direction: column; align-items: center; gap: 12px;
-        }
+        .upload-zone { border: 2px dashed var(--input-border); border-radius: var(--radius); padding: 40px 20px; text-align: center; cursor: pointer; background: transparent; transition: all 0.2s ease; display: flex; flex-direction: column; align-items: center; gap: 12px; }
         .upload-zone:hover { border-color: var(--primary); background: var(--primary-light); }
         .upload-zone svg { width: 32px; height: 32px; color: var(--text-muted); transition: 0.2s;}
         .upload-zone:hover svg { color: var(--primary); transform: scale(1.1); }
@@ -157,16 +101,11 @@
         .chart-content { flex: 1; display: flex; flex-direction: column; gap: 8px; }
         .chart-controls { display: flex; gap: 4px; position: absolute; right: 16px; top: 16px; }
 
-        /* ====== 報告預覽區塊 ====== */
         #preview-workspace { display: none; width: 100%; max-width: 900px; margin: 0 auto; }
         .preview-toolbar { display: flex; justify-content: space-between; margin-bottom: 24px; padding-bottom: 24px; border-bottom: 1px solid var(--border); }
         .btn-primary { background: var(--primary); color: #fff; }
         .btn-primary:hover { background: var(--primary-hover); }
-
-        #report-render-area {
-            background: #fff; padding: 0; border-radius: var(--radius); box-shadow: var(--shadow-md); border: 1px solid var(--border);
-            width: 100%; overflow-x: auto; position: relative;
-        }
+        #report-render-area { background: #fff; padding: 0; border-radius: var(--radius); box-shadow: var(--shadow-md); border: 1px solid var(--border); width: 100%; overflow-x: auto; position: relative; }
 
         @media print {
             body.preview-mode #sidebar, .preview-toolbar { display: none !important; }
@@ -177,9 +116,8 @@
         }
     </style>
 </head>
-<body>
+<body data-role="sim">
 
-    <!-- 用來記憶自動填寫歷史紀錄的 DataLists -->
     <datalist id="dl-pname"></datalist>
     <datalist id="dl-pclient"></datalist>
     <datalist id="dl-powner"></datalist>
@@ -189,11 +127,9 @@
     <datalist id="dl-sfreq"></datalist>
     <datalist id="dl-spec-item"></datalist>
 
-    <!-- ====== Sidebar (導覽列) ====== -->
+    <!-- ====== Sidebar ====== -->
     <aside id="sidebar" class="no-print">
-        <div class="brand-logo">
-            <img src="jpc logo.png" alt="JPC Logo">
-        </div>
+        <div class="brand-logo"><img src="jpc logo.png" alt="JPC Logo"></div>
 
         <div class="role-selector-wrapper">
             <div class="role-label">Engineering Role</div>
@@ -215,89 +151,113 @@
 
         <div class="role-label">Navigation</div>
         <nav class="nav-menu">
-            <a class="nav-link active" onclick="scrollToSection('sec-info')">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                Project Info
-            </a>
-            <a class="nav-link" onclick="scrollToSection('sec-setup')">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path></svg>
-                Environment Setup
-            </a>
-            <a class="nav-link" onclick="scrollToSection('sec-spec')">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
-                Specifications
-            </a>
-            <a class="nav-link" onclick="scrollToSection('sec-chart')">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"></path></svg>
-                Charts & Data
-            </a>
-            <a class="nav-link" onclick="scrollToSection('sec-conc')">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                Conclusion
-            </a>
+            <!-- 共通 -->
+            <a class="nav-link active" onclick="scrollToSection('sec-info')">Project Info</a>
+            
+            <!-- Simulation 專屬 -->
+            <a class="nav-link sim-only" onclick="scrollToSection('sec-setup')">Environment Setup</a>
+            <a class="nav-link sim-only" onclick="scrollToSection('sec-spec')">Specifications</a>
+            
+            <!-- Measurement 專屬 -->
+            <a class="nav-link test-only" onclick="scrollToSection('sec-equip')">Test Equipments</a>
+            <a class="nav-link test-only" onclick="scrollToSection('sec-dut')">DUT Information</a>
+            <a class="nav-link test-only" onclick="scrollToSection('sec-summary')">Test Results</a>
+            
+            <!-- 共通 -->
+            <a class="nav-link" onclick="scrollToSection('sec-chart')">Charts & Data</a>
+            <a class="nav-link" onclick="scrollToSection('sec-conc')">Conclusion</a>
         </nav>
 
         <div class="nav-action">
-            <a class="nav-link btn-theme" onclick="toggleTheme()">
-                <span id="theme-icon"></span>
-                <span id="theme-text">Dark Mode</span>
-            </a>
-            <a class="nav-link btn-preview" onclick="togglePreviewMode()">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
-                Preview & Export
-            </a>
+            <a class="nav-link btn-theme" onclick="toggleTheme()"><span id="theme-icon"></span><span id="theme-text">Dark Mode</span></a>
+            <a class="nav-link btn-preview" onclick="togglePreviewMode()">Preview & Export</a>
         </div>
     </aside>
 
-    <!-- ====== Main Content (工作區) ====== -->
+    <!-- ====== Main Content ====== -->
     <main id="main-content">
         <div id="edit-workspace" class="workspace">
+            
+            <!-- 共通: Project Info -->
             <section id="sec-info">
                 <h2 class="section-header">Project Information</h2>
                 <div class="grid-2">
-                    <div class="form-group"><label>Project Name</label><input type="text" id="pname" list="dl-pname" placeholder="Double click for history"></div>
-                    <div class="form-group"><label>Client / Internal</label><input type="text" id="pclient" list="dl-pclient"></div>
-                    <div class="form-group"><label id="lbl-rev">Version / Revision</label><input type="text" id="prev"></div>
-                    <div class="form-group"><label>DUT / Sample ID</label><input type="text" id="pdut"></div>
+                    <div class="form-group"><label>Project Name</label><input type="text" id="pname" list="dl-pname" placeholder="e.g. QSFP-DD400G To 2*QSFP56..."></div>
+                    <div class="form-group sim-only"><label>Client / Internal</label><input type="text" id="pclient" list="dl-pclient"></div>
+                    <div class="form-group"><label id="lbl-rev">Version / Specification Standard</label><input type="text" id="prev" placeholder="e.g. IEEE P802.3cd 400GBASE-CR8"></div>
+                    <div class="form-group sim-only"><label>DUT / Sample ID</label><input type="text" id="pdut"></div>
                     <div class="form-group"><label>Prepared by (Engineer)</label><input type="text" id="powner" list="dl-powner"></div>
                     <div class="form-group"><label>Approved by (Checker)</label><input type="text" id="pchecker" list="dl-pchecker"></div>
                     <div class="form-group"><label>Date</label><input type="date" id="pdate"></div>
-                    <div class="form-group"><label>Objective</label><input type="text" id="ppurpose"></div>
+                    <div class="form-group sim-only"><label>Objective</label><input type="text" id="ppurpose"></div>
+                    <div class="form-group test-only"><label>Report To (Client)</label><input type="text" id="ptarget"></div>
                 </div>
             </section>
 
-            <section id="sec-setup">
+            <!-- SIM 專屬: Setup -->
+            <section id="sec-setup" class="sim-only">
                 <h2 class="section-header">Environment Setup</h2>
                 <div class="grid-2">
-                    <div class="form-group"><label id="lbl-soft">Software</label><input type="text" id="ssoft" list="dl-ssoft"></div>
-                    <div class="form-group"><label id="lbl-solver">Solver</label><input type="text" id="ssolver" list="dl-ssolver"></div>
-                    <div class="form-group"><label id="lbl-freq">Frequency Range</label><input type="text" id="sfreq" list="dl-sfreq"></div>
-                    
-                    <div class="form-group sim-only"><label>Port Setup</label><input type="text" id="sport"></div>
-                    <div class="form-group full-width sim-only"><label>Material / Stackup</label><input type="text" id="smat"></div>
+                    <div class="form-group"><label>Software</label><input type="text" id="ssoft" list="dl-ssoft"></div>
+                    <div class="form-group"><label>Solver</label><input type="text" id="ssolver" list="dl-ssolver"></div>
+                    <div class="form-group"><label>Frequency Range</label><input type="text" id="sfreq" list="dl-sfreq"></div>
+                    <div class="form-group"><label>Port Setup</label><input type="text" id="sport"></div>
+                    <div class="form-group full-width"><label>Material / Stackup</label><input type="text" id="smat"></div>
                 </div>
             </section>
 
-            <section id="sec-spec">
-                <h2 class="section-header">
-                    Specifications
-                    <button type="button" class="btn btn-outline" onclick="addRow()">
-                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-                        Add Row
-                    </button>
-                </h2>
+            <!-- SIM 專屬: Spec -->
+            <section id="sec-spec" class="sim-only">
+                <h2 class="section-header">Specifications <button type="button" class="btn btn-outline" onclick="addRow('specTableBody')">Add Row</button></h2>
                 <table class="spec-table">
-                    <thead><tr>
-                        <th>Item</th><th>Spec / Condition</th><th>Result</th><th>Margin</th><th>Status</th><th>Remark</th><th style="width: 40px;"></th>
-                    </tr></thead>
+                    <thead><tr><th>Item</th><th>Spec / Condition</th><th>Result</th><th>Margin</th><th>Status</th><th>Remark</th><th style="width: 40px;"></th></tr></thead>
                     <tbody id="specTableBody"></tbody>
                 </table>
             </section>
 
+            <!-- TEST 專屬: Test Equipments -->
+            <section id="sec-equip" class="test-only">
+                <h2 class="section-header">Test Equipments Information <button type="button" class="btn btn-outline" onclick="addEquipRow()">Add Row</button></h2>
+                <table class="spec-table">
+                    <thead><tr><th>ID</th><th>Instrument</th><th>Description with Instrumentation and software</th><th>Manufacture</th><th style="width: 40px;"></th></tr></thead>
+                    <tbody id="equipTableBody"></tbody>
+                </table>
+            </section>
+
+            <!-- TEST 專屬: DUT Info -->
+            <section id="sec-dut" class="test-only">
+                <h2 class="section-header">Device Under Test (DUT) Information <button type="button" class="btn btn-outline" onclick="addDutRow()">Add Row</button></h2>
+                <table class="spec-table">
+                    <thead><tr><th>Property Name</th><th>Value</th><th>Property Name</th><th>Value</th><th style="width: 40px;"></th></tr></thead>
+                    <tbody id="dutTableBody"></tbody>
+                </table>
+            </section>
+
+            <!-- TEST 專屬: Results Summary -->
+            <section id="sec-summary" class="test-only">
+                <h2 class="section-header">Summary of Results <button type="button" class="btn btn-outline" onclick="addSummaryRow()">Add Row</button></h2>
+                <table class="spec-table">
+                    <thead><tr><th style="width: 70%;">Item</th><th>Test Result</th><th style="width: 40px;"></th></tr></thead>
+                    <tbody id="summaryTableBody"></tbody>
+                </table>
+            </section>
+            
+            <!-- TEST 專屬: Manual Matrix (可選手動填寫區) -->
+            <section id="sec-meas-matrix" class="test-only">
+                <h2 class="section-header">TX / RX Data Matrix (Optional) <button type="button" class="btn btn-outline" onclick="addMatrixRow()">Add Row</button></h2>
+                <p style="font-size:0.875rem; color:var(--text-muted); margin-top:-16px;">You can manually input data here, or skip this and paste Excel charts below.</p>
+                <div style="overflow-x: auto;">
+                    <table class="spec-table" style="min-width: 700px;">
+                        <thead><tr><th>Item / Freq</th><th>Limit</th><th>TX/RX 1</th><th>TX/RX 2</th><th>TX/RX 3</th><th>TX/RX 4</th><th>TX/RX 5</th><th>TX/RX 6</th><th>TX/RX 7</th><th>TX/RX 8</th><th>Result</th><th style="width: 40px;"></th></tr></thead>
+                        <tbody id="matrixTableBody"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- 共通: Charts -->
             <section id="sec-chart">
                 <h2 class="section-header">Charts & Data</h2>
                 <div class="upload-zone" onclick="document.getElementById('img_upload').click()">
-                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
                     <span>Click here or <b style="color:var(--primary);">Press Ctrl+V anywhere</b> to paste chart</span>
                     <div class="upload-zone-hint">Support standard image formats & direct clipboard paste</div>
                     <input type="file" id="img_upload" accept="image/*" multiple>
@@ -305,6 +265,7 @@
                 <div id="img_charts_container" class="chart-list"></div>
             </section>
 
+            <!-- 共通: Conclusion -->
             <section id="sec-conc">
                 <h2 class="section-header">Conclusion</h2>
                 <div class="form-group" style="margin-bottom: 20px;"><label>Summary</label><textarea id="c_conc" placeholder="Supports line breaks..."></textarea></div>
@@ -312,22 +273,13 @@
             </section>
         </div>
 
-        <!-- 報告預覽區 -->
+        <!-- Preview Area -->
         <div id="preview-workspace">
             <div class="preview-toolbar">
-                <button class="btn btn-outline" onclick="togglePreviewMode()">
-                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
-                    Back to Edit
-                </button>
+                <button class="btn btn-outline" onclick="togglePreviewMode()">Back to Edit</button>
                 <div style="display: flex; gap: 12px;">
-                    <button class="btn btn-outline" onclick="downloadReportHTML()">
-                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-                        Export HTML
-                    </button>
-                    <button class="btn btn-primary" onclick="window.print()">
-                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
-                        Print / PDF
-                    </button>
+                    <button class="btn btn-outline" onclick="downloadReportHTML()">Export HTML</button>
+                    <button class="btn btn-primary" onclick="window.print()">Print / PDF</button>
                 </div>
             </div>
             <div id="report-render-area"></div>
@@ -338,132 +290,117 @@
         const iconTrash = `<svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>`;
         const iconUp = `<svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path></svg>`;
         const iconDown = `<svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>`;
-        const iconMoon = `<svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>`;
         const iconSun = `<svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>`;
+        const iconMoon = `<svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>`;
 
         document.getElementById('pdate').value = new Date().toISOString().split('T')[0];
         
-        // ====== 暗黑模式邏輯 ======
+        // Theme
         let isDarkMode = false;
         function toggleTheme() {
             isDarkMode = !isDarkMode;
-            applyTheme();
+            document.body.classList.toggle('dark', isDarkMode);
+            document.getElementById('theme-icon').innerHTML = isDarkMode ? iconSun : iconMoon;
+            document.getElementById('theme-text').innerText = isDarkMode ? "Light Mode" : "Dark Mode";
             localStorage.setItem('jpc_theme', isDarkMode ? 'dark' : 'light');
         }
-        function applyTheme() {
-            if (isDarkMode) {
-                document.body.classList.add('dark');
-                document.getElementById('theme-icon').innerHTML = iconSun;
-                document.getElementById('theme-text').innerText = "Light Mode";
-            } else {
-                document.body.classList.remove('dark');
-                document.getElementById('theme-icon').innerHTML = iconMoon;
-                document.getElementById('theme-text').innerText = "Dark Mode";
-            }
-        }
 
-        // ====== 角色切換 ======
+        // Role Switcher
         function switchRole(roleOverride) {
             const roleInput = document.getElementById('role-selector');
-            if(roleOverride) { roleInput.value = roleOverride; }
+            if(roleOverride) roleInput.value = roleOverride;
             const role = roleInput.value;
             const isSim = role === 'sim';
             
             document.getElementById('btn-role-sim').classList.toggle('active', isSim);
             document.getElementById('btn-role-test').classList.toggle('active', !isSim);
-            
-            document.getElementById('lbl-rev').innerText = isSim ? 'Version / Revision' : 'Test Stage';
-            document.getElementById('lbl-soft').innerText = isSim ? 'Software' : 'VNA Model';
-            document.getElementById('lbl-solver').innerText = isSim ? 'Solver' : 'Fixture';
-            document.getElementById('lbl-freq').innerText = isSim ? 'Frequency Range' : 'Calibration';
-            
-            document.querySelectorAll('.sim-only').forEach(el => { el.style.display = isSim ? 'flex' : 'none'; });
+            document.body.setAttribute('data-role', role);
             saveDraft();
         }
 
-        // ====== ScrollSpy ======
-        const mainContent = document.getElementById('main-content');
-        const sections = document.querySelectorAll('section');
-        const navLinks = document.querySelectorAll('.nav-menu .nav-link');
-        function scrollToSection(id) { document.getElementById(id).scrollIntoView({ behavior: 'smooth' }); }
-        mainContent.addEventListener('scroll', () => {
-            if(document.body.classList.contains('preview-mode')) return;
-            let current = '';
-            sections.forEach(sec => { if (mainContent.scrollTop >= (sec.offsetTop - 150)) current = sec.getAttribute('id'); });
-            navLinks.forEach(link => {
-                link.classList.remove('active');
-                if (link.getAttribute('onclick').includes(current)) link.classList.add('active');
-            });
-        });
-
-        // ====== 智慧歷史選單 (Autocomplete History) ======
-        function updateHistoryData() {
-            let history = JSON.parse(localStorage.getItem('jpc_autocomplete') || '{}');
-            const trackIds = ['pname', 'pclient', 'powner', 'pchecker', 'ssoft', 'ssolver', 'sfreq'];
-            
-            // 處理一般文字框
-            trackIds.forEach(id => {
-                const val = document.getElementById(id).value.trim();
-                if(val) {
-                    if(!history[id]) history[id] = [];
-                    history[id] = history[id].filter(v => v !== val); // 移除舊的
-                    history[id].unshift(val); // 放到最前面
-                    if(history[id].length > 8) history[id].pop(); // 只保留最近8筆
-                }
-            });
-
-            // 處理規格表第一欄 (Item Name)
-            if(!history['spec-item']) history['spec-item'] = [];
-            document.querySelectorAll('.spec-item-input').forEach(input => {
-                const val = input.value.trim();
-                if(val && !['IL', 'RL', 'NEXT', 'FEXT'].includes(val)) {
-                    history['spec-item'] = history['spec-item'].filter(v => v !== val);
-                    history['spec-item'].unshift(val);
-                }
-            });
-            if(history['spec-item'].length > 10) history['spec-item'] = history['spec-item'].slice(0,10);
-            
-            localStorage.setItem('jpc_autocomplete', JSON.stringify(history));
-            renderDataLists();
+        // ====== Dynamic Tables Generation ======
+        function addRow(tbodyId, colsHTML) {
+            const tr = document.createElement('tr');
+            tr.innerHTML = colsHTML + `<td style="text-align:right;"><button type="button" class="btn-icon danger" onclick="this.closest('tr').remove(); saveDraft();">${iconTrash}</button></td>`;
+            document.getElementById(tbodyId).appendChild(tr);
+            saveDraft();
         }
 
-        function renderDataLists() {
-            let history = JSON.parse(localStorage.getItem('jpc_autocomplete') || '{}');
-            Object.keys(history).forEach(id => {
-                const dl = document.getElementById('dl-' + id);
-                if(dl) dl.innerHTML = history[id].map(val => `<option value="${val}">`).join('');
-            });
+        // SIM: Spec
+        function addSpecRow(v1='', v2='', v3='', v4='', v5='', v6='') {
+            addRow('specTableBody', `
+                <td><input type="text" class="save-t-spec spec-item-input" list="dl-spec-item" value="${v1}"></td>
+                <td><input type="text" class="save-t-spec" value="${v2}"></td><td><input type="text" class="save-t-spec" value="${v3}"></td>
+                <td><input type="text" class="save-t-spec" value="${v4}"></td>
+                <td><select class="save-t-spec"><option value="">-</option><option value="Pass" ${v5==='Pass'?'selected':''}>Pass</option><option value="Fail" ${v5==='Fail'?'selected':''}>Fail</option></select></td>
+                <td><input type="text" class="save-t-spec" value="${v6}"></td>`);
+        }
+        
+        // TEST: Equip
+        function addEquipRow(v1='', v2='', v3='', v4='') {
+            addRow('equipTableBody', `
+                <td><input type="text" class="save-t-equip" value="${v1}" style="width:60px; text-align:center;"></td>
+                <td><input type="text" class="save-t-equip" value="${v2}"></td>
+                <td><input type="text" class="save-t-equip" value="${v3}"></td>
+                <td><input type="text" class="save-t-equip" value="${v4}"></td>`);
+        }
+        
+        // TEST: DUT
+        function addDutRow(k1='', v1='', k2='', v2='') {
+            addRow('dutTableBody', `
+                <td><input type="text" class="save-t-dut" value="${k1}" style="background:var(--bg-base); font-weight:600;"></td>
+                <td><input type="text" class="save-t-dut" value="${v1}"></td>
+                <td><input type="text" class="save-t-dut" value="${k2}" style="background:var(--bg-base); font-weight:600;"></td>
+                <td><input type="text" class="save-t-dut" value="${v2}"></td>`);
         }
 
-        // ====== 動態表格 ======
-        function getEmptyRowHTML(defaultItem = "") {
-            return `
-                <tr>
-                    <td><input type="text" class="save-target spec-item-input" list="dl-spec-item" placeholder="Item Name" value="${defaultItem}"></td>
-                    <td><input type="text" class="save-target"></td>
-                    <td><input type="text" class="save-target"></td>
-                    <td><input type="text" class="save-target"></td>
-                    <td>
-                        <select class="save-target" style="padding:10px 4px;">
-                            <option value="">-</option>
-                            <option value="Pass">Pass</option>
-                            <option value="Fail">Fail</option>
-                        </select>
-                    </td>
-                    <td><input type="text" class="save-target"></td>
-                    <td style="text-align:right;">
-                        <button type="button" class="btn-icon danger" onclick="this.closest('tr').remove(); saveDraft();">${iconTrash}</button>
-                    </td>
-                </tr>
-            `;
+        // TEST: Summary
+        function addSummaryRow(k='', v='') {
+            addRow('summaryTableBody', `
+                <td><input type="text" class="save-t-sum" value="${k}"></td>
+                <td><select class="save-t-sum"><option value="">-</option><option value="Pass" ${v==='Pass'?'selected':''}>Pass</option><option value="Fail" ${v==='Fail'?'selected':''}>Fail</option></select></td>`);
         }
-        function addRow(item = "") { document.getElementById('specTableBody').insertAdjacentHTML('beforeend', getEmptyRowHTML(item)); saveDraft(); }
+        
+        // TEST: Matrix
+        function addMatrixRow(v1='', v2='', c1='', c2='', c3='', c4='', c5='', c6='', c7='', c8='', r='') {
+            addRow('matrixTableBody', `
+                <td><input type="text" class="save-t-mat" value="${v1}" style="width:80px"></td><td><input type="text" class="save-t-mat" value="${v2}" style="width:60px"></td>
+                <td><input type="text" class="save-t-mat" value="${c1}" style="width:50px"></td><td><input type="text" class="save-t-mat" value="${c2}" style="width:50px"></td>
+                <td><input type="text" class="save-t-mat" value="${c3}" style="width:50px"></td><td><input type="text" class="save-t-mat" value="${c4}" style="width:50px"></td>
+                <td><input type="text" class="save-t-mat" value="${c5}" style="width:50px"></td><td><input type="text" class="save-t-mat" value="${c6}" style="width:50px"></td>
+                <td><input type="text" class="save-t-mat" value="${c7}" style="width:50px"></td><td><input type="text" class="save-t-mat" value="${c8}" style="width:50px"></td>
+                <td><select class="save-t-mat"><option value="">-</option><option value="Pass" ${r==='Pass'?'selected':''}>Pass</option><option value="Fail" ${r==='Fail'?'selected':''}>Fail</option></select></td>`);
+        }
+
         function initDefaultRows() {
-            const tbody = document.getElementById('specTableBody');
-            if(tbody.children.length === 0) { addRow("IL"); addRow("RL"); addRow("NEXT"); addRow("FEXT"); }
+            if(document.getElementById('specTableBody').children.length === 0) { addSpecRow("IL"); addSpecRow("RL"); addSpecRow("NEXT"); addSpecRow("FEXT"); }
+            if(document.getElementById('equipTableBody').children.length === 0) {
+                addEquipRow('1', 'ZNB20', 'network analyzer', 'R&S');
+                addEquipRow('2', 'EVAL16a', 'MATLAB R2020a', 'MathWorks');
+            }
+            if(document.getElementById('dutTableBody').children.length === 0) {
+                addDutRow('Length(m)', '1.5', 'Tested Pairs', '16 Pairs');
+                addDutRow('Temperature', '26 ℃', 'Humidity', '48 %');
+                addDutRow('AWG', '26', 'Part Number', 'P5611NN01500-1');
+                addDutRow('Work order', 'NA', 'Serial Number', '');
+                addDutRow('Testing following', 'IEEE P802.3cd (400GBASE-CR8)', 'Test fixture', 'PHY-SI QSFP-DD MCB To PHY-SI QSFP CMB');
+                addDutRow('Edited by', 'Haiwei', 'Test Result', 'Pass');
+            }
+            if(document.getElementById('summaryTableBody').children.length === 0) {
+                addSummaryRow('1.Differential Mode Insertion Loss (SDD21)', 'Pass');
+                addSummaryRow('2.Differential Mode Return Loss (SDD11, SDD22)', 'Pass');
+                addSummaryRow('3.Differential to Common-mode Return Loss (SCD11, SCD22)', 'Pass');
+                addSummaryRow('4.Differential to Common-mode conversion Loss (SCD21-SDD21)', 'Pass');
+                addSummaryRow('5.Common-mode Return Loss (SCC11, SCC22)', 'Pass');
+                addSummaryRow('6.Channel Operating Margin (COM)', 'Pass');
+            }
+            if(document.getElementById('matrixTableBody').children.length === 0) {
+                addMatrixRow('4 GHz', 'NA', '', '', '', '', '', '', '', '', 'Pass');
+                addMatrixRow('13.28 GHz', '-17.16', '', '', '', '', '', '', '', '', 'Pass');
+            }
         }
 
-        // ====== 圖表與全局 Ctrl+V 貼上功能 ======
+        // ====== Paste Chart ======
         function appendChartCard(imgSrc) {
             const html = `
                 <div class="chart-card">
@@ -484,102 +421,82 @@
             document.getElementById('img_charts_container').insertAdjacentHTML('beforeend', html);
             saveDraft();
         }
-
-        // 1. 傳統按鈕上傳
         document.getElementById('img_upload').addEventListener('change', function(event) {
-            Array.from(event.target.files).forEach((file) => {
-                const reader = new FileReader();
-                reader.onload = function(e) { appendChartCard(e.target.result); }
-                reader.readAsDataURL(file);
-            });
+            Array.from(event.target.files).forEach((file) => { const reader = new FileReader(); reader.onload = function(e) { appendChartCard(e.target.result); }; reader.readAsDataURL(file); });
             event.target.value = '';
         });
-
-        // 2. 殺手級功能：全局監聽 Ctrl+V 貼上圖片
         window.addEventListener('paste', function(e) {
-            // 如果工程師正在文字框裡面打字，就不攔截貼上動作
             const activeTag = document.activeElement.tagName.toLowerCase();
             if (activeTag === 'input' || activeTag === 'textarea') return;
-
             const items = (e.clipboardData || e.originalEvent.clipboardData).items;
             for (let index in items) {
-                const item = items[index];
-                if (item.kind === 'file' && item.type.includes('image/')) {
-                    const blob = item.getAsFile();
+                if (items[index].kind === 'file' && items[index].type.includes('image/')) {
                     const reader = new FileReader();
-                    reader.onload = function(event) {
-                        appendChartCard(event.target.result);
-                        scrollToSection('sec-chart'); // 自動捲動到圖表區給予回饋
-                    };
-                    reader.readAsDataURL(blob);
-                    e.preventDefault(); // 防止瀏覽器預設行為
-                    break;
+                    reader.onload = function(event) { appendChartCard(event.target.result); document.getElementById('sec-chart').scrollIntoView({ behavior: 'smooth' }); };
+                    reader.readAsDataURL(items[index].getAsFile()); e.preventDefault(); break;
                 }
             }
         });
-
         function moveUp(btn) { let item = btn.closest('.chart-card'); if(item.previousElementSibling) item.parentNode.insertBefore(item, item.previousElementSibling); saveDraft();}
         function moveDown(btn) { let item = btn.closest('.chart-card'); if(item.nextElementSibling) item.parentNode.insertBefore(item.nextElementSibling, item); saveDraft();}
 
-        // ====== 草稿儲存 ======
-        window.addEventListener('beforeunload', (e) => { e.preventDefault(); e.returnValue = ''; });
+        // ====== Storage ======
         function saveDraft() {
-            const data = { 
-                fields: {}, 
-                role: document.getElementById('role-selector').value,
-                conf: document.getElementById('conf-level').value
+            const data = { fields: {}, role: document.getElementById('role-selector').value, conf: document.getElementById('conf-level').value };
+            document.querySelectorAll('#edit-workspace input[type="text"], #edit-workspace input[type="date"], #edit-workspace textarea').forEach(el => { if(el.id) data.fields[el.id] = el.value; });
+            
+            const extractTable = (cls) => {
+                let rows = [];
+                document.querySelectorAll(`#edit-workspace tr`).forEach(tr => {
+                    let inputs = tr.querySelectorAll('.' + cls);
+                    if(inputs.length) { let rowData = []; inputs.forEach(input => rowData.push(input.value)); rows.push(rowData); }
+                }); return rows;
             };
-            document.querySelectorAll('#edit-workspace input[id], #edit-workspace textarea[id]').forEach(el => data.fields[el.id] = el.value);
+            data.tblSpec = extractTable('save-t-spec');
+            data.tblEquip = extractTable('save-t-equip');
+            data.tblDut = extractTable('save-t-dut');
+            data.tblSum = extractTable('save-t-sum');
+            data.tblMat = extractTable('save-t-mat');
             
-            const rows = [];
-            document.querySelectorAll('#specTableBody tr').forEach(tr => {
-                let rowData = []; tr.querySelectorAll('.save-target').forEach(input => rowData.push(input.value)); rows.push(rowData);
-            });
-            data.table = rows;
-            localStorage.setItem('jpc_pro_draft', JSON.stringify(data));
-            
-            // 同步更新自動填寫歷史
-            updateHistoryData();
+            localStorage.setItem('jpc_pro_draft_v2', JSON.stringify(data));
         }
 
         function loadDraft() {
-            renderDataLists(); // 初始化歷史選單
             const savedTheme = localStorage.getItem('jpc_theme');
-            if(savedTheme === 'dark') { isDarkMode = true; applyTheme(); } else { applyTheme(); }
+            if(savedTheme === 'dark') { isDarkMode = true; document.body.classList.add('dark'); document.getElementById('theme-icon').innerHTML = iconSun; document.getElementById('theme-text').innerText = "Light Mode"; } 
+            else { document.getElementById('theme-icon').innerHTML = iconMoon; document.getElementById('theme-text').innerText = "Dark Mode"; }
 
-            const draft = localStorage.getItem('jpc_pro_draft');
+            const draft = localStorage.getItem('jpc_pro_draft_v2');
             if(!draft) { initDefaultRows(); return; }
             try {
                 const data = JSON.parse(draft);
                 switchRole(data.role || 'sim');
                 if(data.conf) document.getElementById('conf-level').value = data.conf;
                 Object.keys(data.fields).forEach(key => { if(document.getElementById(key)) document.getElementById(key).value = data.fields[key]; });
-                if(data.table && data.table.length > 0) {
-                    const tbody = document.getElementById('specTableBody');
-                    tbody.innerHTML = '';
-                    data.table.forEach(rowData => {
-                        tbody.insertAdjacentHTML('beforeend', getEmptyRowHTML());
-                        let inputs = tbody.lastElementChild.querySelectorAll('.save-target');
-                        rowData.forEach((val, index) => { if(inputs[index]) inputs[index].value = val; });
-                    });
-                } else { initDefaultRows(); }
+                
+                const restoreTable = (dataArr, addFn) => {
+                    if(dataArr && dataArr.length) { dataArr.forEach(row => addFn(...row)); }
+                };
+                restoreTable(data.tblSpec, addSpecRow);
+                restoreTable(data.tblEquip, addEquipRow);
+                restoreTable(data.tblDut, addDutRow);
+                restoreTable(data.tblSum, addSummaryRow);
+                restoreTable(data.tblMat, addMatrixRow);
+                if(!data.tblSpec && !data.tblEquip) initDefaultRows(); // Fallback for old version
             } catch(e) { initDefaultRows(); }
         }
         document.addEventListener('change', (e) => { if(['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName)) saveDraft(); });
         window.onload = loadDraft;
 
-        // ====== 報告預覽與生成 (機密等級 + 換行支援) ======
+        // ====== Render Output ======
         let isPreview = false;
-        
+        let currentReportInnerHTML = "";
+
         function getConfidentialityConfig() {
             const level = document.getElementById('conf-level').value;
-            if (level === 'internal') {
-                return { text: 'JPC INTERNAL ONLY', color: 'rgba(209, 0, 1, 0.04)', footer: 'JPC Connectivity Confidential - Internal Use Only' };
-            } else if (level === 'confidential') {
-                return { text: 'JPC CONFIDENTIAL', color: 'rgba(0, 0, 0, 0.04)', footer: 'JPC Connectivity Confidential' };
-            } else {
-                return { text: '', color: 'transparent', footer: '' };
-            }
+            if (level === 'internal') return { text: 'JPC INTERNAL ONLY', color: 'rgba(209, 0, 1, 0.04)', footer: 'JPC Connectivity Confidential - Internal Use Only' };
+            if (level === 'confidential') return { text: 'JPC CONFIDENTIAL', color: 'rgba(0, 0, 0, 0.04)', footer: 'JPC Connectivity Confidential' };
+            return { text: '', color: 'transparent', footer: '' };
         }
 
         function togglePreviewMode() {
@@ -590,110 +507,94 @@
             if (isPreview) { generateReportHTML(); document.getElementById('main-content').scrollTop = 0; }
         }
 
+        function buildTableHTML(cls) {
+            let html = '';
+            document.querySelectorAll(`tr`).forEach(tr => {
+                const inputs = tr.querySelectorAll('.' + cls);
+                if(inputs.length && !Array.from(inputs).every(i => i.value.trim() === '')) {
+                    html += '<tr>';
+                    inputs.forEach((input, index) => {
+                        let val = input.value.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+                        let tdClass = val === "Pass" ? "status-pass" : (val === "Fail" ? "status-fail" : "");
+                        
+                        // DUT Table Special Formatting (Gray Background for keys)
+                        if (cls === 'save-t-dut' && (index === 0 || index === 2)) {
+                            html += `<td style="background-color: #f6f5f4; font-weight: 700;">${val || "&nbsp;"}</td>`;
+                        } else {
+                            html += `<td class="${tdClass}">${val || "&nbsp;"}</td>`;
+                        }
+                    });
+                    html += '</tr>';
+                }
+            });
+            return html || '<tr><td colspan="10" style="text-align:center; color:#999;">(No Data)</td></tr>';
+        }
+
         function generateReportHTML() {
             const isSim = document.getElementById('role-selector').value === 'sim';
-            // 安全替換字元，並將 \n 換行符號替換為 <br> 以達到完美多行排版
             const getVal = (id) => { const val = document.getElementById(id).value.trim(); return val ? val : ""; };
             const escapeHTML = (str) => str.replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/\n/g, '<br>');
 
-            const pName = getVal('pname');
             const confCfg = getConfidentialityConfig();
-            
-            // 動態生成 SVG 浮水印
             const watermarkSVG = confCfg.text ? `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="350" height="350"><text x="20" y="175" transform="rotate(-35 175 175)" fill="${confCfg.color}" font-family="Arial" font-size="24" font-weight="bold">${confCfg.text}</text></svg>` : '';
 
-            let specTableHTML = '';
-            document.querySelectorAll(`#specTableBody tr`).forEach(tr => {
-                const inputs = tr.querySelectorAll('.save-target');
-                const isEmpty = Array.from(inputs).every(i => i.value.trim() === '');
-                if(!isEmpty) {
-                    const statusVal = escapeHTML(inputs[4]?.value);
-                    let statusClass = statusVal === "Pass" ? "status-pass" : (statusVal === "Fail" ? "status-fail" : "");
-                    
-                    specTableHTML += `<tr>
-                        <td>${escapeHTML(inputs[0]?.value) || "&nbsp;"}</td><td>${escapeHTML(inputs[1]?.value) || "&nbsp;"}</td>
-                        <td>${escapeHTML(inputs[2]?.value) || "&nbsp;"}</td><td>${escapeHTML(inputs[3]?.value) || "&nbsp;"}</td>
-                        <td class="${statusClass}">${statusVal || "&nbsp;"}</td><td>${escapeHTML(inputs[5]?.value) || "&nbsp;"}</td>
-                    </tr>`;
-                }
-            });
-            if(specTableHTML === '') specTableHTML = '<tr><td colspan="6" style="text-align:center; color:#999;">(No Specification Data)</td></tr>';
-
-            let chartsHTML = '';
-            let chartIndex = 1;
+            let chartsHTML = ''; let chartIndex = 1;
             document.querySelectorAll(`.chart-card`).forEach(item => {
                 const imgSrc = item.querySelector('img').src;
                 const title = escapeHTML(item.querySelector('.chart-title-input').value.trim());
                 const desc = escapeHTML(item.querySelector('.chart-desc-input').value.trim());
-                
-                chartsHTML += `
-                    <div class="rpt-chart-wrapper">
-                        ${title ? `<div class="rpt-chart-title">Figure ${chartIndex}: ${title}</div>` : `<div class="rpt-chart-title">Figure ${chartIndex}</div>`}
-                        <div class="rpt-chart-box">
-                            <img src="${imgSrc}" class="rpt-chart-img">
-                            ${desc ? `<div class="rpt-chart-desc">${desc}</div>` : ''}
-                        </div>
-                    </div>
-                `;
+                chartsHTML += `<div class="rpt-chart-wrapper">${title ? `<div class="rpt-chart-title">Figure ${chartIndex}: ${title}</div>` : `<div class="rpt-chart-title">Figure ${chartIndex}</div>`}<div class="rpt-chart-box"><img src="${imgSrc}" class="rpt-chart-img">${desc ? `<div class="rpt-chart-desc">${desc}</div>` : ''}</div></div>`;
                 chartIndex++;
             });
             if (chartsHTML === '') chartsHTML = '<p style="color:#999; padding-left:12px;">(No Charts Uploaded)</p>';
 
             const reportCSS = `
                 .rpt-wrapper { font-family: 'Inter', sans-serif; color: #111; line-height: 1.6; background: #fff;}
-                
-                ${confCfg.text ? `.rpt-watermark-bg {
-                    position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-                    background-image: url('${watermarkSVG}'); background-repeat: repeat;
-                    z-index: 0; pointer-events: none;
-                }` : `.rpt-watermark-bg { display: none; }`}
-                
+                ${confCfg.text ? `.rpt-watermark-bg { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background-image: url('${watermarkSVG}'); background-repeat: repeat; z-index: 0; pointer-events: none; }` : `.rpt-watermark-bg { display: none; }`}
                 .rpt-content { position: relative; z-index: 1; padding: 40px 60px; min-height: 100vh;}
                 
-                .rpt-cover { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 85vh; text-align: center; }
-                .rpt-cover-logo { width: 320px; height: auto; margin-bottom: 40px; }
-                .rpt-cover-title { font-size: 2.5rem; font-weight: 800; color: #000; margin: 0 0 10px 0; word-break: break-word; }
-                .rpt-cover-subtitle { font-size: 1.25rem; font-weight: 500; color: #d10001; margin-bottom: 60px; letter-spacing: 1px;}
-                
-                .rpt-cover-info { width: 100%; max-width: 500px; text-align: left; background: #fdfdfd; border: 1px solid #e9e5e0; border-radius: 8px; padding: 30px 40px;}
-                .rpt-cover-row { display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 1rem; border-bottom: 1px dashed #eee; padding-bottom: 8px;}
-                .rpt-cover-row:last-child { border: none; margin-bottom: 0; padding-bottom: 0;}
-                .rpt-cover-label { font-weight: 600; color: #555; }
-                .rpt-cover-val { font-weight: 700; color: #111; text-align: right;}
+                /* Measurement Cover (Clean Style) */
+                .rpt-cover-meas { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 85vh; text-align: center; }
+                .rpt-cover-meas .logo { width: 320px; height: auto; margin-bottom: 20px; }
+                .rpt-cover-meas .report-type { font-size: 1.5rem; font-weight: 800; color: #000; margin-bottom: 10px; }
+                .rpt-cover-meas .title { font-size: 1.5rem; font-weight: 700; color: #000; margin-bottom: 5px; }
+                .rpt-cover-meas .subtitle { font-size: 1.125rem; font-weight: 500; color: #000; margin-bottom: 60px; }
+                .rpt-cover-meas .info-table { width: 100%; max-width: 500px; border-collapse: collapse; margin-top: 20px;}
+                .rpt-cover-meas .info-table td { border: 2px solid #000; padding: 12px 20px; font-weight: 700; font-size: 1rem; width: 50%;}
+                .rpt-cover-meas .info-table td:first-child { text-align: center; background: #fdfdfd; }
+                .rpt-cover-meas .info-table td:last-child { text-align: center; }
 
+                /* Common Elements */
                 .rpt-section { page-break-inside: avoid; margin-bottom: 40px; background: #fff;}
-                .rpt-title { font-size: 1.25rem; color: #d10001; border-bottom: 2px solid #d10001; padding-bottom: 8px; margin-bottom: 20px; font-weight: 700;}
-                
+                .rpt-title { font-size: 1.25rem; font-weight: 800; color: #000; margin-bottom: 12px; }
                 .rpt-grid { display: grid; grid-template-columns: minmax(140px, 160px) 1fr; row-gap: 12px; font-size: 0.95rem; margin-bottom: 12px; word-break: break-word; }
                 .rpt-key { font-weight: 600; color: #555; }
                 
-                .rpt-table { width: 100%; border-collapse: collapse; font-size: 0.95rem; margin-top: 12px; }
-                .rpt-table th { background-color: #f6f5f4; font-weight: 700; padding: 12px; text-align: left; border: 1px solid #e9e5e0; border-bottom: 2px solid #ccc;}
-                .rpt-table td { padding: 12px; border: 1px solid #e9e5e0; word-break: break-word; }
-                .rpt-table tr:nth-child(even) { background-color: #fafafa; }
+                /* Table (No Grid, Clean Border) */
+                .rpt-table { width: 100%; border-collapse: collapse; font-size: 0.95rem; margin-top: 8px; border: 1px solid #000; }
+                .rpt-table th { background-color: #f6f5f4; font-weight: 700; padding: 8px 12px; text-align: left; border: 1px solid #000; }
+                .rpt-table td { padding: 8px 12px; border: 1px solid #000; word-break: break-word; }
                 
+                /* Status Colors */
                 .status-pass { color: #16a34a; font-weight: 800; }
                 .status-fail { color: #dc2626; font-weight: 800; }
                 
-                /* 換行與縮排支援 */
-                .rpt-box { border: 1px solid #e9e5e0; border-radius: 8px; padding: 16px 20px; font-size: 0.95rem; background-color: #fafafa; min-height: 20px; }
+                .rpt-box { border: 1px solid #000; border-radius: 4px; padding: 16px 20px; font-size: 0.95rem; background-color: #fafafa; min-height: 20px; }
                 
                 .rpt-chart-wrapper { margin-top: 30px; page-break-inside: avoid; text-align: center; }
-                .rpt-chart-title { font-size: 0.95rem; color: #666; font-style: italic; margin-bottom: 12px; font-weight: 600;}
-                .rpt-chart-box { border: 1px solid #e9e5e0; border-radius: 8px; overflow: hidden; display: inline-block; max-width: 100%; background: #fff;}
-                .rpt-chart-img { max-width: 100%; max-height: 40vh; display: block; margin: 0 auto; border-bottom: 1px solid #e9e5e0;}
-                .rpt-chart-desc { font-size: 0.95rem; color: #333; text-align: left; background: #fafafa; padding: 16px 20px; line-height: 1.5; }
+                .rpt-chart-title { font-size: 0.95rem; color: #000; margin-bottom: 8px; font-weight: 700; text-align: left;}
+                .rpt-chart-box { border: 1px solid #000; display: inline-block; max-width: 100%; background: #fff;}
+                .rpt-chart-img { max-width: 100%; max-height: 40vh; display: block; margin: 0 auto; border-bottom: 1px solid #000;}
+                .rpt-chart-desc { font-size: 0.95rem; color: #000; text-align: left; background: #fafafa; padding: 12px 16px; line-height: 1.5; }
                 
                 .page-break { page-break-before: always; break-before: page; }
                 .rpt-footer-text { text-align: center; font-size: 0.75rem; color: #999; margin-top: 50px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;}
                 
                 @media print { 
                     .rpt-content { padding: 0; }
-                    .rpt-table th { -webkit-print-color-adjust: exact; print-color-adjust: exact; background-color: #f6f5f4 !important; }
-                    .rpt-table tr:nth-child(even) { -webkit-print-color-adjust: exact; print-color-adjust: exact; background-color: #fafafa !important; }
-                    .rpt-chart-desc { -webkit-print-color-adjust: exact; print-color-adjust: exact; background-color: #fafafa !important; }
+                    .rpt-table th, .rpt-table td { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+                    .rpt-cover-meas .info-table td { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
                     .rpt-watermark-bg { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-                    
                     .print-fixed-footer { position: fixed; bottom: 0; left: 0; width: 100%; text-align: center; font-size: 0.75rem; color: #999; font-weight: 600; padding: 10px 0; background: #fff;}
                     .rpt-footer-text { display: none; }
                     @page { margin: 1.5cm 1.5cm 2cm 1.5cm; }
@@ -701,77 +602,119 @@
                 @media screen { .print-fixed-footer { display: none; } }
             `;
 
-            currentReportInnerHTML = `
-    <div class="rpt-watermark-bg"></div>
-    ${confCfg.footer ? `<div class="print-fixed-footer">${confCfg.footer}</div>` : ''}
+            // ======= SIMULATION REPORT LOGIC =======
+            if (isSim) {
+                currentReportInnerHTML = `
+                    <div class="rpt-watermark-bg"></div>
+                    ${confCfg.footer ? `<div class="print-fixed-footer">${confCfg.footer}</div>` : ''}
+                    <div class="rpt-content">
+                        <!-- Sim Cover (Maintains Old Style) -->
+                        <div class="rpt-cover-meas" style="border:none;">
+                            <img src="jpc logo.png" class="logo" alt="JPC Logo">
+                            <h1 class="title" style="font-size:2.5rem; margin-top:20px;">${escapeHTML(getVal('pname'))}</h1>
+                            <div class="subtitle" style="color: #d10001;">Simulation Analysis Report</div>
+                            <div class="rpt-grid" style="text-align:left; max-width:400px; margin-top:40px;">
+                                <div class="rpt-key">Date</div><div>${escapeHTML(getVal('pdate')) || "-"}</div>
+                                <div class="rpt-key">Version</div><div>${escapeHTML(getVal('prev')) || "-"}</div>
+                                <div class="rpt-key">Prepared by</div><div>${escapeHTML(getVal('powner')) || "-"}</div>
+                            </div>
+                        </div>
+                        <div class="page-break"></div>
+                        <div class="rpt-section"><div class="rpt-title">1. Project Information</div>
+                            <div class="rpt-grid">
+                                <div class="rpt-key">Project Name</div><div>${escapeHTML(getVal('pname')) || "-"}</div>
+                                <div class="rpt-key">Client / Internal</div><div>${escapeHTML(getVal('pclient')) || "-"}</div>
+                                <div class="rpt-key">DUT / Sample ID</div><div>${escapeHTML(getVal('pdut')) || "-"}</div>
+                                <div class="rpt-key">Objective</div><div>${escapeHTML(getVal('ppurpose')) || "-"}</div>
+                            </div>
+                        </div>
+                        <div class="rpt-section"><div class="rpt-title">2. Simulation Setup</div>
+                            <div class="rpt-grid">
+                                <div class="rpt-key">Software</div><div>${escapeHTML(getVal('ssoft')) || "-"}</div>
+                                <div class="rpt-key">Solver</div><div>${escapeHTML(getVal('ssolver')) || "-"}</div>
+                                <div class="rpt-key">Frequency Range</div><div>${escapeHTML(getVal('sfreq')) || "-"}</div>
+                                <div class="rpt-key">Port Setup</div><div>${escapeHTML(getVal('sport')) || "-"}</div>
+                                <div class="rpt-key">Material / Stackup</div><div>${escapeHTML(getVal('smat')) || "-"}</div>
+                            </div>
+                        </div>
+                        <div class="rpt-section"><div class="rpt-title">3. Specifications & Results</div>
+                            <table class="rpt-table"><tr><th>Item</th><th>Spec / Condition</th><th>Result</th><th>Margin</th><th>Status</th><th>Remark</th></tr>${buildTableHTML('save-t-spec')}</table>
+                        </div>
+                        <div class="page-break"></div>
+                        <div class="rpt-section"><div class="rpt-title">4. Charts & Data</div>${chartsHTML}</div>
+                        <div class="rpt-section" style="page-break-before: auto;"><div class="rpt-title">5. Conclusion</div><div class="rpt-box">${escapeHTML(getVal('c_conc')) || "-"}</div></div>
+                        <div class="rpt-section"><div class="rpt-title">6. Next Steps</div><div class="rpt-box">${escapeHTML(getVal('c_next')) || "-"}</div></div>
+                        ${confCfg.footer ? `<div class="rpt-footer-text">${confCfg.footer}</div>` : ''}
+                    </div>`;
+            } 
+            // ======= MEASUREMENT REPORT LOGIC =======
+            else {
+                const matrixHtml = buildTableHTML('save-t-mat');
+                const hasMatrix = !matrixHtml.includes('(No Data)');
+                
+                currentReportInnerHTML = `
+                    <div class="rpt-watermark-bg"></div>
+                    ${confCfg.footer ? `<div class="print-fixed-footer">${confCfg.footer}</div>` : ''}
+                    <div class="rpt-content">
+                        <!-- Measurement Standard Cover -->
+                        <div class="rpt-cover-meas">
+                            <img src="jpc logo.png" class="logo" alt="JPC Logo">
+                            <div class="report-type">SI Measurement Report</div>
+                            <div class="title">${escapeHTML(getVal('pname'))}</div>
+                            <div class="subtitle">(${escapeHTML(getVal('prev'))})</div>
+                            
+                            <table class="info-table">
+                                <tr><td>Report To:</td><td>${escapeHTML(getVal('ptarget')) || "-"}</td></tr>
+                                <tr><td>Report Date:</td><td>${escapeHTML(getVal('pdate')) || "-"}</td></tr>
+                                <tr><td>Edited by:</td><td>${escapeHTML(getVal('powner')) || "-"}</td></tr>
+                                <tr><td>Approved by:</td><td>${escapeHTML(getVal('pchecker')) || "-"}</td></tr>
+                            </table>
+                        </div>
+                        
+                        <div class="page-break"></div>
 
-    <div class="rpt-content">
-        <div class="rpt-cover">
-            <img src="jpc logo.png" class="rpt-cover-logo" alt="JPC Logo">
-            ${pName ? `<h1 class="rpt-cover-title">${pName}</h1>` : ''}
-            <div class="rpt-cover-subtitle">${isSim ? 'Simulation' : 'Measurement'} Analysis Report</div>
-            
-            <div class="rpt-cover-info">
-                <div class="rpt-cover-row"><span class="rpt-cover-label">Date</span><span class="rpt-cover-val">${escapeHTML(getVal('pdate')) || "-"}</span></div>
-                <div class="rpt-cover-row"><span class="rpt-cover-label">Version / Stage</span><span class="rpt-cover-val">${escapeHTML(getVal('prev')) || "-"}</span></div>
-                <div class="rpt-cover-row"><span class="rpt-cover-label">Prepared by</span><span class="rpt-cover-val">${escapeHTML(getVal('powner')) || "-"}</span></div>
-                <div class="rpt-cover-row"><span class="rpt-cover-label">Approved by</span><span class="rpt-cover-val">${escapeHTML(getVal('pchecker')) || "-"}</span></div>
-            </div>
-        </div>
-        
-        <div class="page-break"></div>
+                        <div class="rpt-section">
+                            <div class="rpt-title">Test Equipments Information</div>
+                            <table class="rpt-table"><tr><th>ID</th><th>Instrument</th><th>Description with Instrumentation and software</th><th>Manufacture</th></tr>${buildTableHTML('save-t-equip')}</table>
+                        </div>
 
-        <div class="rpt-section">
-            <div class="rpt-title">1. Project Information</div>
-            <div class="rpt-grid">
-                <div class="rpt-key">Project Name</div><div>${pName || "-"}</div>
-                <div class="rpt-key">Client / Internal</div><div>${escapeHTML(getVal('pclient')) || "-"}</div>
-                <div class="rpt-key">DUT / Sample ID</div><div>${escapeHTML(getVal('pdut')) || "-"}</div>
-                <div class="rpt-key">Objective</div><div>${escapeHTML(getVal('ppurpose')) || "-"}</div>
-            </div>
-        </div>
+                        <div class="rpt-section">
+                            <div class="rpt-title">Device Under Test (DUT) Information</div>
+                            <table class="rpt-table"><tr><th>Property Name</th><th>Value</th><th>Property Name</th><th>Value</th></tr>${buildTableHTML('save-t-dut')}</table>
+                        </div>
 
-        <div class="rpt-section">
-            <div class="rpt-title">2. ${isSim ? 'Simulation Setup' : 'Test Environment'}</div>
-            <div class="rpt-grid">
-                <div class="rpt-key">${isSim ? 'Software' : 'VNA Model'}</div><div>${escapeHTML(getVal('ssoft')) || "-"}</div>
-                <div class="rpt-key">${isSim ? 'Solver' : 'Fixture'}</div><div>${escapeHTML(getVal('ssolver')) || "-"}</div>
-                <div class="rpt-key">${isSim ? 'Frequency Range' : 'Calibration'}</div><div>${escapeHTML(getVal('sfreq')) || "-"}</div>
-                ${isSim ? `
-                <div class="rpt-key">Port Setup</div><div>${escapeHTML(getVal('sport')) || "-"}</div>
-                <div class="rpt-key">Material / Stackup</div><div>${escapeHTML(getVal('smat')) || "-"}</div>
-                ` : ''}
-            </div>
-        </div>
+                        <div class="rpt-section">
+                            <div class="rpt-title">Summary of Results</div>
+                            <table class="rpt-table" style="max-width:600px;"><tr><th style="width:70%;">Item</th><th>Test Result</th></tr>${buildTableHTML('save-t-sum')}</table>
+                        </div>
+                        
+                        ${hasMatrix ? `
+                        <div class="page-break"></div>
+                        <div class="rpt-section">
+                            <div class="rpt-title">Summary of Results for the DUT</div>
+                            <div style="overflow-x:auto;">
+                            <table class="rpt-table" style="font-size: 0.85rem; text-align:center;">
+                                <tr><th>Item / Freq</th><th>Limit</th><th>TX/RX 1</th><th>TX/RX 2</th><th>TX/RX 3</th><th>TX/RX 4</th><th>TX/RX 5</th><th>TX/RX 6</th><th>TX/RX 7</th><th>TX/RX 8</th><th>Result</th></tr>
+                                ${matrixHtml}
+                            </table>
+                            </div>
+                        </div>` : ''}
 
-        <div class="rpt-section">
-            <div class="rpt-title">3. Specifications & Results</div>
-            <table class="rpt-table">
-                <tr><th>Item</th><th>Spec / Condition</th><th>Result</th><th>Margin</th><th>Status</th><th>Remark</th></tr>
-                ${specTableHTML}
-            </table>
-        </div>
+                        <div class="page-break"></div>
+                        
+                        <div class="rpt-section">
+                            <div class="rpt-title">Charts & Data</div>
+                            ${chartsHTML}
+                        </div>
 
-        <div class="page-break"></div>
-        
-        <div class="rpt-section">
-            <div class="rpt-title">4. Charts & Data</div>
-            ${chartsHTML}
-        </div>
-
-        <div class="rpt-section" style="page-break-before: auto;">
-            <div class="rpt-title">5. Conclusion</div>
-            <div class="rpt-box">${escapeHTML(getVal('c_conc')) || "-"}</div>
-        </div>
-
-        <div class="rpt-section">
-            <div class="rpt-title">6. Next Steps</div>
-            <div class="rpt-box">${escapeHTML(getVal('c_next')) || "-"}</div>
-        </div>
-        
-        ${confCfg.footer ? `<div class="rpt-footer-text">${confCfg.footer}</div>` : ''}
-    </div>
-            `;
+                        <div class="rpt-section" style="page-break-before: auto;">
+                            <div class="rpt-title">Conclusion</div>
+                            <div class="rpt-box">${escapeHTML(getVal('c_conc')) || "-"}</div>
+                        </div>
+                        
+                        ${confCfg.footer ? `<div class="rpt-footer-text">${confCfg.footer}</div>` : ''}
+                    </div>`;
+            }
             
             document.getElementById('report-render-area').innerHTML = `<style>${reportCSS}</style><div class="rpt-wrapper">${currentReportInnerHTML}</div>`;
         }
@@ -781,31 +724,10 @@
             const roleStr = document.getElementById('role-selector').value === 'sim' ? 'Simulation' : 'Measurement';
             const fileName = `JPC_${projName}_${roleStr}_Report.html`;
             
-            const fullHTMLFile = `<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>${projName} - ${roleStr} Report</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <style>
-        body { margin: 0; background: #fff; -webkit-print-color-adjust: exact; print-color-adjust: exact;}
-        /* 注入動態生成的 CSS */
-        ${document.getElementById('report-render-area').querySelector('style').innerHTML}
-    </style>
-</head>
-<body>
-    <div class="rpt-wrapper">
-        ${currentReportInnerHTML}
-    </div>
-</body>
-</html>`;
-
+            const fullHTMLFile = `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>${projName} - ${roleStr} Report</title><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"><style>body { margin: 0; background: #fff; -webkit-print-color-adjust: exact; print-color-adjust: exact;} ${document.getElementById('report-render-area').querySelector('style').innerHTML}</style></head><body><div class="rpt-wrapper">${currentReportInnerHTML}</div></body></html>`;
             const blob = new Blob([fullHTMLFile], { type: 'text/html;charset=utf-8' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url; a.download = fileName;
-            document.body.appendChild(a); a.click(); document.body.removeChild(a);
-            URL.revokeObjectURL(url);
+            const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = fileName;
+            document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
         }
     </script>
 </body>
