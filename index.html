@@ -57,23 +57,21 @@
         .has-tooltip::after {
             content: attr(data-tip);
             position: absolute;
-            bottom: 110%; left: 50%; transform: translateX(-50%);
+            bottom: 110%; left: 50%; transform: translateX(-50%); /* 改為在正上方 */
             background: rgba(0,0,0,0.85); color: #fff; padding: 8px 12px; border-radius: 6px;
             font-size: 0.75rem; white-space: nowrap; pointer-events: none; font-weight: 500;
             opacity: 0; transition: opacity 0.2s, bottom 0.2s;
             margin-bottom: 5px; z-index: 9999; box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
         .has-tooltip:hover::after { opacity: 1; bottom: 100%; }
-        
-        /* Sidebar Tooltip Alignment */
-        #sidebar .has-tooltip::after { left: 100%; top: 50%; bottom: auto; transform: translateY(-50%); margin-bottom: 0; margin-left: 10px; }
-        #sidebar .has-tooltip:hover::after { left: calc(100% + 5px); }
 
         /* ====== Sidebar ====== */
         #sidebar {
-            width: 260px; background-color: var(--bg-card); border-right: 1px solid var(--border);
+            width: 290px; /* 加寬 Sidebar 解決擁擠感 */
+            background-color: var(--bg-card); border-right: 1px solid var(--border);
             display: flex; flex-direction: column; padding: 24px 16px; flex-shrink: 0; z-index: 10;
-            transition: all 0.3s ease; overflow-y: auto;
+            transition: all 0.3s ease; 
+            overflow-y: auto; overflow-x: hidden; /* 強制隱藏橫向捲軸 */
         }
         body.preview-mode #sidebar { display: none; }
 
@@ -92,15 +90,18 @@
 
         .nav-menu { display: flex; flex-direction: column; gap: 4px; flex: 1; margin-bottom: 20px;}
         .nav-link { display: flex; align-items: center; gap: 12px; padding: 10px 12px; font-size: 0.875rem; font-weight: 500; color: var(--text-muted); border-radius: 6px; cursor: pointer; transition: all 0.2s ease; }
-        .nav-link svg { width: 18px; height: 18px; transition: transform 0.2s ease; flex-shrink: 0;}
+        .nav-link svg { width: 18px; height: 18px; transition: transform 0.2s ease; flex-shrink: 0;} /* 防止 icon 被擠壓 */
         .nav-link:hover { background-color: var(--bg-base); color: var(--text-main); }
         .nav-link:hover svg { transform: scale(1.1); color: var(--primary); }
         .nav-link.active { background-color: var(--primary-light); color: var(--primary); }
         
         .nav-action { margin-top: auto; display: flex; flex-direction: column; gap: 8px;}
-        .btn-theme { background-color: transparent; border: 1px solid var(--border); color: var(--text-main); justify-content: center; font-weight: 600; }
+        .nav-action-row { display: flex; gap: 8px; } /* 用於 Save/Load 並排 */
+        
+        .btn-theme { background-color: transparent; border: 1px solid var(--border); color: var(--text-main); justify-content: center; font-weight: 600; padding: 10px 12px; flex: 1; display: flex; align-items: center; gap: 8px; border-radius: 6px; cursor: pointer; transition: all 0.2s ease; font-size: 0.875rem;}
         .btn-theme:hover { background-color: var(--bg-base); }
-        .btn-preview { background-color: var(--text-main); color: var(--bg-card); justify-content: center; font-weight: 600; border: none;}
+        
+        .btn-preview { background-color: var(--text-main); color: var(--bg-card); justify-content: center; font-weight: 600; border: none; padding: 12px; display: flex; align-items: center; gap: 8px; border-radius: 6px; cursor: pointer; transition: all 0.2s ease; font-size: 0.95rem; width: 100%;}
         .btn-preview:hover { background-color: var(--text-muted); color: var(--bg-card); }
         
         /* ====== Main Content ====== */
@@ -240,17 +241,18 @@
         </nav>
 
         <div class="nav-action">
-            <!-- 新增：儲存專案 / 載入專案按鈕 -->
-            <a class="nav-link btn-theme has-tooltip" data-tip="將目前專案與圖片打包成 .jpc 檔案下載，方便日後修改或交接" onclick="saveProjectFile()">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"></path></svg> Save Project (.jpc)
-            </a>
-            <a class="nav-link btn-theme has-tooltip" data-tip="載入 .jpc 專案檔，或直接將檔案拖曳至網頁中" onclick="document.getElementById('jpc_upload').click()">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg> Load Project (.jpc)
-            </a>
-            <input type="file" id="jpc_upload" accept=".jpc" style="display:none">
-
-            <a class="nav-link btn-theme" onclick="toggleTheme()"><span id="theme-icon"></span><span id="theme-text">Dark Mode</span></a>
-            <a class="nav-link btn-preview" onclick="togglePreviewMode()"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg> Preview & Export</a>
+            <!-- 雙排按鈕設計 -->
+            <div class="nav-action-row">
+                <a class="btn-theme has-tooltip" data-tip="Save Project (.jpc)" onclick="saveProjectFile()">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"></path></svg> Save
+                </a>
+                <a class="btn-theme has-tooltip" data-tip="Load Project (.jpc)" onclick="document.getElementById('jpc_upload').click()">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg> Load
+                </a>
+                <input type="file" id="jpc_upload" accept=".jpc" style="display:none">
+            </div>
+            <a class="btn-theme" onclick="toggleTheme()"><span id="theme-icon"></span><span id="theme-text">Dark Mode</span></a>
+            <a class="btn-preview" onclick="togglePreviewMode()"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg> Preview & Export</a>
         </div>
     </aside>
 
@@ -365,8 +367,8 @@
             <div class="preview-toolbar">
                 <button class="btn btn-outline" onclick="togglePreviewMode()"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg> Back to Edit</button>
                 <div style="display: flex; gap: 12px;">
-                    <button class="btn btn-outline has-tooltip" data-tip="將報告匯出成單一 HTML 網頁檔，方便 Email 預覽" onclick="downloadReportHTML()"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg> Export HTML</button>
-                    <button class="btn btn-primary has-tooltip" data-tip="將報告輸出成 A4 格式的 PDF 檔案" onclick="window.print()"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg> Print / PDF</button>
+                    <button class="btn btn-outline has-tooltip" data-tip="Export to standalone HTML" onclick="downloadReportHTML()"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg> Export HTML</button>
+                    <button class="btn btn-primary has-tooltip" data-tip="Print to PDF" onclick="window.print()"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg> Print / PDF</button>
                 </div>
             </div>
             <div id="report-render-area"></div>
@@ -378,7 +380,7 @@
         <div class="drop-box">
             <svg fill="none" stroke="var(--primary)" viewBox="0 0 24 24" style="width:100px; height:100px;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
             <h1>Drop .jpc file here to load</h1>
-            <p style="color:var(--text-muted); font-size:1.25rem;">將 .jpc 檔案拖曳至此放開即可瞬間還原專案</p>
+            <p style="color:var(--text-muted); font-size:1.25rem;">Drop the .jpc file anywhere to restore your project</p>
         </div>
     </div>
 
@@ -585,7 +587,6 @@
             const startTd = target.closest('td');
             const startColIdx = Array.from(startTr.children).indexOf(startTd);
 
-            // Auto-generate rows if needed (Magic!)
             while(tbody.children.length < startRowIdx + rows.length) {
                 addMatrixRow();
             }
@@ -596,7 +597,7 @@
                 const cells = Array.from(tr.children);
                 for(let j=0; j<rows[i].length; j++) {
                     const colIdx = startColIdx + j;
-                    if(colIdx < cells.length - 1) { // Skip trash bin column
+                    if(colIdx < cells.length - 1) { 
                         const input = cells[colIdx].querySelector('input, select');
                         if(input) input.value = rows[i][j].trim();
                     }
@@ -721,7 +722,6 @@
             try {
                 localStorage.setItem('jpc_pro_draft', JSON.stringify(getProjectData()));
             } catch(e) {
-                // Ignore storage full for auto-save, export will still work
                 console.warn("Local storage full, skipped auto-save.");
             }
             updateHistoryData();
@@ -819,12 +819,18 @@
         document.addEventListener('change', (e) => { if(['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName)) saveDraft(); });
         window.onload = loadDraft;
 
+        // ====== 報告預覽與生成 ======
         let isPreview = false;
+        
         function getConfidentialityConfig() {
             const level = document.getElementById('conf-level').value;
-            if (level === 'internal') return { text: 'JPC INTERNAL ONLY', color: 'rgba(209, 0, 1, 0.04)', footer: 'JPC Connectivity Confidential - Internal Use Only' };
-            if (level === 'confidential') return { text: 'JPC CONFIDENTIAL', color: 'rgba(0, 0, 0, 0.04)', footer: 'JPC Connectivity Confidential' };
-            return { text: '', color: 'transparent', footer: '' };
+            if (level === 'internal') {
+                return { text: 'JPC INTERNAL ONLY', color: 'rgba(209, 0, 1, 0.04)', footer: 'JPC Connectivity Confidential - Internal Use Only' };
+            } else if (level === 'confidential') {
+                return { text: 'JPC CONFIDENTIAL', color: 'rgba(0, 0, 0, 0.04)', footer: 'JPC Connectivity Confidential' };
+            } else {
+                return { text: '', color: 'transparent', footer: '' };
+            }
         }
 
         function togglePreviewMode() {
@@ -920,8 +926,11 @@
             const watermarkSVG = confCfg.text ? `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="350" height="350"><text x="20" y="175" transform="rotate(-35 175 175)" fill="${confCfg.color}" font-family="Arial" font-size="24" font-weight="bold">${confCfg.text}</text></svg>` : '';
             
             let finalCSS = sharedReportCSS;
-            if(!confCfg.text) { finalCSS += `\n.rpt-watermark-bg { display: none; }`; } 
-            else { finalCSS += `\n.rpt-watermark-bg { background-image: url('${watermarkSVG}'); }`; }
+            if(!confCfg.text) {
+                finalCSS += `\n.rpt-watermark-bg { display: none; }`;
+            } else {
+                finalCSS += `\n.rpt-watermark-bg { background-image: url('${watermarkSVG}'); }`;
+            }
 
             let chartIndex = 1;
 
@@ -930,7 +939,11 @@
                 const imgSrc = item.querySelector('img').src;
                 const title = escapeHTML(item.querySelector('.chart-title-input').value.trim());
                 const desc = escapeHTML(item.querySelector('.chart-desc-input').value.trim());
-                geomHTML += `<div class="rpt-chart-wrapper">${title ? `<div class="rpt-chart-title">Figure ${chartIndex}: ${title}</div>` : `<div class="rpt-chart-title">Figure ${chartIndex}</div>`}<div class="rpt-chart-box"><img src="${imgSrc}" class="rpt-chart-img">${desc ? `<div class="rpt-chart-desc">${desc}</div>` : ''}</div></div>`;
+                geomHTML += `
+                    <div class="rpt-chart-wrapper">
+                        ${title ? `<div class="rpt-chart-title">Figure ${chartIndex}: ${title}</div>` : `<div class="rpt-chart-title">Figure ${chartIndex}</div>`}
+                        <div class="rpt-chart-box"><img src="${imgSrc}" class="rpt-chart-img">${desc ? `<div class="rpt-chart-desc">${desc}</div>` : ''}</div>
+                    </div>`;
                 chartIndex++;
             });
 
@@ -939,16 +952,39 @@
                 const imgSrc = item.querySelector('img').src;
                 const title = escapeHTML(item.querySelector('.chart-title-input').value.trim());
                 const desc = escapeHTML(item.querySelector('.chart-desc-input').value.trim());
-                chartsHTML += `<div class="rpt-chart-wrapper">${title ? `<div class="rpt-chart-title">Figure ${chartIndex}: ${title}</div>` : `<div class="rpt-chart-title">Figure ${chartIndex}</div>`}<div class="rpt-chart-box"><img src="${imgSrc}" class="rpt-chart-img">${desc ? `<div class="rpt-chart-desc">${desc}</div>` : ''}</div></div>`;
+                chartsHTML += `
+                    <div class="rpt-chart-wrapper">
+                        ${title ? `<div class="rpt-chart-title">Figure ${chartIndex}: ${title}</div>` : `<div class="rpt-chart-title">Figure ${chartIndex}</div>`}
+                        <div class="rpt-chart-box"><img src="${imgSrc}" class="rpt-chart-img">${desc ? `<div class="rpt-chart-desc">${desc}</div>` : ''}</div>
+                    </div>`;
                 chartIndex++;
             });
 
-            let outHtml = `<div class="rpt-watermark-bg"></div>${confCfg.footer ? `<div class="print-fixed-footer">${confCfg.footer}</div>` : ''}<div class="rpt-content"><div class="rpt-cover"><img src="jpc logo.png" class="rpt-cover-logo" alt="JPC Logo" onerror="this.style.display='none'">${pName !== "-" ? `<h1 class="rpt-cover-title">${pName}</h1>` : ''}<div class="rpt-cover-subtitle">${isSim ? 'Simulation' : 'SI Measurement'} Analysis Report</div><div class="rpt-cover-info">`;
+            let outHtml = `
+            <div class="rpt-watermark-bg"></div>
+            ${confCfg.footer ? `<div class="print-fixed-footer">${confCfg.footer}</div>` : ''}
+            <div class="rpt-content">
+                <div class="rpt-cover">
+                    <img src="jpc logo.png" class="rpt-cover-logo" alt="JPC Logo" onerror="this.style.display='none'">
+                    ${pName !== "-" ? `<h1 class="rpt-cover-title">${pName}</h1>` : ''}
+                    <div class="rpt-cover-subtitle">${isSim ? 'Simulation' : 'SI Measurement'} Analysis Report</div>
+                    <div class="rpt-cover-info">`;
 
             if (isSim) {
-                outHtml += `<div class="rpt-cover-row"><span class="rpt-cover-label">Date</span><span class="rpt-cover-val">${escapeHTML(getValAlways('pdate'))}</span></div><div class="rpt-cover-row"><span class="rpt-cover-label">Version / Std.</span><span class="rpt-cover-val">${escapeHTML(getValAlways('prev'))}</span></div><div class="rpt-cover-row"><span class="rpt-cover-label">Prepared by</span><span class="rpt-cover-val">${escapeHTML(getValAlways('powner'))}</span></div><div class="rpt-cover-row"><span class="rpt-cover-label">Approved by</span><span class="rpt-cover-val">${escapeHTML(getValAlways('pchecker'))}</span></div>`;
+                outHtml += `
+                    <div class="rpt-cover-row"><span class="rpt-cover-label">Date</span><span class="rpt-cover-val">${escapeHTML(getValAlways('pdate'))}</span></div>
+                    <div class="rpt-cover-row"><span class="rpt-cover-label">Version / Std.</span><span class="rpt-cover-val">${escapeHTML(getValAlways('prev'))}</span></div>
+                    <div class="rpt-cover-row"><span class="rpt-cover-label">Prepared by</span><span class="rpt-cover-val">${escapeHTML(getValAlways('powner'))}</span></div>
+                    <div class="rpt-cover-row"><span class="rpt-cover-label">Approved by</span><span class="rpt-cover-val">${escapeHTML(getValAlways('pchecker'))}</span></div>
+                `;
             } else {
-                outHtml += `<div class="rpt-cover-row"><span class="rpt-cover-label">Report To</span><span class="rpt-cover-val">${escapeHTML(getValAlways('ptarget'))}</span></div><div class="rpt-cover-row"><span class="rpt-cover-label">Date</span><span class="rpt-cover-val">${escapeHTML(getValAlways('pdate'))}</span></div><div class="rpt-cover-row"><span class="rpt-cover-label">Specification Standard</span><span class="rpt-cover-val">${escapeHTML(getValAlways('prev'))}</span></div><div class="rpt-cover-row"><span class="rpt-cover-label">Prepared by</span><span class="rpt-cover-val">${escapeHTML(getValAlways('powner'))}</span></div><div class="rpt-cover-row"><span class="rpt-cover-label">Approved by</span><span class="rpt-cover-val">${escapeHTML(getValAlways('pchecker'))}</span></div>`;
+                outHtml += `
+                    <div class="rpt-cover-row"><span class="rpt-cover-label">Report To</span><span class="rpt-cover-val">${escapeHTML(getValAlways('ptarget'))}</span></div>
+                    <div class="rpt-cover-row"><span class="rpt-cover-label">Date</span><span class="rpt-cover-val">${escapeHTML(getValAlways('pdate'))}</span></div>
+                    <div class="rpt-cover-row"><span class="rpt-cover-label">Specification Standard</span><span class="rpt-cover-val">${escapeHTML(getValAlways('prev'))}</span></div>
+                    <div class="rpt-cover-row"><span class="rpt-cover-label">Prepared by</span><span class="rpt-cover-val">${escapeHTML(getValAlways('powner'))}</span></div>
+                    <div class="rpt-cover-row"><span class="rpt-cover-label">Approved by</span><span class="rpt-cover-val">${escapeHTML(getValAlways('pchecker'))}</span></div>
+                `;
             }
             outHtml += `</div></div><div class="page-break"></div>`;
 
@@ -956,40 +992,94 @@
 
             let purposeText = getVal('ppurpose');
             if(isSim && purposeText) {
-                outHtml += `<div class="rpt-section"><div class="rpt-title">${secIndex++}. Purpose</div><div class="rpt-box">${escapeHTML(purposeText)}</div></div>`;
+                outHtml += `
+                <div class="rpt-section">
+                    <div class="rpt-title">${secIndex++}. Purpose</div>
+                    <div class="rpt-box">${escapeHTML(purposeText)}</div>
+                </div>`;
             }
 
-            outHtml += `<div class="rpt-section"><div class="rpt-title">${secIndex++}. Project Information</div><div class="rpt-grid"><div class="rpt-key">Project Name</div><div>${pName}</div><div class="rpt-key">Client / Internal</div><div>${escapeHTML(getValAlways('pclient'))}</div><div class="rpt-key">DUT / Sample ID</div><div>${escapeHTML(getValAlways('pdut'))}</div>${(!isSim && purposeText) ? `<div class="rpt-key">Objective</div><div>${escapeHTML(purposeText)}</div>` : ''}</div></div>`;
+            outHtml += `
+            <div class="rpt-section">
+                <div class="rpt-title">${secIndex++}. Project Information</div>
+                <div class="rpt-grid">
+                    <div class="rpt-key">Project Name</div><div>${pName}</div>
+                    <div class="rpt-key">Client / Internal</div><div>${escapeHTML(getValAlways('pclient'))}</div>
+                    <div class="rpt-key">DUT / Sample ID</div><div>${escapeHTML(getValAlways('pdut'))}</div>
+                    ${(!isSim && purposeText) ? `<div class="rpt-key">Objective</div><div>${escapeHTML(purposeText)}</div>` : ''}
+                </div>
+            </div>`;
 
             if (isSim) {
                 let setupGrid = '';
-                const fields = [{ id: 'ssoft', label: 'Software' }, { id: 'ssolver', label: 'Solver' }, { id: 'sfreq', label: 'Frequency Range' }, { id: 'sstep', label: 'Sweep Step' }, { id: 'simp', label: 'Connector Impedance' }, { id: 'sport', label: 'Port Setup' }, { id: 'sdir', label: 'Port Direction' }, { id: 's3d', label: '3D Model File' }, { id: 'ssnp', label: 'sNp File' }, { id: 'smat', label: 'Material / Stackup' }];
-                fields.forEach(f => { const v = getVal(f.id); if(v) setupGrid += `<div class="rpt-key">${f.label}</div><div>${escapeHTML(v)}</div>`; });
-                if(setupGrid) outHtml += `<div class="rpt-section"><div class="rpt-title">${secIndex++}. Product & Environment Setup</div><div class="rpt-grid">${setupGrid}</div></div>`;
+                const fields = [
+                    { id: 'ssoft', label: 'Software' }, { id: 'ssolver', label: 'Solver' }, { id: 'sfreq', label: 'Frequency Range' },
+                    { id: 'sstep', label: 'Sweep Step' }, { id: 'simp', label: 'Connector Impedance' }, { id: 'sport', label: 'Port Setup' },
+                    { id: 'sdir', label: 'Port Direction' }, { id: 's3d', label: '3D Model File' }, { id: 'ssnp', label: 'sNp File' },
+                    { id: 'smat', label: 'Material / Stackup' }
+                ];
+                fields.forEach(f => {
+                    const v = getVal(f.id);
+                    if(v) setupGrid += `<div class="rpt-key">${f.label}</div><div>${escapeHTML(v)}</div>`;
+                });
 
-                if (geomHTML) outHtml += `<div class="page-break"></div><div class="rpt-section"><div class="rpt-title">${secIndex++}. Geometry & Requirements</div>${geomHTML}</div>`;
+                if(setupGrid) {
+                    outHtml += `<div class="rpt-section"><div class="rpt-title">${secIndex++}. Product & Environment Setup</div><div class="rpt-grid">${setupGrid}</div></div>`;
+                }
+
+                if (geomHTML) {
+                    outHtml += `<div class="page-break"></div><div class="rpt-section"><div class="rpt-title">${secIndex++}. Geometry & Requirements</div>${geomHTML}</div>`;
+                }
 
                 let specTableHTML = buildTableHTML('save-target');
-                if (specTableHTML) outHtml += `<div class="rpt-section"><div class="rpt-title">${secIndex++}. Specifications (Text Table)</div><table class="rpt-table"><tr><th>Item</th><th>Spec / Condition</th><th>Result</th><th>Margin</th><th>Status</th><th>Remark</th></tr>${specTableHTML}</table></div>`;
+                if (specTableHTML) {
+                    outHtml += `
+                    <div class="rpt-section">
+                        <div class="rpt-title">${secIndex++}. Specifications (Text Table)</div>
+                        <table class="rpt-table"><tr><th>Item</th><th>Spec / Condition</th><th>Result</th><th>Margin</th><th>Status</th><th>Remark</th></tr>${specTableHTML}</table>
+                    </div>`;
+                }
 
             } else {
-                let equipHtml = buildTableHTML('save-t-equip'); let dutHtml = buildTableHTML('save-t-dut'); let sumHtml = buildTableHTML('save-t-sum'); let matrixHtml = buildTableHTML('save-t-mat');
-                if(equipHtml || dutHtml || sumHtml || matrixHtml) outHtml += `<div class="page-break"></div>`;
+                let equipHtml = buildTableHTML('save-t-equip');
+                let dutHtml = buildTableHTML('save-t-dut');
+                let sumHtml = buildTableHTML('save-t-sum');
+                let matrixHtml = buildTableHTML('save-t-mat');
+
+                if(equipHtml || dutHtml || sumHtml || matrixHtml) { outHtml += `<div class="page-break"></div>`; }
 
                 if (equipHtml) outHtml += `<div class="rpt-section"><div class="rpt-title">${secIndex++}. Test Equipments Information</div><table class="rpt-table"><tr><th>ID</th><th>Instrument</th><th>Description with Instrumentation and software</th><th>Manufacture</th></tr>${equipHtml}</table></div>`;
                 if (dutHtml) outHtml += `<div class="rpt-section"><div class="rpt-title">${secIndex++}. Device Under Test (DUT) Information</div><table class="rpt-table"><tr><th>Property Name</th><th>Value</th><th>Property Name</th><th>Value</th></tr>${dutHtml}</table></div>`;
                 if (sumHtml) outHtml += `<div class="rpt-section"><div class="rpt-title">${secIndex++}. Summary of Results</div><table class="rpt-table"><tr><th style="width:80%;">Item</th><th>Test Result</th></tr>${sumHtml}</table></div>`;
                 
-                if (matrixHtml) outHtml += `<div class="page-break"></div><div class="rpt-section"><div class="rpt-title">${secIndex++}. Summary of Results for the DUT</div><div style="overflow-x:auto;"><table class="rpt-table" style="font-size: 0.85rem; text-align:center;"><tr><th>Item / Freq</th><th>Limit</th><th>TX/RX 1</th><th>TX/RX 2</th><th>TX/RX 3</th><th>TX/RX 4</th><th>TX/RX 5</th><th>TX/RX 6</th><th>TX/RX 7</th><th>TX/RX 8</th><th>Result</th></tr>${matrixHtml}</table></div></div>`;
+                if (matrixHtml) {
+                    outHtml += `
+                    <div class="page-break"></div>
+                    <div class="rpt-section">
+                        <div class="rpt-title">${secIndex++}. Summary of Results for the DUT</div>
+                        <div style="overflow-x:auto;">
+                        <table class="rpt-table" style="font-size: 0.85rem; text-align:center;">
+                            <tr><th>Item / Freq</th><th>Limit</th><th>TX/RX 1</th><th>TX/RX 2</th><th>TX/RX 3</th><th>TX/RX 4</th><th>TX/RX 5</th><th>TX/RX 6</th><th>TX/RX 7</th><th>TX/RX 8</th><th>Result</th></tr>
+                            ${matrixHtml}
+                        </table>
+                        </div>
+                    </div>`;
+                }
             }
 
-            if (chartsHTML) outHtml += `<div class="page-break"></div><div class="rpt-section"><div class="rpt-title">${secIndex++}. ${isSim ? 'Simulation Results' : 'Charts & Data'}</div>${chartsHTML}</div>`;
+            if (chartsHTML) {
+                outHtml += `<div class="page-break"></div><div class="rpt-section"><div class="rpt-title">${secIndex++}. ${isSim ? 'Simulation Results' : 'Charts & Data'}</div>${chartsHTML}</div>`;
+            }
             
             let concText = getVal('c_conc');
-            if (concText) outHtml += `<div class="rpt-section" style="page-break-before: auto;"><div class="rpt-title">${secIndex++}. Conclusion</div><div class="rpt-box">${escapeHTML(concText)}</div></div>`;
+            if (concText) {
+                outHtml += `<div class="rpt-section" style="page-break-before: auto;"><div class="rpt-title">${secIndex++}. Conclusion</div><div class="rpt-box">${escapeHTML(concText)}</div></div>`;
+            }
             
             let nextText = getVal('c_next');
-            if (nextText) outHtml += `<div class="rpt-section"><div class="rpt-title">${secIndex++}. Next Steps</div><div class="rpt-box">${escapeHTML(nextText)}</div></div>`;
+            if (nextText) {
+                outHtml += `<div class="rpt-section"><div class="rpt-title">${secIndex++}. Next Steps</div><div class="rpt-box">${escapeHTML(nextText)}</div></div>`;
+            }
 
             outHtml += `${confCfg.footer ? `<div class="rpt-footer-text">${confCfg.footer}</div>` : ''}</div>`;
 
@@ -1002,12 +1092,30 @@
             const roleStr = document.getElementById('role-selector').value === 'sim' ? 'Simulation' : 'Measurement';
             const fileName = `JPC_${projName}_${roleStr}_Report.html`;
             
-            const fullHTMLFile = `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>${projName} - ${roleStr} Report</title><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"><style>body { margin: 0; background: #fff; -webkit-print-color-adjust: exact; print-color-adjust: exact;} ${document.getElementById('report-render-area').querySelector('style').innerHTML}</style></head><body><div class="rpt-wrapper">${currentReportInnerHTML}</div></body></html>`;
+            const fullHTMLFile = `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>${projName} - ${roleStr} Report</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { margin: 0; background: #fff; -webkit-print-color-adjust: exact; print-color-adjust: exact;}
+        ${document.getElementById('report-render-area').querySelector('style').innerHTML}
+    </style>
+</head>
+<body>
+    <div class="rpt-wrapper">
+        ${currentReportInnerHTML}
+    </div>
+</body>
+</html>`;
 
             const blob = new Blob([fullHTMLFile], { type: 'text/html;charset=utf-8' });
             const url = URL.createObjectURL(blob);
-            const a = document.createElement('a'); a.href = url; a.download = fileName;
-            document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
+            const a = document.createElement('a');
+            a.href = url; a.download = fileName;
+            document.body.appendChild(a); a.click(); document.body.removeChild(a);
+            URL.revokeObjectURL(url);
             showToast("🌐 HTML Exported Successfully!");
         }
     </script>
