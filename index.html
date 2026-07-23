@@ -49,13 +49,9 @@
             transition: background-color 0.3s ease, color 0.3s ease;
         }
 
-        /* 雙角色 UI 切換邏輯 (新增) */
-        .sim-only, .test-only { display: none; }
-        body[data-role="sim"] .sim-only { display: flex; }
-        body[data-role="test"] .test-only { display: flex; }
-        /* 針對 Section 區塊的隱藏修正 */
-        body[data-role="sim"] section.test-only { display: none; }
-        body[data-role="test"] section.sim-only { display: none; }
+        /* 雙角色 UI 切換邏輯：非當前角色的元素一律強制隱藏 */
+        body[data-role="sim"] .test-only { display: none !important; }
+        body[data-role="test"] .sim-only { display: none !important; }
 
         /* ====== Sidebar ====== */
         #sidebar {
