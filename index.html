@@ -131,8 +131,18 @@
         .btn-icon:hover { background: var(--bg-base); color: var(--text-main); }
         .btn-icon.danger:hover { background: var(--primary-light); color: var(--primary); }
 
-        .layout-toggle-btn { font-size: 0.75rem; font-weight: 600; padding: 4px 10px; background: var(--bg-base); border: none; border-radius: 999px; color: var(--text-muted); cursor: pointer; transition: all 0.2s ease; font-family: var(--font-sans); }
-        .layout-toggle-btn:hover { background: var(--primary-light); color: var(--primary); }
+        /* 更新排版按鈕與控制區塊，移除絕對定位，加上更柔和的膠囊設計 */
+        .layout-toggle-btn { 
+            font-size: 0.75rem; font-weight: 600; padding: 6px 12px; 
+            background: var(--bg-base); border: 1px solid transparent; 
+            border-radius: 999px; color: var(--text-muted); cursor: pointer; 
+            transition: all 0.2s ease; font-family: var(--font-sans);
+            display: flex; align-items: center; gap: 4px;
+        }
+        .layout-toggle-btn:hover { 
+            background: var(--primary-light); color: var(--primary); border-color: var(--primary-light);
+        }
+        .chart-controls { display: flex; gap: 6px; align-items: center; }
 
         .upload-zone {
             border: 2px dashed var(--input-border); border-radius: var(--radius); padding: 40px 20px;
@@ -149,10 +159,10 @@
         .sop-alert { background-color: var(--primary-light); border-left: 4px solid var(--primary); padding: 12px 16px; border-radius: 4px; margin-bottom: 20px; font-size: 0.875rem; color: var(--text-main); }
 
         .chart-list { display: flex; flex-direction: column; gap: 16px; margin-top: 20px; }
-        .chart-card { border: 1px solid var(--border); border-radius: 8px; padding: 16px; background: var(--bg-card); display: flex; gap: 20px; align-items: flex-start; position: relative; }
+        /* 移除原本的 position: relative 防止按鈕異常 */
+        .chart-card { border: 1px solid var(--border); border-radius: 8px; padding: 16px; background: var(--bg-card); display: flex; gap: 20px; align-items: flex-start; }
         .chart-img-preview { width: 220px; height: 140px; object-fit: contain; border: 1px solid var(--border); border-radius: 4px; background: #fff;}
         .chart-content { flex: 1; display: flex; flex-direction: column; gap: 8px; }
-        .chart-controls { display: flex; gap: 4px; align-items: center; }
 
         /* Drop Overlay */
         #drop-overlay {
@@ -611,7 +621,7 @@
             if(layout === 'full') { btnText = '🔲 Full'; btnTitle = '滿版換行'; }
             if(layout === 'focus') { btnText = '🎯 Focus'; btnTitle = '單頁置中'; }
 
-            // 將控制區塊移入文字區，與 Title 標籤並排
+            // 控制區塊移入文字區，與 Title 標籤並排，並確保對齊
             const html = `
                 <div class="chart-card">
                     <img src="${imgSrc}" class="chart-img-preview" alt="Chart">
@@ -635,6 +645,27 @@
             `;
             document.getElementById(containerId).insertAdjacentHTML('beforeend', html);
             saveDraft();
+        }
+
+        // ============================================
+        // 核心更新：精確的滾動置中與防跳躍 Focus 機制
+        // ============================================
+        function focusAndCenterNewCard(containerId) {
+            setTimeout(() => {
+                const container = document.getElementById(containerId);
+                if (container && container.lastElementChild) {
+                    const newCard = container.lastElementChild;
+                    const titleInput = newCard.querySelector('.chart-title-input');
+                    
+                    // 1. 先平滑滾動讓卡片置中
+                    newCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    
+                    // 2. 聚焦輸入框時，加入 preventScroll: true 防止瀏覽器強行跳轉打斷平滑滾動
+                    if (titleInput) {
+                        titleInput.focus({ preventScroll: true });
+                    }
+                }
+            }, 100); // 稍微延遲以確保 DOM 和圖片預覽已完全渲染，高度已確定
         }
 
         document.getElementById('img_upload_geom').addEventListener('change', function(event) {
@@ -682,21 +713,6 @@
                 }
             }
         });
-
-        // 獨立出一個控制滾動與對焦的函數
-        function focusAndCenterNewCard(containerId) {
-            setTimeout(() => {
-                const container = document.getElementById(containerId);
-                if (container && container.lastElementChild) {
-                    const newCard = container.lastElementChild;
-                    // 將新卡片滾動到畫面正中央
-                    newCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    // 自動選中 Title 輸入框，方便直接打字
-                    const titleInput = newCard.querySelector('.chart-title-input');
-                    if(titleInput) titleInput.focus();
-                }
-            }, 50); // 給予一點延遲，確保 DOM 已經渲染完畢
-        }
 
         function moveUp(btn) { let item = btn.closest('.chart-card'); if(item.previousElementSibling) item.parentNode.insertBefore(item, item.previousElementSibling); saveDraft();}
         function moveDown(btn) { let item = btn.closest('.chart-card'); if(item.nextElementSibling) item.parentNode.insertBefore(item.nextElementSibling, item); saveDraft();}
