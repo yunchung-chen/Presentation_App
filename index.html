@@ -114,7 +114,7 @@
             background: var(--bg-card); color: var(--text-main);
         }
         input:focus, textarea:focus, select:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 2px var(--primary-light); }
-        textarea { resize: vertical; min-height: 80px; }
+        textarea { resize: none; min-height: 80px; overflow: hidden; transition: border-color 0.2s, box-shadow 0.2s; }
 
         .spec-table { width: 100%; border-collapse: collapse; }
         .spec-table th { font-size: 0.75rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; text-align: left; padding: 0 0 12px 0; border-bottom: 1px solid var(--border); }
@@ -846,6 +846,8 @@
             
             document.getElementById('img_charts_container').innerHTML = '';
             if(data.resCharts) data.resCharts.forEach(c => appendChartCard(c.img, 'img_charts_container', c.title, c.desc, c.layout));
+
+            setTimeout(resizeAllTextareas, 100);
         }
 
         function loadDraft() {
@@ -858,7 +860,27 @@
             try { applyDataToUI(JSON.parse(draft)); } catch(e) { initDefaultRows(); }
         }
         document.addEventListener('change', (e) => { if(['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName)) saveDraft(); });
-        window.onload = loadDraft;
+        // ======= 自動調整 Textarea 高度 =======
+        function autoResizeTextarea(el) {
+            el.style.height = 'auto'; // 先重置高度
+            el.style.height = (el.scrollHeight + 2) + 'px'; // 根據內容重新設定高度 (+2 緩衝避免誤差)
+        }
+
+        // 監聽所有打字事件，即時調整高度
+        document.addEventListener('input', function(e) {
+            if (e.target.tagName === 'TEXTAREA') autoResizeTextarea(e.target);
+        });
+
+        // 建立一個函式，用來一次性更新網頁上所有 Textarea 的高度
+        function resizeAllTextareas() {
+            document.querySelectorAll('textarea').forEach(autoResizeTextarea);
+        }
+
+        // 網頁載入時執行
+        window.onload = () => {
+            loadDraft();
+            setTimeout(resizeAllTextareas, 100); // 給予渲染時間後，自動撐開有文字的框
+        };
 
         let isPreview = false;
         
