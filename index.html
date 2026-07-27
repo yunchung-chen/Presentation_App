@@ -640,8 +640,10 @@
         document.getElementById('img_upload_geom').addEventListener('change', function(event) {
             Array.from(event.target.files).forEach((file) => {
                 const reader = new FileReader();
-                // 幾何圖預設給 Full 比較適合
-                reader.onload = function(e) { appendChartCard(e.target.result, 'img_geom_container', '', '', 'full'); }
+                reader.onload = function(e) { 
+                    appendChartCard(e.target.result, 'img_geom_container', '', '', 'full'); 
+                    focusAndCenterNewCard('img_geom_container');
+                }
                 reader.readAsDataURL(file);
             });
             event.target.value = '';
@@ -650,7 +652,10 @@
         document.getElementById('img_upload').addEventListener('change', function(event) {
             Array.from(event.target.files).forEach((file) => {
                 const reader = new FileReader();
-                reader.onload = function(e) { appendChartCard(e.target.result, 'img_charts_container', '', '', 'half'); }
+                reader.onload = function(e) { 
+                    appendChartCard(e.target.result, 'img_charts_container', '', '', 'half'); 
+                    focusAndCenterNewCard('img_charts_container');
+                }
                 reader.readAsDataURL(file);
             });
             event.target.value = '';
@@ -669,11 +674,7 @@
                     reader.onload = function(event) {
                         const defaultLayout = currentPasteTarget === 'img_geom_container' ? 'full' : 'half';
                         appendChartCard(event.target.result, currentPasteTarget, '', '', defaultLayout);
-                        if(currentPasteTarget === 'img_geom_container') {
-                            scrollToSection('sec-geom');
-                        } else {
-                            scrollToSection('sec-chart');
-                        }
+                        focusAndCenterNewCard(currentPasteTarget);
                     };
                     reader.readAsDataURL(blob);
                     e.preventDefault(); 
@@ -681,6 +682,21 @@
                 }
             }
         });
+
+        // 獨立出一個控制滾動與對焦的函數
+        function focusAndCenterNewCard(containerId) {
+            setTimeout(() => {
+                const container = document.getElementById(containerId);
+                if (container && container.lastElementChild) {
+                    const newCard = container.lastElementChild;
+                    // 將新卡片滾動到畫面正中央
+                    newCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    // 自動選中 Title 輸入框，方便直接打字
+                    const titleInput = newCard.querySelector('.chart-title-input');
+                    if(titleInput) titleInput.focus();
+                }
+            }, 50); // 給予一點延遲，確保 DOM 已經渲染完畢
+        }
 
         function moveUp(btn) { let item = btn.closest('.chart-card'); if(item.previousElementSibling) item.parentNode.insertBefore(item, item.previousElementSibling); saveDraft();}
         function moveDown(btn) { let item = btn.closest('.chart-card'); if(item.nextElementSibling) item.parentNode.insertBefore(item.nextElementSibling, item); saveDraft();}
