@@ -131,8 +131,8 @@
         .btn-icon:hover { background: var(--bg-base); color: var(--text-main); }
         .btn-icon.danger:hover { background: var(--primary-light); color: var(--primary); }
 
-        .layout-toggle-btn { font-size: 0.8rem; font-weight: 600; padding: 4px 8px; width: auto; background: var(--bg-base); border: 1px solid var(--border); border-radius: 4px; color: var(--text-main); }
-        .layout-toggle-btn:hover { background: var(--primary-light); border-color: var(--primary); color: var(--primary); }
+        .layout-toggle-btn { font-size: 0.75rem; font-weight: 600; padding: 4px 10px; background: var(--bg-base); border: none; border-radius: 999px; color: var(--text-muted); cursor: pointer; transition: all 0.2s ease; font-family: var(--font-sans); }
+        .layout-toggle-btn:hover { background: var(--primary-light); color: var(--primary); }
 
         .upload-zone {
             border: 2px dashed var(--input-border); border-radius: var(--radius); padding: 40px 20px;
@@ -152,7 +152,7 @@
         .chart-card { border: 1px solid var(--border); border-radius: 8px; padding: 16px; background: var(--bg-card); display: flex; gap: 20px; align-items: flex-start; position: relative; }
         .chart-img-preview { width: 220px; height: 140px; object-fit: contain; border: 1px solid var(--border); border-radius: 4px; background: #fff;}
         .chart-content { flex: 1; display: flex; flex-direction: column; gap: 8px; }
-        .chart-controls { display: flex; gap: 6px; position: absolute; right: 16px; top: 16px; align-items: center;}
+        .chart-controls { display: flex; gap: 4px; align-items: center; }
 
         /* Drop Overlay */
         #drop-overlay {
@@ -607,26 +607,28 @@
         function appendChartCard(imgSrc, containerId = 'img_charts_container', title = '', desc = '', layout = 'half') {
             let phTitle = containerId === 'img_geom_container' ? '圖片標題 (例如: 3D 幾何圖)' : '圖片標題 (例如: Insertion Loss)';
             
-            // 決定按鈕初始顯示文字
             let btnText = '◫ Half'; let btnTitle = '半版並排';
             if(layout === 'full') { btnText = '🔲 Full'; btnTitle = '滿版換行'; }
             if(layout === 'focus') { btnText = '🎯 Focus'; btnTitle = '單頁置中'; }
 
+            // 將控制區塊移入文字區，與 Title 標籤並排
             const html = `
                 <div class="chart-card">
-                    <div class="chart-controls">
-                        <button type="button" class="layout-toggle-btn" onclick="toggleChartLayout(this)" title="${btnTitle}">${btnText}</button>
-                        <input type="hidden" class="chart-layout-state" value="${layout}">
-                        <div style="width:1px; height:16px; background:var(--border); margin:0 4px;"></div>
-                        <button type="button" class="btn-icon" onclick="moveUp(this)">${iconUp}</button>
-                        <button type="button" class="btn-icon" onclick="moveDown(this)">${iconDown}</button>
-                        <button type="button" class="btn-icon danger" onclick="this.closest('.chart-card').remove(); saveDraft();">${iconTrash}</button>
-                    </div>
                     <img src="${imgSrc}" class="chart-img-preview" alt="Chart">
                     <div class="chart-content">
-                        <label>Chart Title (Auto-numbered):</label>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                            <label style="margin: 0;">Chart Title (Auto-numbered):</label>
+                            <div class="chart-controls">
+                                <button type="button" class="layout-toggle-btn" onclick="toggleChartLayout(this)" title="${btnTitle}">${btnText}</button>
+                                <input type="hidden" class="chart-layout-state" value="${layout}">
+                                <div style="width:1px; height:14px; background:var(--border); margin:0 4px;"></div>
+                                <button type="button" class="btn-icon" onclick="moveUp(this)">${iconUp}</button>
+                                <button type="button" class="btn-icon" onclick="moveDown(this)">${iconDown}</button>
+                                <button type="button" class="btn-icon danger" onclick="this.closest('.chart-card').remove(); saveDraft();">${iconTrash}</button>
+                            </div>
+                        </div>
                         <input type="text" class="chart-title-input" placeholder="${phTitle}" value="${title}">
-                        <label>Description:</label>
+                        <label style="margin-top: 4px;">Description:</label>
                         <textarea class="chart-desc-input" placeholder="請輸入圖片補充說明...">${desc}</textarea>
                     </div>
                 </div>
