@@ -131,6 +131,9 @@
         .btn-icon:hover { background: var(--bg-base); color: var(--text-main); }
         .btn-icon.danger:hover { background: var(--primary-light); color: var(--primary); }
 
+        .layout-toggle-btn { font-size: 0.8rem; font-weight: 600; padding: 4px 8px; width: auto; background: var(--bg-base); border: 1px solid var(--border); border-radius: 4px; color: var(--text-main); }
+        .layout-toggle-btn:hover { background: var(--primary-light); border-color: var(--primary); color: var(--primary); }
+
         .upload-zone {
             border: 2px dashed var(--input-border); border-radius: var(--radius); padding: 40px 20px;
             text-align: center; cursor: pointer; background: transparent; transition: all 0.2s ease;
@@ -149,7 +152,7 @@
         .chart-card { border: 1px solid var(--border); border-radius: 8px; padding: 16px; background: var(--bg-card); display: flex; gap: 20px; align-items: flex-start; position: relative; }
         .chart-img-preview { width: 220px; height: 140px; object-fit: contain; border: 1px solid var(--border); border-radius: 4px; background: #fff;}
         .chart-content { flex: 1; display: flex; flex-direction: column; gap: 8px; }
-        .chart-controls { display: flex; gap: 4px; position: absolute; right: 16px; top: 16px; }
+        .chart-controls { display: flex; gap: 6px; position: absolute; right: 16px; top: 16px; align-items: center;}
 
         /* Drop Overlay */
         #drop-overlay {
@@ -581,16 +584,40 @@
             }
         }
 
-        // 追蹤滑鼠位置，決定 Ctrl+V 要貼到哪一個區塊 (預設為 Results)
         let currentPasteTarget = 'img_charts_container'; 
         document.getElementById('sec-geom').addEventListener('mouseenter', () => { currentPasteTarget = 'img_geom_container'; });
         document.getElementById('sec-chart').addEventListener('mouseenter', () => { currentPasteTarget = 'img_charts_container'; });
 
-        function appendChartCard(imgSrc, containerId = 'img_charts_container', title = '', desc = '') {
+        function toggleChartLayout(btn) {
+            const states = [
+                { val: 'half', text: '◫ Half', title: '半版並排' },
+                { val: 'full', text: '🔲 Full', title: '滿版換行' },
+                { val: 'focus', text: '🎯 Focus', title: '單頁置中' }
+            ];
+            const input = btn.parentElement.querySelector('.chart-layout-state');
+            const currentIdx = states.findIndex(s => s.val === input.value);
+            const nextIdx = (currentIdx + 1) % states.length;
+            
+            input.value = states[nextIdx].val;
+            btn.innerHTML = states[nextIdx].text;
+            btn.title = states[nextIdx].title;
+            saveDraft();
+        }
+
+        function appendChartCard(imgSrc, containerId = 'img_charts_container', title = '', desc = '', layout = 'half') {
             let phTitle = containerId === 'img_geom_container' ? '圖片標題 (例如: 3D 幾何圖)' : '圖片標題 (例如: Insertion Loss)';
+            
+            // 決定按鈕初始顯示文字
+            let btnText = '◫ Half'; let btnTitle = '半版並排';
+            if(layout === 'full') { btnText = '🔲 Full'; btnTitle = '滿版換行'; }
+            if(layout === 'focus') { btnText = '🎯 Focus'; btnTitle = '單頁置中'; }
+
             const html = `
                 <div class="chart-card">
                     <div class="chart-controls">
+                        <button type="button" class="layout-toggle-btn" onclick="toggleChartLayout(this)" title="${btnTitle}">${btnText}</button>
+                        <input type="hidden" class="chart-layout-state" value="${layout}">
+                        <div style="width:1px; height:16px; background:var(--border); margin:0 4px;"></div>
                         <button type="button" class="btn-icon" onclick="moveUp(this)">${iconUp}</button>
                         <button type="button" class="btn-icon" onclick="moveDown(this)">${iconDown}</button>
                         <button type="button" class="btn-icon danger" onclick="this.closest('.chart-card').remove(); saveDraft();">${iconTrash}</button>
@@ -611,7 +638,8 @@
         document.getElementById('img_upload_geom').addEventListener('change', function(event) {
             Array.from(event.target.files).forEach((file) => {
                 const reader = new FileReader();
-                reader.onload = function(e) { appendChartCard(e.target.result, 'img_geom_container'); }
+                // 幾何圖預設給 Full 比較適合
+                reader.onload = function(e) { appendChartCard(e.target.result, 'img_geom_container', '', '', 'full'); }
                 reader.readAsDataURL(file);
             });
             event.target.value = '';
@@ -620,7 +648,7 @@
         document.getElementById('img_upload').addEventListener('change', function(event) {
             Array.from(event.target.files).forEach((file) => {
                 const reader = new FileReader();
-                reader.onload = function(e) { appendChartCard(e.target.result, 'img_charts_container'); }
+                reader.onload = function(e) { appendChartCard(e.target.result, 'img_charts_container', '', '', 'half'); }
                 reader.readAsDataURL(file);
             });
             event.target.value = '';
@@ -637,7 +665,8 @@
                     const blob = item.getAsFile();
                     const reader = new FileReader();
                     reader.onload = function(event) {
-                        appendChartCard(event.target.result, currentPasteTarget);
+                        const defaultLayout = currentPasteTarget === 'img_geom_container' ? 'full' : 'half';
+                        appendChartCard(event.target.result, currentPasteTarget, '', '', defaultLayout);
                         if(currentPasteTarget === 'img_geom_container') {
                             scrollToSection('sec-geom');
                         } else {
@@ -683,7 +712,8 @@
                     charts.push({
                         img: card.querySelector('.chart-img-preview').src,
                         title: card.querySelector('.chart-title-input').value,
-                        desc: card.querySelector('.chart-desc-input').value
+                        desc: card.querySelector('.chart-desc-input').value,
+                        layout: card.querySelector('.chart-layout-state').value
                     });
                 });
                 return charts;
@@ -778,10 +808,10 @@
             if(!data.tblEquip || data.tblEquip.length === 0) initDefaultRows();
             
             document.getElementById('img_geom_container').innerHTML = '';
-            if(data.geomCharts) data.geomCharts.forEach(c => appendChartCard(c.img, 'img_geom_container', c.title, c.desc));
+            if(data.geomCharts) data.geomCharts.forEach(c => appendChartCard(c.img, 'img_geom_container', c.title, c.desc, c.layout));
             
             document.getElementById('img_charts_container').innerHTML = '';
-            if(data.resCharts) data.resCharts.forEach(c => appendChartCard(c.img, 'img_charts_container', c.title, c.desc));
+            if(data.resCharts) data.resCharts.forEach(c => appendChartCard(c.img, 'img_charts_container', c.title, c.desc, c.layout));
         }
 
         function loadDraft() {
@@ -825,11 +855,19 @@
                     html += '<tr>';
                     inputs.forEach((input, index) => {
                         let val = input.value.replace(/</g, "&lt;").replace(/>/g, "&gt;");
-                        let tdClass = val === "Pass" ? "status-pass" : (val === "Fail" ? "status-fail" : "");
+                        
+                        // 標籤化測試結果判斷
+                        let tdContent = val || "&nbsp;";
+                        if (val === "Pass") {
+                            tdContent = `<span class="status-badge badge-pass">Pass</span>`;
+                        } else if (val === "Fail") {
+                            tdContent = `<span class="status-badge badge-fail">Fail</span>`;
+                        }
+
                         if (cls === 'save-t-dut' && (index === 0 || index === 2)) {
-                            html += `<td style="background-color: #f6f5f4; font-weight: 700;">${val || "&nbsp;"}</td>`;
+                            html += `<td style="background-color: #f6f5f4; font-weight: 700;">${tdContent}</td>`;
                         } else {
-                            html += `<td class="${tdClass}">${val || "&nbsp;"}</td>`;
+                            html += `<td>${tdContent}</td>`;
                         }
                     });
                     html += '</tr>';
@@ -854,8 +892,8 @@
             .rpt-cover-label { font-weight: 600; color: #555; }
             .rpt-cover-val { font-weight: 700; color: #111; text-align: right;}
 
-            .rpt-section { page-break-inside: avoid; margin-bottom: 40px; background: #fff;}
-            .rpt-title { font-size: 1.25rem; color: #d10001; border-bottom: 2px solid #d10001; padding-bottom: 8px; margin-bottom: 20px; font-weight: 700;}
+            .rpt-section { margin-bottom: 40px; background: #fff;}
+            .rpt-title { font-size: 1.25rem; color: #d10001; border-bottom: 2px solid #d10001; padding-bottom: 8px; margin-bottom: 20px; font-weight: 700; page-break-after: avoid;}
             .rpt-grid { display: grid; grid-template-columns: minmax(140px, 160px) 1fr; row-gap: 12px; font-size: 0.95rem; margin-bottom: 12px; word-break: break-word; }
             .rpt-key { font-weight: 600; color: #555; }
             
@@ -863,17 +901,40 @@
             .rpt-table th { background-color: #f6f5f4; font-weight: 700; padding: 12px; text-align: left; border: 1px solid #e9e5e0; border-bottom: 2px solid #ccc;}
             .rpt-table td { padding: 12px; border: 1px solid #e9e5e0; word-break: break-word; }
             .rpt-table tr:nth-child(even) { background-color: #fafafa; }
+            .rpt-table tr { page-break-inside: avoid; } /* 防斷層：表格列不被切斷 */
             
-            .status-pass { color: #16a34a; font-weight: 800; }
-            .status-fail { color: #dc2626; font-weight: 800; }
+            /* 標籤化視覺 Badge UI */
+            .status-badge { padding: 4px 10px; border-radius: 999px; font-weight: 700; display: inline-block; font-size: 0.85rem; line-height: 1; text-align: center; }
+            .badge-pass { background-color: #dcfce7 !important; color: #166534 !important; border: 1px solid #bbf7d0 !important; }
+            .badge-fail { background-color: #fee2e2 !important; color: #991b1b !important; border: 1px solid #fecaca !important; }
             
             .rpt-box { border: 1px solid #e9e5e0; border-radius: 8px; padding: 16px 20px; font-size: 0.95rem; background-color: #fafafa; min-height: 20px; }
             
-            .rpt-chart-wrapper { margin-top: 30px; page-break-inside: avoid; text-align: center; }
+            /* 三段式圖表排版架構 */
+            .rpt-charts-container { display: flex; flex-wrap: wrap; gap: 24px; justify-content: center; }
+            .rpt-chart-wrapper { page-break-inside: avoid; text-align: center; display: flex; flex-direction: column; align-items: center; }
+            
+            /* 半版排版 */
+            .chart-layout-half { width: calc(50% - 12px); }
+            /* 滿版排版 */
+            .chart-layout-full { width: 100%; }
+            /* 單圖垂直置中 (Focus Page) */
+            .chart-layout-focus { 
+                width: 100%; min-height: 85vh; justify-content: center; 
+                page-break-before: always; page-break-after: always; 
+            }
+            
             .rpt-chart-title { font-size: 0.95rem; color: #666; font-style: italic; margin-bottom: 12px; font-weight: 600;}
-            .rpt-chart-box { border: 1px solid #e9e5e0; border-radius: 8px; overflow: hidden; display: inline-block; max-width: 100%; background: #fff;}
-            .rpt-chart-img { max-width: 100%; max-height: 40vh; display: block; margin: 0 auto; border-bottom: 1px solid #e9e5e0;}
-            .rpt-chart-desc { font-size: 0.95rem; color: #333; text-align: left; background: #fafafa; padding: 16px 20px; line-height: 1.5; }
+            
+            /* 彈性卡片 UI (Flexible Card) */
+            .rpt-chart-box { 
+                background: #ffffff; border: 1px solid #e9e5e0; border-radius: 12px; padding: 24px; 
+                box-shadow: 0 4px 12px rgba(0,0,0,0.05); display: inline-block; width: 100%; box-sizing: border-box;
+            }
+            .rpt-chart-img { max-width: 100%; max-height: 45vh; display: block; margin: 0 auto; object-fit: contain; }
+            .chart-layout-focus .rpt-chart-img { max-height: 65vh; } /* Focus頁面允許圖片更高 */
+            
+            .rpt-chart-desc { margin-top: 16px; padding-top: 16px; border-top: 1px solid #f0f0f0; text-align: left; font-size: 0.95rem; color: #333; line-height: 1.5; }
             
             .page-break { page-break-before: always; break-before: page; }
             .rpt-footer-text { text-align: center; font-size: 0.75rem; color: #999; margin-top: 50px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;}
@@ -882,7 +943,8 @@
                 .rpt-content { padding: 0; }
                 .rpt-table th { -webkit-print-color-adjust: exact; print-color-adjust: exact; background-color: #f6f5f4 !important; }
                 .rpt-table tr:nth-child(even) { -webkit-print-color-adjust: exact; print-color-adjust: exact; background-color: #fafafa !important; }
-                .rpt-chart-desc { -webkit-print-color-adjust: exact; print-color-adjust: exact; background-color: #fafafa !important; }
+                .status-badge { -webkit-print-color-adjust: exact; print-color-adjust: exact; } /* 保證標籤底色印出 */
+                .rpt-chart-box { -webkit-print-color-adjust: exact; print-color-adjust: exact; box-shadow: none; border-color: #ddd;}
                 .rpt-watermark-bg { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
                 .print-fixed-footer { position: fixed; bottom: 0; left: 0; width: 100%; text-align: center; font-size: 0.75rem; color: #999; font-weight: 600; padding: 10px 0; background: #fff;}
                 .rpt-footer-text { display: none; }
@@ -916,31 +978,30 @@
 
             let chartIndex = 1;
 
-            let geomHTML = '';
-            document.querySelectorAll(`#img_geom_container .chart-card`).forEach(item => {
-                const imgSrc = item.querySelector('img').src;
-                const title = escapeHTML(item.querySelector('.chart-title-input').value.trim());
-                const desc = escapeHTML(item.querySelector('.chart-desc-input').value.trim());
-                geomHTML += `
-                    <div class="rpt-chart-wrapper">
-                        ${title ? `<div class="rpt-chart-title">Figure ${chartIndex}: ${title}</div>` : `<div class="rpt-chart-title">Figure ${chartIndex}</div>`}
-                        <div class="rpt-chart-box"><img src="${imgSrc}" class="rpt-chart-img">${desc ? `<div class="rpt-chart-desc">${desc}</div>` : ''}</div>
-                    </div>`;
-                chartIndex++;
-            });
+            const processCharts = (containerId) => {
+                let html = '<div class="rpt-charts-container">';
+                document.querySelectorAll(`#${containerId} .chart-card`).forEach(item => {
+                    const imgSrc = item.querySelector('img').src;
+                    const title = escapeHTML(item.querySelector('.chart-title-input').value.trim());
+                    const desc = escapeHTML(item.querySelector('.chart-desc-input').value.trim());
+                    const layout = item.querySelector('.chart-layout-state').value;
+                    
+                    html += `
+                        <div class="rpt-chart-wrapper chart-layout-${layout}">
+                            ${title ? `<div class="rpt-chart-title">Figure ${chartIndex}: ${title}</div>` : `<div class="rpt-chart-title">Figure ${chartIndex}</div>`}
+                            <div class="rpt-chart-box">
+                                <img src="${imgSrc}" class="rpt-chart-img">
+                                ${desc ? `<div class="rpt-chart-desc">${desc}</div>` : ''}
+                            </div>
+                        </div>`;
+                    chartIndex++;
+                });
+                html += '</div>';
+                return html;
+            };
 
-            let chartsHTML = '';
-            document.querySelectorAll(`#img_charts_container .chart-card`).forEach(item => {
-                const imgSrc = item.querySelector('img').src;
-                const title = escapeHTML(item.querySelector('.chart-title-input').value.trim());
-                const desc = escapeHTML(item.querySelector('.chart-desc-input').value.trim());
-                chartsHTML += `
-                    <div class="rpt-chart-wrapper">
-                        ${title ? `<div class="rpt-chart-title">Figure ${chartIndex}: ${title}</div>` : `<div class="rpt-chart-title">Figure ${chartIndex}</div>`}
-                        <div class="rpt-chart-box"><img src="${imgSrc}" class="rpt-chart-img">${desc ? `<div class="rpt-chart-desc">${desc}</div>` : ''}</div>
-                    </div>`;
-                chartIndex++;
-            });
+            let geomHTML = processCharts('img_geom_container');
+            let chartsHTML = processCharts('img_charts_container');
 
             let outHtml = `
             <div class="rpt-watermark-bg"></div>
@@ -1020,7 +1081,7 @@
                     outHtml += `<div class="rpt-section"><div class="rpt-title">${secIndex++}. Product & Environment Setup</div><div class="rpt-grid">${setupGrid}</div></div>`;
                 }
 
-                if (geomHTML) {
+                if (document.querySelectorAll('#img_geom_container .chart-card').length > 0) {
                     outHtml += `<div class="page-break"></div><div class="rpt-section"><div class="rpt-title">${secIndex++}. Geometry & Requirements</div>${geomHTML}</div>`;
                 }
 
@@ -1060,7 +1121,7 @@
                 }
             }
 
-            if (chartsHTML) {
+            if (document.querySelectorAll('#img_charts_container .chart-card').length > 0) {
                 outHtml += `<div class="page-break"></div><div class="rpt-section"><div class="rpt-title">${secIndex++}. ${isSim ? 'Simulation Results' : 'Charts & Data'}</div>${chartsHTML}</div>`;
             }
             
