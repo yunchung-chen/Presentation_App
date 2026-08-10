@@ -933,74 +933,91 @@
         }
 
         const sharedReportCSS = `
-            .rpt-wrapper { font-family: 'Inter', sans-serif; color: #111; line-height: 1.6; background: #fff;}
+            .rpt-wrapper { font-family: 'Inter', Helvetica, Arial, sans-serif; color: #222; line-height: 1.6; background: #fff;}
             .rpt-watermark-bg { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background-repeat: repeat; z-index: 0; pointer-events: none; }
             .rpt-content { position: relative; z-index: 1; padding: 40px 60px; min-height: 100vh;}
             
+            /* --- 封面設計 (Cover) --- */
             .rpt-cover { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 85vh; text-align: center; }
-            .rpt-cover-logo { width: 320px; height: auto; margin-bottom: 40px; }
-            .rpt-cover-title { font-size: 2.5rem; font-weight: 800; color: #000; margin: 0 0 10px 0; word-break: break-word; }
-            .rpt-cover-subtitle { font-size: 1.25rem; font-weight: 500; color: #d10001; margin-bottom: 60px; letter-spacing: 1px;}
+            .rpt-cover-logo { width: 280px; height: auto; margin-bottom: 40px; }
+            .rpt-cover-title { font-size: 2.75rem; font-weight: 800; color: #1a1a1a; margin: 0 0 12px 0; letter-spacing: -0.02em;}
+            .rpt-cover-subtitle { font-size: 1.25rem; font-weight: 600; color: #d10001; margin-bottom: 60px; text-transform: uppercase; letter-spacing: 2px;}
             
-            .rpt-cover-info { width: 100%; max-width: 500px; text-align: left; background: #fdfdfd; border: 1px solid #e9e5e0; border-radius: 8px; padding: 30px 40px;}
-            .rpt-cover-row { display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 1rem; border-bottom: 1px dashed #eee; padding-bottom: 8px;}
+            .rpt-cover-info { width: 100%; max-width: 550px; text-align: left; background: #fff; border: 1px solid #eaeaea; border-radius: 12px; padding: 32px 40px; box-shadow: 0 8px 24px rgba(0,0,0,0.03);}
+            .rpt-cover-row { display: flex; justify-content: space-between; margin-bottom: 14px; font-size: 1.05rem; border-bottom: 1px solid #f0f0f0; padding-bottom: 10px;}
             .rpt-cover-row:last-child { border: none; margin-bottom: 0; padding-bottom: 0;}
-            .rpt-cover-label { font-weight: 600; color: #555; }
+            .rpt-cover-label { font-weight: 500; color: #666; }
             .rpt-cover-val { font-weight: 700; color: #111; text-align: right;}
 
-            .rpt-section { margin-bottom: 40px; background: #fff;}
-            .rpt-title { font-size: 1.25rem; color: #d10001; border-bottom: 2px solid #d10001; padding-bottom: 8px; margin-bottom: 20px; font-weight: 700; page-break-after: avoid;}
-            .rpt-grid { display: grid; grid-template-columns: minmax(140px, 160px) 1fr; row-gap: 12px; font-size: 0.95rem; margin-bottom: 12px; word-break: break-word; }
+            /* --- 區塊標題 (Section Headers) - 沉穩深灰 + 品牌紅底線 --- */
+            .rpt-section { margin-bottom: 48px; background: #fff;}
+            .rpt-title { 
+                font-size: 1.35rem; color: #1a1a1a; 
+                border-bottom: 1px solid #e0e0e0; 
+                padding-bottom: 10px; margin-bottom: 24px; 
+                font-weight: 800; position: relative;
+                page-break-after: avoid;
+            }
+            .rpt-title::after {
+                content: ''; position: absolute; left: 0; bottom: -1px;
+                width: 48px; height: 3px; background-color: #d10001; /* 品牌點綴 */
+            }
+
+            .rpt-grid { display: grid; grid-template-columns: minmax(160px, 180px) 1fr; row-gap: 14px; font-size: 0.95rem; margin-bottom: 12px; word-break: break-word; }
             .rpt-key { font-weight: 600; color: #555; }
             
+            /* --- 企業級表格 (Corporate Tables) --- */
             .rpt-table { width: 100%; border-collapse: collapse; font-size: 0.95rem; margin-top: 12px; }
-            .rpt-table th { background-color: #f6f5f4; font-weight: 700; padding: 12px; text-align: left; border: 1px solid #e9e5e0; border-bottom: 2px solid #ccc;}
-            .rpt-table td { padding: 12px; border: 1px solid #e9e5e0; word-break: break-word; }
-            .rpt-table tr:nth-child(even) { background-color: #fafafa; }
-            .rpt-table tr { page-break-inside: avoid; } /* 防斷層：表格列不被切斷 */
+            .rpt-table th { background-color: #f8f9fa; font-weight: 700; padding: 12px 14px; text-align: left; border-bottom: 2px solid #ddd; border-top: 2px solid #d10001; /* 表頭紅線 */ color: #333;}
+            .rpt-table td { padding: 12px 14px; border-bottom: 1px solid #eee; word-break: break-word; color: #444;}
+            .rpt-table tr:nth-child(even) { background-color: #fdfdfd; }
+            .rpt-table tr { page-break-inside: avoid; } 
             
             /* 標籤化視覺 Badge UI */
-            .status-badge { padding: 4px 10px; border-radius: 999px; font-weight: 700; display: inline-block; font-size: 0.85rem; line-height: 1; text-align: center; }
-            .badge-pass { background-color: #dcfce7 !important; color: #166534 !important; border: 1px solid #bbf7d0 !important; }
-            .badge-fail { background-color: #fee2e2 !important; color: #991b1b !important; border: 1px solid #fecaca !important; }
+            .status-badge { padding: 4px 10px; border-radius: 6px; font-weight: 700; display: inline-block; font-size: 0.85rem; line-height: 1; text-align: center; }
+            .badge-pass { background-color: #e6f4ea !important; color: #1e7e34 !important; }
+            .badge-fail { background-color: #fce8e6 !important; color: #c5221f !important; }
             
-            .rpt-box { border: 1px solid #e9e5e0; border-radius: 8px; padding: 16px 20px; font-size: 0.95rem; background-color: #fafafa; min-height: 20px; }
+            /* --- 重點文字框 (Callout Boxes) --- */
+            .rpt-box { 
+                border-left: 4px solid #d10001; /* 左側紅線強調 */
+                border-radius: 0 8px 8px 0; 
+                padding: 16px 24px; font-size: 0.95rem; 
+                background-color: #fbfbfb; min-height: 20px;
+                color: #333;
+            }
             
-            /* 三段式圖表排版架構 */
+            /* --- 三段式圖表排版架構 --- */
             .rpt-charts-container { display: flex; flex-wrap: wrap; gap: 24px; justify-content: center; }
             .rpt-chart-wrapper { page-break-inside: avoid; text-align: center; display: flex; flex-direction: column; align-items: center; }
             
-            /* 半版排版 */
             .chart-layout-half { width: calc(50% - 12px); }
-            /* 滿版排版 */
             .chart-layout-full { width: 100%; }
-            /* 單圖垂直置中 (Focus Page) */
-            .chart-layout-focus { 
-                width: 100%; min-height: 85vh; justify-content: center; 
-                page-break-before: always; page-break-after: always; 
-            }
+            .chart-layout-focus { width: 100%; min-height: 85vh; justify-content: center; page-break-before: always; page-break-after: always; }
             
-            .rpt-chart-title { font-size: 0.95rem; color: #666; font-style: italic; margin-bottom: 12px; font-weight: 600;}
+            /* 圖表標題優化 */
+            .rpt-chart-title { font-size: 1rem; color: #333; margin-bottom: 12px; font-weight: 700;}
             
             /* 彈性卡片 UI (Flexible Card) */
             .rpt-chart-box { 
-                background: #ffffff; border: 1px solid #e9e5e0; border-radius: 12px; padding: 24px; 
-                box-shadow: 0 4px 12px rgba(0,0,0,0.05); display: inline-block; width: 100%; box-sizing: border-box;
+                background: #ffffff; border: 1px solid #eaeaea; border-radius: 8px; padding: 24px; 
+                display: inline-block; width: 100%; box-sizing: border-box;
             }
-            .rpt-chart-img { max-width: 100%; max-height: 45vh; display: block; margin: 0 auto; object-fit: contain; }
-            .chart-layout-focus .rpt-chart-img { max-height: 65vh; } /* Focus頁面允許圖片更高 */
+            .rpt-chart-img { max-width: 100%; max-height: 40vh; display: block; margin: 0 auto; object-fit: contain; }
+            .chart-layout-focus .rpt-chart-img { max-height: 60vh; }
             
-            .rpt-chart-desc { margin-top: 16px; padding-top: 16px; border-top: 1px solid #f0f0f0; text-align: left; font-size: 0.95rem; color: #333; line-height: 1.5; }
+            .rpt-chart-desc { margin-top: 16px; padding-top: 16px; border-top: 1px solid #f0f0f0; text-align: left; font-size: 0.9rem; color: #555; line-height: 1.6; }
             
             .page-break { page-break-before: always; break-before: page; }
             .rpt-footer-text { text-align: center; font-size: 0.75rem; color: #999; margin-top: 50px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;}
             
             @media print { 
                 .rpt-content { padding: 0; }
-                .rpt-table th { -webkit-print-color-adjust: exact; print-color-adjust: exact; background-color: #f6f5f4 !important; }
-                .rpt-table tr:nth-child(even) { -webkit-print-color-adjust: exact; print-color-adjust: exact; background-color: #fafafa !important; }
-                .status-badge { -webkit-print-color-adjust: exact; print-color-adjust: exact; } /* 保證標籤底色印出 */
-                .rpt-chart-box { -webkit-print-color-adjust: exact; print-color-adjust: exact; box-shadow: none; border-color: #ddd;}
+                .rpt-table th { -webkit-print-color-adjust: exact; print-color-adjust: exact; background-color: #f8f9fa !important; border-top: 2px solid #d10001 !important;}
+                .rpt-table tr:nth-child(even) { -webkit-print-color-adjust: exact; print-color-adjust: exact; background-color: #fdfdfd !important; }
+                .status-badge { -webkit-print-color-adjust: exact; print-color-adjust: exact; } 
+                .rpt-box { -webkit-print-color-adjust: exact; print-color-adjust: exact; background-color: #fbfbfb !important; border-left: 4px solid #d10001 !important;}
+                .rpt-chart-box { -webkit-print-color-adjust: exact; print-color-adjust: exact; border-color: #eee;}
                 .rpt-watermark-bg { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
                 .print-fixed-footer { position: fixed; bottom: 0; left: 0; width: 100%; text-align: center; font-size: 0.75rem; color: #999; font-weight: 600; padding: 10px 0; background: #fff;}
                 .rpt-footer-text { display: none; }
