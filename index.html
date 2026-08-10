@@ -19,7 +19,7 @@
             --input-border: #c9c6c1;
             
             --radius: 0.75rem; 
-            --font-sans: 'Inter', sans-serif;
+            --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
             --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
         }
@@ -125,33 +125,36 @@
         .btn svg { width: 18px; height: 18px; flex-shrink: 0; }
         .btn-outline { background: var(--bg-card); border: 1px solid var(--input-border); color: var(--text-main); }
         .btn-outline:hover { background: var(--bg-base); border-color: var(--text-muted); }
+        .btn-primary { background: var(--primary); color: #fff; border: none;}
+        .btn-primary:hover { background: var(--primary-hover); }
         
         .btn-icon { background: transparent; border: none; color: var(--text-muted); cursor: pointer; padding: 6px; border-radius: 4px; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
         .btn-icon svg { width: 18px; height: 18px; }
         .btn-icon:hover { background: var(--bg-base); color: var(--text-main); }
         .btn-icon.danger:hover { background: var(--primary-light); color: var(--primary); }
 
-        /* 更新排版按鈕與控制區塊，移除絕對定位，加上更柔和的膠囊設計 */
         .layout-toggle-btn { 
             font-size: 0.75rem; font-weight: 600; padding: 6px 12px; 
             background: var(--bg-base); border: 1px solid transparent; 
             border-radius: 999px; color: var(--text-muted); cursor: pointer; 
-            transition: all 0.2s ease; font-family: var(--font-sans);
-            display: flex; align-items: center; gap: 4px;
+            transition: all 0.2s ease; font-family: var(--font-sans); display: flex; align-items: center; gap: 4px;
         }
-        .layout-toggle-btn:hover { 
-            background: var(--primary-light); color: var(--primary); border-color: var(--primary-light);
-        }
+        .layout-toggle-btn:hover { background: var(--primary-light); color: var(--primary); border-color: var(--primary-light); }
         .chart-controls { display: flex; gap: 6px; align-items: center; }
 
+        /* 智慧發光拖曳區 */
         .upload-zone {
             border: 2px dashed var(--input-border); border-radius: var(--radius); padding: 40px 20px;
-            text-align: center; cursor: pointer; background: transparent; transition: all 0.2s ease;
-            display: flex; flex-direction: column; align-items: center; gap: 12px;
+            text-align: center; cursor: pointer; background: transparent; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex; flex-direction: column; align-items: center; gap: 12px; position: relative;
         }
         .upload-zone:hover { border-color: var(--primary); background: var(--primary-light); }
+        .upload-zone.dragover {
+            border-color: var(--primary); background: var(--primary-light);
+            transform: scale(1.02); box-shadow: 0 10px 30px rgba(209, 0, 1, 0.15);
+        }
         .upload-zone svg { width: 32px; height: 32px; color: var(--text-muted); transition: 0.2s;}
-        .upload-zone:hover svg { color: var(--primary); transform: scale(1.1); }
+        .upload-zone:hover svg, .upload-zone.dragover svg { color: var(--primary); transform: scale(1.1); }
         .upload-zone span { font-size: 0.875rem; font-weight: 500; color: var(--text-muted); }
         .upload-zone-hint { font-size: 0.75rem; color: var(--text-muted); opacity: 0.8; margin-top: -6px;}
         .upload-zone input { display: none; }
@@ -159,29 +162,22 @@
         .sop-alert { background-color: var(--primary-light); border-left: 4px solid var(--primary); padding: 12px 16px; border-radius: 4px; margin-bottom: 20px; font-size: 0.875rem; color: var(--text-main); }
 
         .chart-list { display: flex; flex-direction: column; gap: 16px; margin-top: 20px; }
-        /* 移除原本的 position: relative 防止按鈕異常 */
         .chart-card { border: 1px solid var(--border); border-radius: 8px; padding: 16px; background: var(--bg-card); display: flex; gap: 20px; align-items: flex-start; }
         .chart-img-preview { width: 220px; height: 140px; object-fit: contain; border: 1px solid var(--border); border-radius: 4px; background: #fff;}
         .chart-content { flex: 1; display: flex; flex-direction: column; gap: 8px; }
 
-        /* Drop Overlay */
-        #drop-overlay {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(255,255,255,0.95); z-index: 9999;
-            justify-content: center; align-items: center; flex-direction: column;
-        }
-        #drop-overlay .drop-box {
-            border: 6px dashed var(--primary); border-radius: 20px; width: 80%; height: 80%;
-            display: flex; flex-direction: column; justify-content: center; align-items: center; pointer-events: none;
-        }
-        #drop-overlay h1 { color: var(--primary); font-size: 3rem; margin-top: 20px; font-weight: 800; }
-        body.dark #drop-overlay { background: rgba(0,0,0,0.9); }
+        /* Modal 樣式 (New Report 提示框) */
+        .modal-overlay { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index: 10000; justify-content:center; align-items:center; opacity: 0; transition: opacity 0.2s;}
+        .modal-overlay.show { display: flex; opacity: 1; }
+        .modal-box { background: var(--bg-card); padding: 32px; border-radius: 12px; width: 400px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); transform: translateY(20px); transition: transform 0.2s; border: 1px solid var(--border);}
+        .modal-overlay.show .modal-box { transform: translateY(0); }
+        .modal-box h3 { margin-top:0; color: var(--primary); font-size: 1.25rem; display: flex; align-items: center; gap: 8px; font-weight: 800;}
+        .modal-box p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.5; margin-bottom: 24px;}
+        .modal-actions { display: flex; gap: 12px; justify-content: flex-end; }
 
         /* ====== 報告預覽區塊 ====== */
         #preview-workspace { display: none; width: 100%; max-width: 900px; margin: 0 auto; }
         .preview-toolbar { display: flex; justify-content: space-between; margin-bottom: 24px; padding-bottom: 24px; border-bottom: 1px solid var(--border); }
-        .btn-primary { background: var(--primary); color: #fff; }
-        .btn-primary:hover { background: var(--primary-hover); }
 
         #report-render-area {
             background: #fff; padding: 0; border-radius: var(--radius); box-shadow: var(--shadow-md); border: 1px solid var(--border);
@@ -193,7 +189,6 @@
             #main-content { padding: 0; overflow: visible; }
             #preview-workspace { max-width: 100%; display: block; margin: 0;}
             #report-render-area { padding: 0; box-shadow: none; border: none; overflow-x: visible; }
-            @page { margin: 1.5cm 1.5cm 2cm 1.5cm; }
         }
     </style>
 </head>
@@ -205,6 +200,7 @@
 
     <aside id="sidebar" class="no-print">
         <div class="brand-logo"><img src="jpc logo.png" alt="JPC Logo" onerror="this.style.display='none'"></div>
+        
         <div class="role-selector-wrapper">
             <div class="role-label">Engineering Role</div>
             <div class="segmented-control">
@@ -227,6 +223,8 @@
         <nav class="nav-menu">
             <a class="nav-link active" onclick="scrollToSection('sec-info')"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg> Project Info</a>
             
+            <a class="nav-link" onclick="scrollToSection('sec-conc')"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg> Executive Summary</a>
+
             <a class="nav-link sim-only" onclick="scrollToSection('sec-setup')"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path></svg> Product & Setup</a>
             <a class="nav-link sim-only" onclick="scrollToSection('sec-geom')"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg> Geometry & Specs</a>
             <a class="nav-link sim-only" onclick="scrollToSection('sec-spec')"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg> Spec Table</a>
@@ -236,15 +234,19 @@
             <a class="nav-link test-only" onclick="scrollToSection('sec-summary')"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg> Summary & Matrix</a>
 
             <a class="nav-link" id="nav-chart" onclick="scrollToSection('sec-chart')"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"></path></svg> Simulation Results</a>
-            <a class="nav-link" onclick="scrollToSection('sec-conc')"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> Conclusion</a>
         </nav>
 
         <div class="nav-action">
+            <!-- ✨ New Report 按鈕 -->
+            <button class="btn-theme" style="margin-bottom: 8px; background: var(--primary-light); color: var(--primary); border-color: var(--primary-light); justify-content: center; font-weight: 800;" onclick="openNewReportModal()">
+                <svg style="width: 18px; height: 18px; flex-shrink: 0;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg> ✨ New Report
+            </button>
+
             <div class="nav-action-row">
-                <button class="btn-theme" onclick="saveProjectFile()" title="將目前的專案與圖片打包成 .jpc 檔案下載，方便日後修改或交接">
+                <button class="btn-theme" onclick="saveProjectFile()" title="將目前的專案打包成 .jpc 檔案下載">
                     <svg style="width: 18px; height: 18px; flex-shrink: 0;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg> Save
                 </button>
-                <button class="btn-theme" onclick="document.getElementById('jpc_upload').click()" title="載入 .jpc 專案檔，或直接將檔案拖曳至網頁中">
+                <button class="btn-theme" onclick="document.getElementById('jpc_upload').click()" title="載入 .jpc 專案檔">
                     <svg style="width: 18px; height: 18px; flex-shrink: 0;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg> Load
                 </button>
                 <input type="file" id="jpc_upload" accept=".jpc" style="display: none;">
@@ -255,7 +257,7 @@
                 <span id="theme-text">Dark Mode</span>
             </button>
             
-            <button class="btn-preview" onclick="togglePreviewMode()" title="將報告匯出成單一 HTML 網頁檔或列印為 PDF">
+            <button class="btn-preview" onclick="togglePreviewMode()" title="將報告匯出成高階 PDF">
                 <svg style="width: 20px; height: 20px; flex-shrink: 0;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg> 
                 Preview & Export
             </button>
@@ -277,6 +279,13 @@
                     <div class="form-group"><label>Date</label><input type="date" id="pdate"></div>
                     <div class="form-group full-width"><label>Purpose / Objective</label><textarea id="ppurpose" placeholder="請說明本次測試或模擬之目的..." style="min-height: 50px;"></textarea></div>
                 </div>
+            </section>
+
+            <!-- ✨ 閱讀邏輯升級：大綱前置 -->
+            <section id="sec-conc">
+                <h2 class="section-header">Executive Summary <span style="font-size:0.85rem; font-weight:500; color:var(--text-muted); margin-left:12px;">(Top-down approach)</span></h2>
+                <div class="form-group" style="margin-bottom: 20px;"><label>Conclusion / Highlights</label><textarea id="c_conc" placeholder="支援換行... 寫在最前面的核心結論讓主管一秒掌握重點！"></textarea></div>
+                <div class="form-group"><label>Next Steps</label><textarea id="c_next" placeholder="請輸入後續建議或下一步..."></textarea></div>
             </section>
 
             <section id="sec-setup" class="sim-only">
@@ -315,11 +324,11 @@
 
             <section id="sec-geom" class="sim-only">
                 <h2 class="section-header">Geometry & Requirements</h2>
-                <p style="font-size:0.875rem; color:var(--text-muted); margin-top:-16px;">Please upload or paste your 3D Geometry, PCB Stack-up, and Specification Requirement images here.</p>
-                <div class="upload-zone" onclick="document.getElementById('img_upload_geom').click()">
+                <p style="font-size:0.875rem; color:var(--text-muted); margin-top:-16px;">Please upload, paste, or <b style="color:var(--primary);">Drag & Drop</b> your 3D Geometry images here.</p>
+                <div class="upload-zone" id="zone-geom" onclick="document.getElementById('img_upload_geom').click()">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
-                    <span>Click here or <b style="color:var(--primary);">Press Ctrl+V anywhere</b> to paste Geometry & Spec images</span>
-                    <div class="upload-zone-hint">Support standard image formats & direct clipboard paste</div>
+                    <span>Click, Paste or <b style="color:var(--primary);">Drop images here</b></span>
+                    <div class="upload-zone-hint">Smart Drag & Drop enabled</div>
                     <input type="file" id="img_upload_geom" accept="image/*" multiple>
                 </div>
                 <div id="img_geom_container" class="chart-list"></div>
@@ -372,19 +381,13 @@
             <section id="sec-chart">
                 <h2 class="section-header" id="header-chart">Simulation Results</h2>
                 <div class="sop-alert"><strong>💡 SOP 圖片擺放順序建議：</strong> 1. IL (Insertion Loss) ➔ 2. RL (Return Loss) ➔ 3. NEXT ➔ 4. FEXT ➔ 5. COM。請盡量依此順序貼上截圖。</div>
-                <div class="upload-zone" onclick="document.getElementById('img_upload').click()">
+                <div class="upload-zone" id="zone-charts" onclick="document.getElementById('img_upload').click()">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
-                    <span>Click here or <b style="color:var(--primary);">Press Ctrl+V anywhere</b> to paste Results chart</span>
-                    <div class="upload-zone-hint">Support standard image formats & direct clipboard paste</div>
+                    <span>Click, Paste or <b style="color:var(--primary);">Drop images here</b></span>
+                    <div class="upload-zone-hint">Smart Drag & Drop enabled</div>
                     <input type="file" id="img_upload" accept="image/*" multiple>
                 </div>
                 <div id="img_charts_container" class="chart-list"></div>
-            </section>
-
-            <section id="sec-conc">
-                <h2 class="section-header">Conclusion</h2>
-                <div class="form-group" style="margin-bottom: 20px;"><label>Summary</label><textarea id="c_conc" placeholder="支援換行... 請輸入結論摘要"></textarea></div>
-                <div class="form-group"><label>Next Steps</label><textarea id="c_next" placeholder="請輸入後續建議或下一步..."></textarea></div>
             </section>
         </div>
 
@@ -400,12 +403,15 @@
         </div>
     </main>
 
-    <!-- 全螢幕拖曳載入遮罩 -->
-    <div id="drop-overlay">
-        <div class="drop-box">
-            <svg fill="none" stroke="var(--primary)" viewBox="0 0 24 24" style="width:100px; height:100px;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
-            <h1>Drop .jpc file here to load</h1>
-            <p style="color:var(--text-muted); font-size:1.25rem;">Drop the .jpc file anywhere to restore your project</p>
+    <!-- ✨ New Report Confirmation Modal -->
+    <div id="confirm-modal" class="modal-overlay">
+        <div class="modal-box">
+            <h3>✨ Create New Report?</h3>
+            <p>This will clear all current input data and charts. Please make sure you have exported or saved your current work to a .jpc file before proceeding.</p>
+            <div class="modal-actions">
+                <button class="btn btn-outline" onclick="closeNewReportModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="confirmNewReport()">Yes, Clear All</button>
+            </div>
         </div>
     </div>
 
@@ -425,6 +431,14 @@
             document.body.appendChild(toast);
             requestAnimationFrame(() => toast.style.opacity = 1);
             setTimeout(() => { toast.style.opacity = 0; setTimeout(() => toast.remove(), 300); }, 3000);
+        }
+
+        // --- New Report Modal ---
+        function openNewReportModal() { document.getElementById('confirm-modal').classList.add('show'); }
+        function closeNewReportModal() { document.getElementById('confirm-modal').classList.remove('show'); }
+        function confirmNewReport() {
+            localStorage.removeItem('jpc_pro_draft');
+            location.reload(); // 一鍵清空並重新載入全新狀態
         }
 
         let isDarkMode = false;
@@ -621,7 +635,6 @@
             if(layout === 'full') { btnText = '🔲 Full'; btnTitle = '滿版換行'; }
             if(layout === 'focus') { btnText = '🎯 Focus'; btnTitle = '單頁置中'; }
 
-            // 控制區塊移入文字區，與 Title 標籤並排，並確保對齊
             const html = `
                 <div class="chart-card">
                     <img src="${imgSrc}" class="chart-img-preview" alt="Chart">
@@ -645,36 +658,58 @@
             `;
             document.getElementById(containerId).insertAdjacentHTML('beforeend', html);
             saveDraft();
+            setTimeout(resizeAllTextareas, 50);
         }
 
-        // ============================================
-        // 核心更新：精確的滾動置中與防跳躍 Focus 機制
-        // ============================================
         function focusAndCenterNewCard(containerId) {
             setTimeout(() => {
                 const container = document.getElementById(containerId);
                 if (container && container.lastElementChild) {
                     const newCard = container.lastElementChild;
                     const titleInput = newCard.querySelector('.chart-title-input');
-                    
-                    // 1. 先平滑滾動讓卡片置中
                     newCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    
-                    // 2. 聚焦輸入框時，加入 preventScroll: true 防止瀏覽器強行跳轉打斷平滑滾動
-                    if (titleInput) {
-                        titleInput.focus({ preventScroll: true });
-                    }
+                    if (titleInput) { titleInput.focus({ preventScroll: true }); }
                 }
-            }, 100); // 稍微延遲以確保 DOM 和圖片預覽已完全渲染，高度已確定
+            }, 100); 
         }
 
+        // ✨ 智慧發光拖曳區 (Smart Drag & Drop Zones)
+        function setupSmartDropZone(zoneId, fileInputId, containerId, defaultLayout) {
+            const zone = document.getElementById(zoneId);
+            if(!zone) return;
+            
+            zone.addEventListener('dragover', e => { 
+                e.preventDefault(); e.stopPropagation(); 
+                zone.classList.add('dragover'); 
+            });
+            zone.addEventListener('dragleave', e => { 
+                e.preventDefault(); e.stopPropagation(); 
+                zone.classList.remove('dragover'); 
+            });
+            zone.addEventListener('drop', e => {
+                e.preventDefault(); e.stopPropagation();
+                zone.classList.remove('dragover');
+                
+                Array.from(e.dataTransfer.files).forEach(file => {
+                    if(file.type.startsWith('image/')) {
+                        const reader = new FileReader();
+                        reader.onload = ev => { 
+                            appendChartCard(ev.target.result, containerId, '', '', defaultLayout); 
+                            focusAndCenterNewCard(containerId);
+                        };
+                        reader.readAsDataURL(file);
+                    }
+                });
+            });
+        }
+        setupSmartDropZone('zone-geom', 'img_upload_geom', 'img_geom_container', 'full');
+        setupSmartDropZone('zone-charts', 'img_upload', 'img_charts_container', 'half');
+
+        // 傳統檔案選擇器
         document.getElementById('img_upload_geom').addEventListener('change', function(event) {
             Array.from(event.target.files).forEach((file) => {
                 const reader = new FileReader();
-                reader.onload = function(e) { 
-                    appendChartCard(e.target.result, 'img_geom_container', '', '', 'full'); 
-                    focusAndCenterNewCard('img_geom_container');
-                }
+                reader.onload = function(e) { appendChartCard(e.target.result, 'img_geom_container', '', '', 'full'); focusAndCenterNewCard('img_geom_container'); }
                 reader.readAsDataURL(file);
             });
             event.target.value = '';
@@ -683,10 +718,7 @@
         document.getElementById('img_upload').addEventListener('change', function(event) {
             Array.from(event.target.files).forEach((file) => {
                 const reader = new FileReader();
-                reader.onload = function(e) { 
-                    appendChartCard(e.target.result, 'img_charts_container', '', '', 'half'); 
-                    focusAndCenterNewCard('img_charts_container');
-                }
+                reader.onload = function(e) { appendChartCard(e.target.result, 'img_charts_container', '', '', 'half'); focusAndCenterNewCard('img_charts_container'); }
                 reader.readAsDataURL(file);
             });
             event.target.value = '';
@@ -761,11 +793,7 @@
         window.addEventListener('beforeunload', (e) => { e.preventDefault(); e.returnValue = ''; });
         
         function saveDraft() {
-            try {
-                localStorage.setItem('jpc_pro_draft', JSON.stringify(getProjectData()));
-            } catch(e) {
-                console.warn("Local storage full, skipped auto-save.");
-            }
+            try { localStorage.setItem('jpc_pro_draft', JSON.stringify(getProjectData())); } catch(e) {}
             updateHistoryData();
         }
 
@@ -790,9 +818,7 @@
                     try { localStorage.setItem('jpc_pro_draft', JSON.stringify(data)); } catch(err){}
                     applyDataToUI(data);
                     showToast("📂 Project Loaded Successfully!");
-                } catch(err) {
-                    showToast("⚠️ Invalid .jpc file format!", true);
-                }
+                } catch(err) { showToast("⚠️ Invalid .jpc file format!", true); }
             };
             reader.readAsText(file);
         }
@@ -803,9 +829,19 @@
         });
 
         const dropOverlay = document.getElementById('drop-overlay');
-        window.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            if(!document.body.classList.contains('preview-mode')) dropOverlay.style.display = 'flex';
+        window.addEventListener('dragenter', (e) => {
+             const items = e.dataTransfer.items;
+             let isFile = false; let isImage = false;
+             if(items) {
+                 for(let i=0; i<items.length; i++) {
+                     if(items[i].kind === 'file') isFile = true;
+                     if(items[i].type.startsWith('image/')) isImage = true;
+                 }
+             }
+             // 只在拖曳「非圖片」的檔案 (通常是 .jpc 專案檔) 時，才顯示全螢幕覆蓋
+             if (isFile && !isImage && !document.body.classList.contains('preview-mode')) {
+                 dropOverlay.style.display = 'flex';
+             }
         });
         window.addEventListener('dragleave', (e) => { if(e.target === dropOverlay) dropOverlay.style.display = 'none'; });
         window.addEventListener('drop', (e) => {
@@ -860,27 +896,16 @@
             try { applyDataToUI(JSON.parse(draft)); } catch(e) { initDefaultRows(); }
         }
         document.addEventListener('change', (e) => { if(['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName)) saveDraft(); });
+        
         // ======= 自動調整 Textarea 高度 =======
         function autoResizeTextarea(el) {
-            el.style.height = 'auto'; // 先重置高度
-            el.style.height = (el.scrollHeight + 2) + 'px'; // 根據內容重新設定高度 (+2 緩衝避免誤差)
+            el.style.height = 'auto';
+            el.style.height = (el.scrollHeight + 2) + 'px';
         }
+        document.addEventListener('input', function(e) { if (e.target.tagName === 'TEXTAREA') autoResizeTextarea(e.target); });
+        function resizeAllTextareas() { document.querySelectorAll('textarea').forEach(autoResizeTextarea); }
 
-        // 監聽所有打字事件，即時調整高度
-        document.addEventListener('input', function(e) {
-            if (e.target.tagName === 'TEXTAREA') autoResizeTextarea(e.target);
-        });
-
-        // 建立一個函式，用來一次性更新網頁上所有 Textarea 的高度
-        function resizeAllTextareas() {
-            document.querySelectorAll('textarea').forEach(autoResizeTextarea);
-        }
-
-        // 網頁載入時執行
-        window.onload = () => {
-            loadDraft();
-            setTimeout(resizeAllTextareas, 100); // 給予渲染時間後，自動撐開有文字的框
-        };
+        window.onload = () => { loadDraft(); setTimeout(resizeAllTextareas, 100); };
 
         let isPreview = false;
         
@@ -911,14 +936,9 @@
                     html += '<tr>';
                     inputs.forEach((input, index) => {
                         let val = input.value.replace(/</g, "&lt;").replace(/>/g, "&gt;");
-                        
-                        // 標籤化測試結果判斷
                         let tdContent = val || "&nbsp;";
-                        if (val === "Pass") {
-                            tdContent = `<span class="status-badge badge-pass">Pass</span>`;
-                        } else if (val === "Fail") {
-                            tdContent = `<span class="status-badge badge-fail">Fail</span>`;
-                        }
+                        if (val === "Pass") { tdContent = `<span class="status-badge badge-pass">Pass</span>`; } 
+                        else if (val === "Fail") { tdContent = `<span class="status-badge badge-fail">Fail</span>`; }
 
                         if (cls === 'save-t-dut' && (index === 0 || index === 2)) {
                             html += `<td style="background-color: #f6f5f4; font-weight: 700;">${tdContent}</td>`;
@@ -938,42 +958,21 @@
             .rpt-watermark-bg { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background-repeat: repeat; z-index: 0; pointer-events: none; opacity: 0.8; }
             .rpt-content { position: relative; z-index: 1; padding: 50px 80px; min-height: 100vh;}
             
-            /* --- 封面設計 (Modern Editorial Cover) --- */
+            /* --- 封面設計 (Premium Editorial Cover) --- */
             .rpt-cover { 
                 display: flex; flex-direction: column; justify-content: center; 
                 min-height: 85vh; text-align: left; align-items: flex-start; 
-                padding-bottom: 10vh;
-                position: relative;
-                padding-left: 36px; /* ★ 將內容往右推，給紅線留出安全空間 */
+                padding-bottom: 10vh; position: relative; padding-left: 36px;
             }
-            
-            /* 左側品牌紅線裝飾 */
             .rpt-cover::before {
-                content: '';
-                position: absolute;
-                left: 0; /* ★ 緊貼容器左緣，確保絕對印得出來 */
-                top: 20vh;
-                bottom: 15vh;
-                width: 6px; /* 加粗一點讓 PDF 顯示更清晰 */
-                background-color: #d10001;
-                border-radius: 3px;
-                -webkit-print-color-adjust: exact;
-                print-color-adjust: exact;
+                content: ''; position: absolute; left: 0; top: 20vh; bottom: 15vh; width: 6px;
+                background-color: #d10001; border-radius: 3px; -webkit-print-color-adjust: exact; print-color-adjust: exact;
             }
-
             .rpt-cover-logo { width: 220px; height: auto; margin-bottom: 32px; }
             .rpt-cover-title { font-size: 3.4rem; font-weight: 900; color: #111; margin: 0 0 12px 0; letter-spacing: -0.03em; line-height: 1.15;}
             .rpt-cover-subtitle { font-size: 1.1rem; font-weight: 600; color: #888; margin-bottom: 50px; text-transform: uppercase; letter-spacing: 0.15em;}
             
-            /* 資訊區塊 */
-            .rpt-cover-info { 
-                width: 100%; max-width: 600px; 
-                padding: 24px 32px; 
-                background-color: #fcfcfc; 
-                border-top: 3px solid #d10001; 
-                border-radius: 0 0 8px 8px; 
-                box-shadow: 0 4px 12px rgba(0,0,0,0.03);
-            }
+            .rpt-cover-info { width: 100%; max-width: 600px; padding: 24px 32px; background-color: #fcfcfc; border-top: 3px solid #d10001; border-radius: 0 0 8px 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.03);}
             .rpt-cover-row { display: flex; justify-content: space-between; margin-bottom: 0; font-size: 1rem; border-bottom: 1px solid #eaeaea; padding: 14px 0;}
             .rpt-cover-row:last-child { border-bottom: none; padding-bottom: 0;}
             .rpt-cover-label { font-weight: 500; color: #666; }
@@ -981,13 +980,8 @@
 
             /* --- 區塊標題 (Clean Headers) --- */
             .rpt-section { margin-bottom: 60px; background: #fff;}
-            .rpt-title { 
-                font-size: 1.5rem; color: #111; margin-bottom: 24px; font-weight: 800; letter-spacing: -0.01em; page-break-after: avoid; display: flex; align-items: center; gap: 12px;
-            }
-            .rpt-title::before {
-                content: ''; display: block; width: 6px; height: 24px; background-color: #d10001; border-radius: 4px;
-                -webkit-print-color-adjust: exact; print-color-adjust: exact;
-            }
+            .rpt-title { font-size: 1.5rem; color: #111; margin-bottom: 24px; font-weight: 800; letter-spacing: -0.01em; page-break-after: avoid; display: flex; align-items: center; gap: 12px;}
+            .rpt-title::before { content: ''; display: block; width: 6px; height: 24px; background-color: #d10001; border-radius: 4px; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
 
             .rpt-grid { display: grid; grid-template-columns: minmax(180px, 200px) 1fr; row-gap: 16px; font-size: 1rem; margin-bottom: 16px; word-break: break-word; }
             .rpt-key { font-weight: 600; color: #555; }
@@ -1004,6 +998,7 @@
             .badge-fail { background-color: #fce8e6 !important; color: #c5221f !important; }
             
             .rpt-box { border: 1px solid #eaeaea; border-left: 4px solid #d10001; border-radius: 6px; padding: 20px 24px; font-size: 1rem; background-color: #fafafa; color: #333; line-height: 1.7;}
+            .rpt-box.success { border-left-color: #16a34a !important; } /* 用於 Conclusion 強調 */
             
             /* --- 三段式圖表排版架構 --- */
             .rpt-charts-container { display: flex; flex-wrap: wrap; gap: 32px; justify-content: flex-start; }
@@ -1015,50 +1010,50 @@
             
             .rpt-chart-title { font-size: 1.05rem; color: #111; margin-bottom: 16px; font-weight: 700;}
             
-            .rpt-chart-box { 
-                background: #fff; border: 1px solid #e6e6e6; border-radius: 12px; padding: 24px; 
-                box-shadow: 0 4px 20px rgba(0,0,0,0.03); display: flex; justify-content: center; align-items: center; width: 100%; box-sizing: border-box;
-            }
+            .rpt-chart-box { background: #fff; border: 1px solid #e6e6e6; border-radius: 12px; padding: 24px; box-shadow: 0 4px 20px rgba(0,0,0,0.03); display: flex; justify-content: center; align-items: center; width: 100%; box-sizing: border-box;}
             .rpt-chart-img { max-width: 100%; max-height: 40vh; display: block; border-radius: 4px; object-fit: contain; mix-blend-mode: multiply;}
             .chart-layout-focus .rpt-chart-img { max-height: 65vh; }
             
             .rpt-chart-desc { margin-top: 16px; padding: 16px 20px; background: #f8f9fa; border-radius: 8px; font-size: 0.9rem; color: #555; line-height: 1.6; border-left: 3px solid #ccc; }
             
             .page-break { page-break-before: always; break-before: page; }
-            .rpt-footer-text { text-align: center; font-size: 0.75rem; color: #999; margin-top: 50px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;}
             
+            @media screen { 
+                .print-fixed-header, .print-fixed-footer { display: none; } 
+                .rpt-footer-text { text-align: center; font-size: 0.75rem; color: #999; margin-top: 50px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;}
+            }
+
             @media print { 
-                .rpt-content { padding: 0; }
+                /* ✨ 總裁級高階列印：全頁面 Fixed 頁首頁尾 */
+                .print-fixed-header { position: fixed; top: 0; left: 0; right: 0; height: 40px; border-bottom: 1px solid #d10001; display: flex; justify-content: space-between; align-items: flex-end; padding-bottom: 8px; background: #fff; z-index: 1000; }
+                .print-fixed-header img { height: 20px; }
+                .print-fixed-header .hdr-text { font-size: 0.75rem; color: #888; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
                 
-                /* ★ 強制印出封面裝飾線與灰底 */
+                .print-fixed-footer { position: fixed; bottom: 0; left: 0; right: 0; border-top: 1px solid #eaeaea; padding-top: 8px; display: flex; justify-content: space-between; font-size: 0.7rem; color: #aaa; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; background: #fff; z-index: 1000;}
+
+                /* 將頁面內容上下推開，避免與 Header/Footer 重疊 */
+                .rpt-content { padding: 0; margin-top: 50px; margin-bottom: 30px; }
+                
                 .rpt-cover::before { background-color: #d10001 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
                 .rpt-cover-info { background-color: #fcfcfc !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-                
                 .rpt-title::before { background-color: #d10001 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
                 .rpt-table th { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
                 .rpt-table tr:nth-child(even) { background-color: transparent !important; } 
                 .status-badge { -webkit-print-color-adjust: exact; print-color-adjust: exact; } 
                 .rpt-box { -webkit-print-color-adjust: exact; print-color-adjust: exact; background-color: #fafafa !important; border-left: 4px solid #d10001 !important;}
+                .rpt-box.success { border-left-color: #16a34a !important; }
                 .rpt-chart-box { -webkit-print-color-adjust: exact; print-color-adjust: exact; box-shadow: none; border-color: #ddd;}
                 .rpt-chart-desc { -webkit-print-color-adjust: exact; print-color-adjust: exact; background-color: #f8f9fa !important; }
                 .rpt-watermark-bg { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-                .print-fixed-footer { position: fixed; bottom: 0; left: 0; width: 100%; text-align: center; font-size: 0.75rem; color: #999; font-weight: 600; padding: 10px 0; background: #fff;}
                 .rpt-footer-text { display: none; }
-                @page { margin: 1.5cm 1.5cm 2cm 1.5cm; }
+                @page { margin: 15mm 15mm 20mm 15mm; }
             }
-            @media screen { .print-fixed-footer { display: none; } }
         `;
 
         function generateReportHTML() {
             const isSim = document.getElementById('role-selector').value === 'sim';
-            const getVal = (id) => { 
-                const el = document.getElementById(id); 
-                return el ? el.value.trim() : ""; 
-            };
-            const getValAlways = (id) => { 
-                const el = document.getElementById(id); 
-                return el && el.value.trim() ? el.value.trim() : "-"; 
-            };
+            const getVal = (id) => { const el = document.getElementById(id); return el ? el.value.trim() : ""; };
+            const getValAlways = (id) => { const el = document.getElementById(id); return el && el.value.trim() ? el.value.trim() : "-"; };
             const escapeHTML = (str) => str.replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/\n/g, '<br>');
 
             const pName = getValAlways('pname');
@@ -1066,14 +1061,10 @@
             const watermarkSVG = confCfg.text ? `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="350" height="350"><text x="20" y="175" transform="rotate(-35 175 175)" fill="${confCfg.color}" font-family="Arial" font-size="24" font-weight="bold">${confCfg.text}</text></svg>` : '';
             
             let finalCSS = sharedReportCSS;
-            if(!confCfg.text) {
-                finalCSS += `\n.rpt-watermark-bg { display: none; }`;
-            } else {
-                finalCSS += `\n.rpt-watermark-bg { background-image: url('${watermarkSVG}'); }`;
-            }
+            if(!confCfg.text) { finalCSS += `\n.rpt-watermark-bg { display: none; }`; } 
+            else { finalCSS += `\n.rpt-watermark-bg { background-image: url('${watermarkSVG}'); }`; }
 
             let chartIndex = 1;
-
             const processCharts = (containerId) => {
                 let html = '<div class="rpt-charts-container">';
                 document.querySelectorAll(`#${containerId} .chart-card`).forEach(item => {
@@ -1081,13 +1072,10 @@
                     const title = escapeHTML(item.querySelector('.chart-title-input').value.trim());
                     const desc = escapeHTML(item.querySelector('.chart-desc-input').value.trim());
                     const layout = item.querySelector('.chart-layout-state').value;
-                    
                     html += `
                         <div class="rpt-chart-wrapper chart-layout-${layout}">
                             ${title ? `<div class="rpt-chart-title">Figure ${chartIndex}: ${title}</div>` : `<div class="rpt-chart-title">Figure ${chartIndex}</div>`}
-                            <div class="rpt-chart-box">
-                                <img src="${imgSrc}" class="rpt-chart-img">
-                            </div>
+                            <div class="rpt-chart-box"><img src="${imgSrc}" class="rpt-chart-img"></div>
                             ${desc ? `<div class="rpt-chart-desc">${desc}</div>` : ''}
                         </div>`;
                     chartIndex++;
@@ -1099,9 +1087,17 @@
             let geomHTML = processCharts('img_geom_container');
             let chartsHTML = processCharts('img_charts_container');
 
+            // ✨ 加入 PDF Fixed Header / Footer 結構
             let outHtml = `
             <div class="rpt-watermark-bg"></div>
-            ${confCfg.footer ? `<div class="print-fixed-footer">${confCfg.footer}</div>` : ''}
+            <div class="print-fixed-header">
+                <img src="jpc logo.png" alt="JPC Logo" onerror="this.style.display='none'">
+                <span class="hdr-text">${isSim ? 'Simulation' : 'SI Measurement'} Report</span>
+            </div>
+            <div class="print-fixed-footer">
+                <span>${pName !== "-" ? escapeHTML(pName) : 'JPC Connectivity'}</span>
+                <span>${escapeHTML(getValAlways('pdate'))} | Confidential</span>
+            </div>
             <div class="rpt-content">
                 <div class="rpt-cover">
                     <img src="jpc logo.png" class="rpt-cover-logo" alt="JPC Logo" onerror="this.style.display='none'">
@@ -1128,14 +1124,9 @@
             outHtml += `</div></div><div class="page-break"></div>`;
 
             let secIndex = 1; 
-
             let purposeText = getVal('ppurpose');
             if(isSim && purposeText) {
-                outHtml += `
-                <div class="rpt-section">
-                    <div class="rpt-title">${secIndex++}. Purpose</div>
-                    <div class="rpt-box">${escapeHTML(purposeText)}</div>
-                </div>`;
+                outHtml += `<div class="rpt-section"><div class="rpt-title">${secIndex++}. Purpose</div><div class="rpt-box">${escapeHTML(purposeText)}</div></div>`;
             }
 
             outHtml += `
@@ -1149,23 +1140,27 @@
                 </div>
             </div>`;
 
+            // ✨ Executive Summary 前置佈局 (高階主管 Top-down 邏輯)
+            let concText = getVal('c_conc');
+            if (concText) {
+                outHtml += `<div class="rpt-section"><div class="rpt-title">${secIndex++}. Executive Summary (Conclusion)</div><div class="rpt-box success">${escapeHTML(concText)}</div></div>`;
+            }
+            let nextText = getVal('c_next');
+            if (nextText) {
+                outHtml += `<div class="rpt-section"><div class="rpt-title">${secIndex++}. Next Steps</div><div class="rpt-box">${escapeHTML(nextText)}</div></div>`;
+            }
+
+            if(concText || nextText) { outHtml += `<div class="page-break"></div>`; }
+
             if (isSim) {
                 let setupGrid = '';
-                
-                let startFreq = getVal('sfreq_start') || '0';
-                let endFreq = getVal('sfreq_end');
+                let startFreq = getVal('sfreq_start') || '0'; let endFreq = getVal('sfreq_end');
                 let freqStr = endFreq ? `${startFreq} ~ ${endFreq} GHz` : '';
                 
                 const fields = [
-                    { id: 'ssoft', label: 'Software' }, 
-                    { id: 'ssolver', label: 'Solver' }, 
-                    { val: freqStr, label: 'Frequency Range' },
-                    { id: 'sstep', label: 'Sweep Step' }, 
-                    { id: 'simp', label: 'Connector Impedance' }, 
-                    { id: 'sport', label: 'Port Setup' },
-                    { id: 'sdir', label: 'Port Direction' }, 
-                    { id: 's3d', label: '3D Model File' }, 
-                    { id: 'ssnp', label: 'sNp File' },
+                    { id: 'ssoft', label: 'Software' }, { id: 'ssolver', label: 'Solver' }, { val: freqStr, label: 'Frequency Range' },
+                    { id: 'sstep', label: 'Sweep Step' }, { id: 'simp', label: 'Connector Impedance' }, { id: 'sport', label: 'Port Setup' },
+                    { id: 'sdir', label: 'Port Direction' }, { id: 's3d', label: '3D Model File' }, { id: 'ssnp', label: 'sNp File' },
                     { id: 'smat', label: 'Material / Stackup' }
                 ];
                 fields.forEach(f => {
@@ -1173,47 +1168,29 @@
                     if(v) setupGrid += `<div class="rpt-key">${f.label}</div><div>${escapeHTML(v)}</div>`;
                 });
 
-                if(setupGrid) {
-                    outHtml += `<div class="rpt-section"><div class="rpt-title">${secIndex++}. Product & Environment Setup</div><div class="rpt-grid">${setupGrid}</div></div>`;
-                }
-
+                if(setupGrid) outHtml += `<div class="rpt-section"><div class="rpt-title">${secIndex++}. Product & Environment Setup</div><div class="rpt-grid">${setupGrid}</div></div>`;
                 if (document.querySelectorAll('#img_geom_container .chart-card').length > 0) {
                     outHtml += `<div class="page-break"></div><div class="rpt-section"><div class="rpt-title">${secIndex++}. Geometry & Requirements</div>${geomHTML}</div>`;
                 }
 
                 let specTableHTML = buildTableHTML('save-target');
                 if (specTableHTML) {
-                    outHtml += `
-                    <div class="rpt-section">
-                        <div class="rpt-title">${secIndex++}. Specifications (Text Table)</div>
-                        <table class="rpt-table"><tr><th>Item</th><th>Spec / Condition</th><th>Result</th><th>Margin</th><th>Status</th><th>Remark</th></tr>${specTableHTML}</table>
-                    </div>`;
+                    outHtml += `<div class="rpt-section"><div class="rpt-title">${secIndex++}. Specifications (Text Table)</div><table class="rpt-table"><tr><th>Item</th><th>Spec / Condition</th><th>Result</th><th>Margin</th><th>Status</th><th>Remark</th></tr>${specTableHTML}</table></div>`;
                 }
-
             } else {
-                let equipHtml = buildTableHTML('save-t-equip');
-                let dutHtml = buildTableHTML('save-t-dut');
-                let sumHtml = buildTableHTML('save-t-sum');
-                let matrixHtml = buildTableHTML('save-t-mat');
+                let equipHtml = buildTableHTML('save-t-equip'); let dutHtml = buildTableHTML('save-t-dut');
+                let sumHtml = buildTableHTML('save-t-sum'); let matrixHtml = buildTableHTML('save-t-mat');
 
-                if(equipHtml || dutHtml || sumHtml || matrixHtml) { outHtml += `<div class="page-break"></div>`; }
-
-                if (equipHtml) outHtml += `<div class="rpt-section"><div class="rpt-title">${secIndex++}. Test Equipments Information</div><table class="rpt-table"><tr><th>ID</th><th>Instrument</th><th>Description with Instrumentation and software</th><th>Manufacture</th></tr>${equipHtml}</table></div>`;
-                if (dutHtml) outHtml += `<div class="rpt-section"><div class="rpt-title">${secIndex++}. Device Under Test (DUT) Information</div><table class="rpt-table"><tr><th>Property Name</th><th>Value</th><th>Property Name</th><th>Value</th></tr>${dutHtml}</table></div>`;
-                if (sumHtml) outHtml += `<div class="rpt-section"><div class="rpt-title">${secIndex++}. Summary of Results</div><table class="rpt-table"><tr><th style="width:80%;">Item</th><th>Test Result</th></tr>${sumHtml}</table></div>`;
+                if(equipHtml) outHtml += `<div class="rpt-section"><div class="rpt-title">${secIndex++}. Test Equipments Information</div><table class="rpt-table"><tr><th>ID</th><th>Instrument</th><th>Description with Instrumentation and software</th><th>Manufacture</th></tr>${equipHtml}</table></div>`;
+                if(dutHtml) outHtml += `<div class="rpt-section"><div class="rpt-title">${secIndex++}. Device Under Test (DUT) Information</div><table class="rpt-table"><tr><th>Property Name</th><th>Value</th><th>Property Name</th><th>Value</th></tr>${dutHtml}</table></div>`;
+                if(sumHtml) outHtml += `<div class="rpt-section"><div class="rpt-title">${secIndex++}. Summary of Results</div><table class="rpt-table"><tr><th style="width:80%;">Item</th><th>Test Result</th></tr>${sumHtml}</table></div>`;
                 
                 if (matrixHtml) {
-                    outHtml += `
-                    <div class="page-break"></div>
-                    <div class="rpt-section">
-                        <div class="rpt-title">${secIndex++}. Summary of Results for the DUT</div>
-                        <div style="overflow-x:auto;">
+                    outHtml += `<div class="page-break"></div><div class="rpt-section"><div class="rpt-title">${secIndex++}. Summary of Results for the DUT</div><div style="overflow-x:auto;">
                         <table class="rpt-table" style="font-size: 0.85rem; text-align:center;">
                             <tr><th>Item / Freq</th><th>Limit</th><th>TX/RX 1</th><th>TX/RX 2</th><th>TX/RX 3</th><th>TX/RX 4</th><th>TX/RX 5</th><th>TX/RX 6</th><th>TX/RX 7</th><th>TX/RX 8</th><th>Result</th></tr>
                             ${matrixHtml}
-                        </table>
-                        </div>
-                    </div>`;
+                        </table></div></div>`;
                 }
             }
 
@@ -1221,16 +1198,6 @@
                 outHtml += `<div class="page-break"></div><div class="rpt-section"><div class="rpt-title">${secIndex++}. ${isSim ? 'Simulation Results' : 'Charts & Data'}</div>${chartsHTML}</div>`;
             }
             
-            let concText = getVal('c_conc');
-            if (concText) {
-                outHtml += `<div class="rpt-section" style="page-break-before: auto;"><div class="rpt-title">${secIndex++}. Conclusion</div><div class="rpt-box">${escapeHTML(concText)}</div></div>`;
-            }
-            
-            let nextText = getVal('c_next');
-            if (nextText) {
-                outHtml += `<div class="rpt-section"><div class="rpt-title">${secIndex++}. Next Steps</div><div class="rpt-box">${escapeHTML(nextText)}</div></div>`;
-            }
-
             outHtml += `${confCfg.footer ? `<div class="rpt-footer-text">${confCfg.footer}</div>` : ''}</div>`;
 
             currentReportInnerHTML = outHtml;
@@ -1241,31 +1208,11 @@
             const projName = document.getElementById('pname').value.trim() || 'Untitled';
             const roleStr = document.getElementById('role-selector').value === 'sim' ? 'Simulation' : 'Measurement';
             const fileName = `JPC_${projName}_${roleStr}_Report.html`;
-            
-            const fullHTMLFile = `<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>${projName} - ${roleStr} Report</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <style>
-        body { margin: 0; background: #fff; -webkit-print-color-adjust: exact; print-color-adjust: exact;}
-        ${document.getElementById('report-render-area').querySelector('style').innerHTML}
-    </style>
-</head>
-<body>
-    <div class="rpt-wrapper">
-        ${currentReportInnerHTML}
-    </div>
-</body>
-</html>`;
-
+            const fullHTMLFile = `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>${projName} - ${roleStr} Report</title><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"><style>body { margin: 0; background: #fff; -webkit-print-color-adjust: exact; print-color-adjust: exact;} ${document.getElementById('report-render-area').querySelector('style').innerHTML}</style></head><body><div class="rpt-wrapper">${currentReportInnerHTML}</div></body></html>`;
             const blob = new Blob([fullHTMLFile], { type: 'text/html;charset=utf-8' });
             const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url; a.download = fileName;
-            document.body.appendChild(a); a.click(); document.body.removeChild(a);
-            URL.revokeObjectURL(url);
+            const a = document.createElement('a'); a.href = url; a.download = fileName;
+            document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
             showToast("🌐 HTML Exported Successfully!");
         }
     </script>
