@@ -938,103 +938,54 @@
             .rpt-watermark-bg { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background-repeat: repeat; z-index: 0; pointer-events: none; opacity: 0.8; }
             .rpt-content { position: relative; z-index: 1; padding: 50px 80px; min-height: 100vh;}
             
-            /* --- 封面設計 (Premium Editorial Cover) --- */
+            /* --- 封面設計 (Modern Editorial Cover) --- */
             .rpt-cover { 
-                display: flex; 
-                flex-direction: column; 
-                justify-content: center; 
-                min-height: 85vh; 
-                text-align: left; 
-                align-items: flex-start; 
+                display: flex; flex-direction: column; justify-content: center; 
+                min-height: 85vh; text-align: left; align-items: flex-start; 
                 padding-bottom: 10vh;
-                position: relative; /* 為了讓左側裝飾線定位 */
+                position: relative;
+                padding-left: 36px; /* ★ 將內容往右推，給紅線留出安全空間 */
             }
             
-            /* 加入左側品牌紅線裝飾 (Brand Accent Line) */
+            /* 左側品牌紅線裝飾 */
             .rpt-cover::before {
                 content: '';
                 position: absolute;
-                left: -40px; /* 將紅線放在內容區左側外，這需要搭配 .rpt-content 有足夠的 left-padding */
+                left: 0; /* ★ 緊貼容器左緣，確保絕對印得出來 */
                 top: 20vh;
                 bottom: 15vh;
-                width: 4px;
+                width: 6px; /* 加粗一點讓 PDF 顯示更清晰 */
                 background-color: #d10001;
-                border-radius: 2px;
+                border-radius: 3px;
                 -webkit-print-color-adjust: exact;
                 print-color-adjust: exact;
             }
 
-            .rpt-cover-logo { 
-                width: 220px; 
-                height: auto; 
-                margin-bottom: 32px; /* 縮短間距，原為 50px */
-            }
+            .rpt-cover-logo { width: 220px; height: auto; margin-bottom: 32px; }
+            .rpt-cover-title { font-size: 3.4rem; font-weight: 900; color: #111; margin: 0 0 12px 0; letter-spacing: -0.03em; line-height: 1.15;}
+            .rpt-cover-subtitle { font-size: 1.1rem; font-weight: 600; color: #888; margin-bottom: 50px; text-transform: uppercase; letter-spacing: 0.15em;}
             
-            .rpt-cover-title { 
-                font-size: 3.4rem; /* 稍微放大標題 */
-                font-weight: 900; 
-                color: #111; 
-                margin: 0 0 12px 0; /* 縮短與副標的間距，原為 16px */
-                letter-spacing: -0.03em; 
-                line-height: 1.15;
-            }
-            
-            .rpt-cover-subtitle { 
-                font-size: 1.1rem; /* 調整大小以配合大寫 */
-                font-weight: 600; 
-                color: #888; 
-                margin-bottom: 50px; /* 縮短與資訊表的間距，原為 80px */
-                text-transform: uppercase; /* 強制大寫 */
-                letter-spacing: 0.15em; /* 加大字元間距，增加科技權威感 */
-            }
-            
-            /* 資訊區塊微調 (Info Table Refinement) */
+            /* 資訊區塊 */
             .rpt-cover-info { 
-                width: 100%; 
-                max-width: 600px; 
-                padding: 24px 32px; /* 加上內邊距，創造區塊感 */
-                background-color: #fcfcfc; /* 極淺的灰底色 */
-                border-top: 3px solid #d10001; /* 頂部紅色細飾線 */
-                border-radius: 0 0 8px 8px; /* 下方圓角修飾 */
-                box-shadow: 0 4px 12px rgba(0,0,0,0.02); /* 極淡的陰影，讓區塊浮出 */
+                width: 100%; max-width: 600px; 
+                padding: 24px 32px; 
+                background-color: #fcfcfc; 
+                border-top: 3px solid #d10001; 
+                border-radius: 0 0 8px 8px; 
+                box-shadow: 0 4px 12px rgba(0,0,0,0.03);
             }
-            
-            .rpt-cover-row { 
-                display: flex; 
-                justify-content: space-between; 
-                margin-bottom: 0; 
-                font-size: 1rem; 
-                border-bottom: 1px solid #eaeaea; 
-                padding: 14px 0;
-            }
-            .rpt-cover-row:last-child { 
-                border-bottom: none; /* 移除最後一行的底線，看起來更乾淨 */
-                padding-bottom: 0;
-            }
-            .rpt-cover-label { 
-                font-weight: 500; 
-                color: #666; 
-            }
-            .rpt-cover-val { 
-                font-weight: 700; 
-                color: #111; 
-                text-align: right;
-            }
+            .rpt-cover-row { display: flex; justify-content: space-between; margin-bottom: 0; font-size: 1rem; border-bottom: 1px solid #eaeaea; padding: 14px 0;}
+            .rpt-cover-row:last-child { border-bottom: none; padding-bottom: 0;}
+            .rpt-cover-label { font-weight: 500; color: #666; }
+            .rpt-cover-val { font-weight: 700; color: #111; text-align: right;}
 
             /* --- 區塊標題 (Clean Headers) --- */
             .rpt-section { margin-bottom: 60px; background: #fff;}
             .rpt-title { 
-                font-size: 1.5rem; color: #111; 
-                margin-bottom: 24px; 
-                font-weight: 800; 
-                letter-spacing: -0.01em;
-                page-break-after: avoid;
-                display: flex; align-items: center; gap: 12px;
+                font-size: 1.5rem; color: #111; margin-bottom: 24px; font-weight: 800; letter-spacing: -0.01em; page-break-after: avoid; display: flex; align-items: center; gap: 12px;
             }
-            /* 現代感的左側紅色粗飾條 */
             .rpt-title::before {
-                content: ''; display: block;
-                width: 6px; height: 24px; background-color: #d10001; border-radius: 4px;
+                content: ''; display: block; width: 6px; height: 24px; background-color: #d10001; border-radius: 4px;
                 -webkit-print-color-adjust: exact; print-color-adjust: exact;
             }
 
@@ -1045,22 +996,16 @@
             .rpt-table { width: 100%; border-collapse: collapse; font-size: 0.95rem; margin-top: 16px; }
             .rpt-table th { font-weight: 700; padding: 14px 12px; text-align: left; color: #111; border-top: 2px solid #111; border-bottom: 1px solid #111;}
             .rpt-table td { padding: 14px 12px; border-bottom: 1px solid #f0f0f0; word-break: break-word; color: #444;}
-            .rpt-table tr:last-child td { border-bottom: 2px solid #111; } /* 底部收尾粗線 */
+            .rpt-table tr:last-child td { border-bottom: 2px solid #111; } 
             .rpt-table tr { page-break-inside: avoid; } 
             
-            /* 標籤化視覺 Badge UI */
             .status-badge { padding: 4px 10px; border-radius: 6px; font-weight: 700; display: inline-block; font-size: 0.85rem; line-height: 1; text-align: center; }
             .badge-pass { background-color: #e6f4ea !important; color: #1e7e34 !important; }
             .badge-fail { background-color: #fce8e6 !important; color: #c5221f !important; }
             
-            /* --- 重點文字框 (Callout Boxes) --- */
-            .rpt-box { 
-                border: 1px solid #eaeaea; border-left: 4px solid #d10001; border-radius: 6px; 
-                padding: 20px 24px; font-size: 1rem; background-color: #fafafa;
-                color: #333; line-height: 1.7;
-            }
+            .rpt-box { border: 1px solid #eaeaea; border-left: 4px solid #d10001; border-radius: 6px; padding: 20px 24px; font-size: 1rem; background-color: #fafafa; color: #333; line-height: 1.7;}
             
-            /* --- 三段式圖表排版架構 (Modern Figure Presentation) --- */
+            /* --- 三段式圖表排版架構 --- */
             .rpt-charts-container { display: flex; flex-wrap: wrap; gap: 32px; justify-content: flex-start; }
             .rpt-chart-wrapper { page-break-inside: avoid; display: flex; flex-direction: column; align-items: stretch; text-align: left; }
             
@@ -1070,30 +1015,28 @@
             
             .rpt-chart-title { font-size: 1.05rem; color: #111; margin-bottom: 16px; font-weight: 700;}
             
-            /* 圖片外框：極簡畫框風格 */
             .rpt-chart-box { 
                 background: #fff; border: 1px solid #e6e6e6; border-radius: 12px; padding: 24px; 
-                box-shadow: 0 4px 20px rgba(0,0,0,0.03); display: flex; justify-content: center; align-items: center;
-                width: 100%; box-sizing: border-box;
+                box-shadow: 0 4px 20px rgba(0,0,0,0.03); display: flex; justify-content: center; align-items: center; width: 100%; box-sizing: border-box;
             }
-            /* 圖片去背融入 (mix-blend-mode 讓白底圖片完美融入卡片) */
             .rpt-chart-img { max-width: 100%; max-height: 40vh; display: block; border-radius: 4px; object-fit: contain; mix-blend-mode: multiply;}
             .chart-layout-focus .rpt-chart-img { max-height: 65vh; }
             
-            /* 獨立出的圖表說明 (Caption) */
-            .rpt-chart-desc { 
-                margin-top: 16px; padding: 16px 20px; background: #f8f9fa; border-radius: 8px; 
-                font-size: 0.9rem; color: #555; line-height: 1.6; border-left: 3px solid #ccc; 
-            }
+            .rpt-chart-desc { margin-top: 16px; padding: 16px 20px; background: #f8f9fa; border-radius: 8px; font-size: 0.9rem; color: #555; line-height: 1.6; border-left: 3px solid #ccc; }
             
             .page-break { page-break-before: always; break-before: page; }
             .rpt-footer-text { text-align: center; font-size: 0.75rem; color: #999; margin-top: 50px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;}
             
             @media print { 
                 .rpt-content { padding: 0; }
-                .rpt-title::before { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+                
+                /* ★ 強制印出封面裝飾線與灰底 */
+                .rpt-cover::before { background-color: #d10001 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+                .rpt-cover-info { background-color: #fcfcfc !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+                
+                .rpt-title::before { background-color: #d10001 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
                 .rpt-table th { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-                .rpt-table tr:nth-child(even) { background-color: transparent !important; } /* 列印時表格更乾淨 */
+                .rpt-table tr:nth-child(even) { background-color: transparent !important; } 
                 .status-badge { -webkit-print-color-adjust: exact; print-color-adjust: exact; } 
                 .rpt-box { -webkit-print-color-adjust: exact; print-color-adjust: exact; background-color: #fafafa !important; border-left: 4px solid #d10001 !important;}
                 .rpt-chart-box { -webkit-print-color-adjust: exact; print-color-adjust: exact; box-shadow: none; border-color: #ddd;}
