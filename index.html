@@ -938,17 +938,88 @@
             .rpt-watermark-bg { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background-repeat: repeat; z-index: 0; pointer-events: none; opacity: 0.8; }
             .rpt-content { position: relative; z-index: 1; padding: 50px 80px; min-height: 100vh;}
             
-            /* --- 封面設計 (Modern Editorial Cover) --- */
-            .rpt-cover { display: flex; flex-direction: column; justify-content: center; min-height: 85vh; text-align: left; align-items: flex-start; padding-bottom: 10vh;}
-            .rpt-cover-logo { width: 220px; height: auto; margin-bottom: 50px; }
-            .rpt-cover-title { font-size: 3.2rem; font-weight: 900; color: #111; margin: 0 0 16px 0; letter-spacing: -0.03em; line-height: 1.15;}
-            .rpt-cover-subtitle { font-size: 1.4rem; font-weight: 500; color: #888; margin-bottom: 80px; letter-spacing: 0.5px;}
+            /* --- 封面設計 (Premium Editorial Cover) --- */
+            .rpt-cover { 
+                display: flex; 
+                flex-direction: column; 
+                justify-content: center; 
+                min-height: 85vh; 
+                text-align: left; 
+                align-items: flex-start; 
+                padding-bottom: 10vh;
+                position: relative; /* 為了讓左側裝飾線定位 */
+            }
             
-            .rpt-cover-info { width: 100%; max-width: 600px; padding: 0; }
-            .rpt-cover-row { display: flex; justify-content: space-between; margin-bottom: 0; font-size: 1.05rem; border-top: 1px solid #eaeaea; padding: 16px 0;}
-            .rpt-cover-row:last-child { border-bottom: 1px solid #eaeaea; }
-            .rpt-cover-label { font-weight: 500; color: #666; }
-            .rpt-cover-val { font-weight: 700; color: #111; text-align: right;}
+            /* 加入左側品牌紅線裝飾 (Brand Accent Line) */
+            .rpt-cover::before {
+                content: '';
+                position: absolute;
+                left: -40px; /* 將紅線放在內容區左側外，這需要搭配 .rpt-content 有足夠的 left-padding */
+                top: 20vh;
+                bottom: 15vh;
+                width: 4px;
+                background-color: #d10001;
+                border-radius: 2px;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+
+            .rpt-cover-logo { 
+                width: 220px; 
+                height: auto; 
+                margin-bottom: 32px; /* 縮短間距，原為 50px */
+            }
+            
+            .rpt-cover-title { 
+                font-size: 3.4rem; /* 稍微放大標題 */
+                font-weight: 900; 
+                color: #111; 
+                margin: 0 0 12px 0; /* 縮短與副標的間距，原為 16px */
+                letter-spacing: -0.03em; 
+                line-height: 1.15;
+            }
+            
+            .rpt-cover-subtitle { 
+                font-size: 1.1rem; /* 調整大小以配合大寫 */
+                font-weight: 600; 
+                color: #888; 
+                margin-bottom: 50px; /* 縮短與資訊表的間距，原為 80px */
+                text-transform: uppercase; /* 強制大寫 */
+                letter-spacing: 0.15em; /* 加大字元間距，增加科技權威感 */
+            }
+            
+            /* 資訊區塊微調 (Info Table Refinement) */
+            .rpt-cover-info { 
+                width: 100%; 
+                max-width: 600px; 
+                padding: 24px 32px; /* 加上內邊距，創造區塊感 */
+                background-color: #fcfcfc; /* 極淺的灰底色 */
+                border-top: 3px solid #d10001; /* 頂部紅色細飾線 */
+                border-radius: 0 0 8px 8px; /* 下方圓角修飾 */
+                box-shadow: 0 4px 12px rgba(0,0,0,0.02); /* 極淡的陰影，讓區塊浮出 */
+            }
+            
+            .rpt-cover-row { 
+                display: flex; 
+                justify-content: space-between; 
+                margin-bottom: 0; 
+                font-size: 1rem; 
+                border-bottom: 1px solid #eaeaea; 
+                padding: 14px 0;
+            }
+            .rpt-cover-row:last-child { 
+                border-bottom: none; /* 移除最後一行的底線，看起來更乾淨 */
+                padding-bottom: 0;
+            }
+            .rpt-cover-label { 
+                font-weight: 500; 
+                color: #666; 
+            }
+            .rpt-cover-val { 
+                font-weight: 700; 
+                color: #111; 
+                text-align: right;
+            }
 
             /* --- 區塊標題 (Clean Headers) --- */
             .rpt-section { margin-bottom: 60px; background: #fff;}
