@@ -214,7 +214,7 @@
             <div class="role-label">Security Level</div>
             <select id="conf-level" class="security-select" onchange="saveDraft()">
                 <option value="internal">JPC Internal Only</option>
-                <option value="confidential">Confidential (Client)</option>
+                <option value="confidential">Client</option>
                 <option value="public">Public</option>
             </select>
         </div>
@@ -239,7 +239,7 @@
         <div class="nav-action">
             <!-- ✨ New Report 按鈕 -->
             <button class="btn-theme" style="margin-bottom: 8px; background: var(--primary-light); color: var(--primary); border-color: var(--primary-light); justify-content: center; font-weight: 800;" onclick="openNewReportModal()">
-                <svg style="width: 18px; height: 18px; flex-shrink: 0;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg> ✨ New Report
+                <svg style="width: 18px; height: 18px; flex-shrink: 0;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>Clean All
             </button>
 
             <div class="nav-action-row">
@@ -283,8 +283,8 @@
 
             <!-- ✨ 閱讀邏輯升級：大綱前置 -->
             <section id="sec-conc">
-                <h2 class="section-header">Executive Summary <span style="font-size:0.85rem; font-weight:500; color:var(--text-muted); margin-left:12px;">(Top-down approach)</span></h2>
-                <div class="form-group" style="margin-bottom: 20px;"><label>Conclusion / Highlights</label><textarea id="c_conc" placeholder="支援換行... 寫在最前面的核心結論讓主管一秒掌握重點！"></textarea></div>
+                <h2 class="section-header">Executive Summary </h2>
+                <div class="form-group" style="margin-bottom: 20px;"><label>Conclusion</label><textarea id="c_conc" placeholder="請輸入報告結論..."></textarea></div>
                 <div class="form-group"><label>Next Steps</label><textarea id="c_next" placeholder="請輸入後續建議或下一步..."></textarea></div>
             </section>
 
