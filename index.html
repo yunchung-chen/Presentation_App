@@ -7,88 +7,166 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-base: #f6f5f4; --bg-card: #ffffff; --primary: #d10001; --primary-hover: #a80001; --primary-light: #fbe6e6;
-            --text-main: #000000; --text-muted: #777777; --border: #e9e5e0; --input-border: #c9c6c1;
-            --radius: 0.75rem; --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05); --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            /* Light Mode */
+            --bg-base: #f6f5f4;
+            --bg-card: #ffffff;
+            --primary: #d10001;
+            --primary-hover: #a80001;
+            --primary-light: #fbe6e6;
+            --text-main: #000000;
+            --text-muted: #777777;
+            --border: #e9e5e0;
+            --input-border: #c9c6c1;
+            
+            --radius: 0.75rem; 
+            --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
         }
+
+        /* Dark Mode */
         body.dark {
-            --bg-base: #1D1D1D; --bg-card: #1D1D1D; --primary: #FF4B32; --primary-hover: #D03520; --primary-light: rgba(255, 75, 50, 0.15);
-            --text-main: #FFFFFF; --text-muted: #808080; --border: #333333; --input-border: #333333; color-scheme: dark;
+            --bg-base: #1D1D1D;
+            --bg-card: #1D1D1D;
+            --primary: #FF4B32;
+            --primary-hover: #D03520;
+            --primary-light: rgba(255, 75, 50, 0.15);
+            --text-main: #FFFFFF;
+            --text-muted: #808080;
+            --border: #333333;
+            --input-border: #333333;
+            color-scheme: dark;
         }
+
         * { box-sizing: border-box; }
-        body { margin: 0; padding: 0; background-color: var(--bg-base); color: var(--text-main); font-family: var(--font-sans); display: flex; height: 100vh; overflow: hidden; transition: background-color 0.3s ease, color 0.3s ease; }
+
+        body {
+            margin: 0; padding: 0;
+            background-color: var(--bg-base); color: var(--text-main);
+            font-family: var(--font-sans);
+            display: flex; height: 100vh; overflow: hidden;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
         body[data-role="sim"] .test-only { display: none !important; }
         body[data-role="test"] .sim-only { display: none !important; }
 
         /* ====== Sidebar ====== */
-        #sidebar { width: 290px; background-color: var(--bg-card); border-right: 1px solid var(--border); display: flex; flex-direction: column; padding: 24px 16px; flex-shrink: 0; z-index: 10; overflow-y: auto; overflow-x: hidden; }
+        #sidebar {
+            width: 290px;
+            background-color: var(--bg-card); border-right: 1px solid var(--border);
+            display: flex; flex-direction: column; padding: 24px 16px; flex-shrink: 0; z-index: 10;
+            transition: all 0.3s ease; 
+            overflow-y: auto; overflow-x: hidden;
+        }
         body.preview-mode #sidebar { display: none; }
+
         .brand-logo { margin-bottom: 24px; display: flex; justify-content: center; align-items: center; width: 100%; }
         .brand-logo img { width: 130px; height: auto; object-fit: contain; }
+
         .role-selector-wrapper { margin-bottom: 24px; padding: 0 8px; }
         .role-label { font-size: 0.75rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px; letter-spacing: 0.05em; }
+        
         .segmented-control { display: flex; background-color: var(--bg-base); padding: 4px; border-radius: 8px; border: 1px solid var(--border); }
         .segment-btn { flex: 1; padding: 8px 4px; text-align: center; font-size: 0.75rem; font-weight: 600; color: var(--text-muted); background: transparent; border: none; border-radius: 6px; cursor: pointer; transition: all 0.2s ease; font-family: var(--font-sans); }
         .segment-btn:hover { color: var(--text-main); }
         .segment-btn.active { background-color: var(--bg-card); color: var(--primary); box-shadow: var(--shadow-sm); border: 1px solid var(--border);}
+
         .security-select { width: 100%; padding: 8px 10px; border-radius: 6px; border: 1px solid var(--input-border); background: var(--bg-base); color: var(--text-main); font-size: 0.8rem; font-weight: 600; cursor: pointer; }
+
         .nav-menu { display: flex; flex-direction: column; gap: 4px; flex: 1; margin-bottom: 20px;}
         .nav-link { display: flex; align-items: center; gap: 12px; padding: 10px 12px; font-size: 0.875rem; font-weight: 500; color: var(--text-muted); border-radius: 6px; cursor: pointer; transition: all 0.2s ease; }
         .nav-link svg { width: 18px; height: 18px; transition: transform 0.2s ease; flex-shrink: 0;}
         .nav-link:hover { background-color: var(--bg-base); color: var(--text-main); }
         .nav-link:hover svg { transform: scale(1.1); color: var(--primary); }
         .nav-link.active { background-color: var(--primary-light); color: var(--primary); }
+        
         .nav-action { margin-top: auto; display: flex; flex-direction: column; gap: 8px;}
         .nav-action-row { display: flex; gap: 8px; }
+        
         .btn-theme { background-color: transparent; border: 1px solid var(--border); color: var(--text-main); justify-content: center; font-weight: 600; padding: 10px 12px; flex: 1; display: flex; align-items: center; gap: 8px; border-radius: 6px; cursor: pointer; transition: all 0.2s ease; font-size: 0.875rem;}
         .btn-theme:hover { background-color: var(--bg-base); }
+        
         .btn-preview { background-color: var(--text-main); color: var(--bg-card); justify-content: center; font-weight: 600; border: none; padding: 12px; display: flex; align-items: center; gap: 8px; border-radius: 6px; cursor: pointer; transition: all 0.2s ease; font-size: 0.95rem; width: 100%;}
         .btn-preview:hover { background-color: var(--text-muted); color: var(--bg-card); }
-
+        
         /* ====== Main Content ====== */
         #main-content { flex: 1; overflow-y: auto; scroll-behavior: smooth; padding: 40px 60px; position: relative; }
         body.preview-mode #main-content { padding: 40px 20px; }
+
         .workspace { max-width: 800px; margin: 0 auto; padding-bottom: 100px;}
-        section { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 32px; margin-bottom: 32px; box-shadow: var(--shadow-sm); scroll-margin-top: 40px; }
+
+        section {
+            background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius);
+            padding: 32px; margin-bottom: 32px; box-shadow: var(--shadow-sm); scroll-margin-top: 40px; 
+            transition: all 0.3s ease;
+        }
         .section-header { margin-top: 0; margin-bottom: 24px; font-size: 1.25rem; font-weight: 600; color: var(--text-main); display: flex; align-items: center; justify-content: space-between;}
+
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
         .full-width { grid-column: span 2; }
         .form-group { display: flex; flex-direction: column; gap: 6px; }
         label { font-size: 0.875rem; font-weight: 500; color: var(--text-main); }
-        input[type="text"], input[type="date"], textarea, select { padding: 10px 12px; border: 1px solid var(--input-border); border-radius: 6px; font-size: 0.875rem; font-family: var(--font-sans); transition: all 0.2s; background: var(--bg-card); color: var(--text-main); }
+        
+        input[type="text"], input[type="date"], textarea, select {
+            padding: 10px 12px; border: 1px solid var(--input-border); border-radius: 6px;
+            font-size: 0.875rem; font-family: var(--font-sans); transition: all 0.2s; 
+            background: var(--bg-card); color: var(--text-main);
+        }
         input:focus, textarea:focus, select:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 2px var(--primary-light); }
-        textarea { resize: none; min-height: 80px; overflow: hidden; }
+        textarea { resize: none; min-height: 80px; overflow: hidden; transition: border-color 0.2s, box-shadow 0.2s; }
+
         .spec-table { width: 100%; border-collapse: collapse; }
         .spec-table th { font-size: 0.75rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; text-align: left; padding: 0 0 12px 0; border-bottom: 1px solid var(--border); }
         .spec-table td { padding: 12px 8px 12px 0; border-bottom: 1px solid var(--bg-base); }
         .spec-table input, .spec-table select { width: 100%; }
+        
         .btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; font-size: 0.875rem; font-weight: 500; border-radius: 6px; cursor: pointer; transition: all 0.2s; border: none; font-family: var(--font-sans); white-space: nowrap; }
         .btn svg { width: 18px; height: 18px; flex-shrink: 0; }
         .btn-outline { background: var(--bg-card); border: 1px solid var(--input-border); color: var(--text-main); }
         .btn-outline:hover { background: var(--bg-base); border-color: var(--text-muted); }
         .btn-primary { background: var(--primary); color: #fff; border: none;}
         .btn-primary:hover { background: var(--primary-hover); }
+        
         .btn-icon { background: transparent; border: none; color: var(--text-muted); cursor: pointer; padding: 6px; border-radius: 4px; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
         .btn-icon svg { width: 18px; height: 18px; }
         .btn-icon:hover { background: var(--bg-base); color: var(--text-main); }
         .btn-icon.danger:hover { background: var(--primary-light); color: var(--primary); }
-        .layout-toggle-btn { font-size: 0.75rem; font-weight: 600; padding: 6px 12px; background: var(--bg-base); border: 1px solid transparent; border-radius: 999px; color: var(--text-muted); cursor: pointer; transition: all 0.2s ease; display: flex; align-items: center; gap: 4px; }
+
+        .layout-toggle-btn { 
+            font-size: 0.75rem; font-weight: 600; padding: 6px 12px; 
+            background: var(--bg-base); border: 1px solid transparent; 
+            border-radius: 999px; color: var(--text-muted); cursor: pointer; 
+            transition: all 0.2s ease; font-family: var(--font-sans); display: flex; align-items: center; gap: 4px;
+        }
         .layout-toggle-btn:hover { background: var(--primary-light); color: var(--primary); border-color: var(--primary-light); }
         .chart-controls { display: flex; gap: 6px; align-items: center; }
 
-        .upload-zone { border: 2px dashed var(--input-border); border-radius: var(--radius); padding: 40px 20px; text-align: center; cursor: pointer; background: transparent; transition: all 0.3s ease; display: flex; flex-direction: column; align-items: center; gap: 12px; }
-        .upload-zone:hover, .upload-zone.dragover { border-color: var(--primary); background: var(--primary-light); }
-        .upload-zone svg { width: 32px; height: 32px; color: var(--text-muted); }
+        /* 智慧發光拖曳區 */
+        .upload-zone {
+            border: 2px dashed var(--input-border); border-radius: var(--radius); padding: 40px 20px;
+            text-align: center; cursor: pointer; background: transparent; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex; flex-direction: column; align-items: center; gap: 12px; position: relative;
+        }
+        .upload-zone:hover { border-color: var(--primary); background: var(--primary-light); }
+        .upload-zone.dragover {
+            border-color: var(--primary); background: var(--primary-light);
+            transform: scale(1.02); box-shadow: 0 10px 30px rgba(209, 0, 1, 0.15);
+        }
+        .upload-zone svg { width: 32px; height: 32px; color: var(--text-muted); transition: 0.2s;}
         .upload-zone:hover svg, .upload-zone.dragover svg { color: var(--primary); transform: scale(1.1); }
         .upload-zone span { font-size: 0.875rem; font-weight: 500; color: var(--text-muted); }
+        .upload-zone-hint { font-size: 0.75rem; color: var(--text-muted); opacity: 0.8; margin-top: -6px;}
         .upload-zone input { display: none; }
+
         .sop-alert { background-color: var(--primary-light); border-left: 4px solid var(--primary); padding: 12px 16px; border-radius: 4px; margin-bottom: 20px; font-size: 0.875rem; color: var(--text-main); }
+
         .chart-list { display: flex; flex-direction: column; gap: 16px; margin-top: 20px; }
         .chart-card { border: 1px solid var(--border); border-radius: 8px; padding: 16px; background: var(--bg-card); display: flex; gap: 20px; align-items: flex-start; }
         .chart-img-preview { width: 220px; height: 140px; object-fit: contain; border: 1px solid var(--border); border-radius: 4px; background: #fff;}
         .chart-content { flex: 1; display: flex; flex-direction: column; gap: 8px; }
 
+        /* Modal 樣式 (New Report 提示框) */
         .modal-overlay { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index: 10000; justify-content:center; align-items:center; opacity: 0; transition: opacity 0.2s;}
         .modal-overlay.show { display: flex; opacity: 1; }
         .modal-box { background: var(--bg-card); padding: 32px; border-radius: 12px; width: 400px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); transform: translateY(20px); transition: transform 0.2s; border: 1px solid var(--border);}
@@ -97,9 +175,14 @@
         .modal-box p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.5; margin-bottom: 24px;}
         .modal-actions { display: flex; gap: 12px; justify-content: flex-end; }
 
+        /* ====== 報告預覽區塊 ====== */
         #preview-workspace { display: none; width: 100%; max-width: 900px; margin: 0 auto; }
         .preview-toolbar { display: flex; justify-content: space-between; margin-bottom: 24px; padding-bottom: 24px; border-bottom: 1px solid var(--border); }
-        #report-render-area { background: #fff; padding: 0; border-radius: var(--radius); box-shadow: var(--shadow-md); border: 1px solid var(--border); width: 100%; overflow-x: auto; position: relative; }
+
+        #report-render-area {
+            background: #fff; padding: 0; border-radius: var(--radius); box-shadow: var(--shadow-md); border: 1px solid var(--border);
+            width: 100%; overflow-x: auto; position: relative;
+        }
 
         @media print {
             body.preview-mode #sidebar, .preview-toolbar { display: none !important; }
@@ -139,20 +222,26 @@
         <div class="role-label">Navigation</div>
         <nav class="nav-menu">
             <a class="nav-link active" onclick="scrollToSection('sec-info')"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg> Project Info</a>
+            
             <a class="nav-link" onclick="scrollToSection('sec-conc')"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg> Executive Summary</a>
+
             <a class="nav-link sim-only" onclick="scrollToSection('sec-setup')"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path></svg> Product & Setup</a>
             <a class="nav-link sim-only" onclick="scrollToSection('sec-geom')"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg> Geometry & Specs</a>
             <a class="nav-link sim-only" onclick="scrollToSection('sec-spec')"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg> Spec Table</a>
+
             <a class="nav-link test-only" onclick="scrollToSection('sec-equip')"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg> Test Equipments</a>
             <a class="nav-link test-only" onclick="scrollToSection('sec-dut')"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"></path></svg> DUT Information</a>
             <a class="nav-link test-only" onclick="scrollToSection('sec-summary')"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg> Summary & Matrix</a>
+
             <a class="nav-link" id="nav-chart" onclick="scrollToSection('sec-chart')"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"></path></svg> Simulation Results</a>
         </nav>
 
         <div class="nav-action">
+            <!-- ✨ New Report 按鈕 -->
             <button class="btn-theme" style="margin-bottom: 8px; background: var(--primary-light); color: var(--primary); border-color: var(--primary-light); justify-content: center; font-weight: 800;" onclick="openNewReportModal()">
                 <svg style="width: 18px; height: 18px; flex-shrink: 0;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>Clean All
             </button>
+
             <div class="nav-action-row">
                 <button class="btn-theme" onclick="saveProjectFile()" title="將目前的專案打包成 .jpc 檔案下載">
                     <svg style="width: 18px; height: 18px; flex-shrink: 0;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg> Save
@@ -162,10 +251,12 @@
                 </button>
                 <input type="file" id="jpc_upload" accept=".jpc" style="display: none;">
             </div>
+            
             <button class="btn-theme" onclick="toggleTheme()">
                 <span id="theme-icon" style="display: flex; align-items: center; justify-content: center; width: 18px; height: 18px; flex-shrink: 0;"></span>
                 <span id="theme-text">Dark Mode</span>
             </button>
+            
             <button class="btn-preview" onclick="togglePreviewMode()" title="預覽報告及匯出成PDF">
                 <svg style="width: 20px; height: 20px; flex-shrink: 0;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg> 
                 Preview & Export
@@ -190,6 +281,7 @@
                 </div>
             </section>
 
+            <!-- ✨ 閱讀邏輯升級：大綱前置 -->
             <section id="sec-conc">
                 <h2 class="section-header">Executive Summary </h2>
                 <div class="form-group" style="margin-bottom: 20px;"><label>Conclusion</label><textarea id="c_conc" placeholder="請輸入報告結論..."></textarea></div>
@@ -201,9 +293,27 @@
                 <div class="grid-2">
                     <div class="form-group"><label>Software</label><input type="text" id="ssoft" value="CST Microwave Studio" list="dl-ssoft" placeholder="請輸入軟體名稱..."></div>
                     <div class="form-group"><label>Solver</label><input type="text" id="ssolver" list="dl-ssolver" placeholder="請輸入求解器..."></div>
-                    <div class="form-group"><label>Frequency Range</label><div style="display:flex; gap:8px; align-items:center;"><input type="text" id="sfreq_start" value="0" style="width:45px; text-align:center;"><span style="font-weight:600; color:var(--text-muted);">~</span><input type="text" id="sfreq_end" placeholder="請輸入結束頻率" style="flex:1;"><span style="font-weight:600; color:var(--text-muted);">GHz</span></div></div>
+                    
+                    <div class="form-group">
+                        <label>Frequency Range</label>
+                        <div style="display:flex; gap:8px; align-items:center;">
+                            <input type="text" id="sfreq_start" value="0" style="width:45px; text-align:center;">
+                            <span style="font-weight:600; color:var(--text-muted);">~</span>
+                            <input type="text" id="sfreq_end" placeholder="請輸入結束頻率" style="flex:1;">
+                            <span style="font-weight:600; color:var(--text-muted);">GHz</span>
+                        </div>
+                    </div>
+                    
                     <div class="form-group"><label>Sweep Step</label><input type="text" id="sstep" list="dl-sstep" placeholder="例如: 10MHz"></div>
-                    <div class="form-group"><label>Connector Impedance</label><select id="simp"><option value="Differential 85Ω" selected>Differential 85Ω</option><option value="Differential 90Ω">Differential 90Ω</option><option value="Differential 100Ω">Differential 100Ω</option></select></div>
+                    
+                    <div class="form-group"><label>Connector Impedance</label>
+                        <select id="simp">
+                            <option value="Differential 85Ω" selected>Differential 85Ω</option>
+                            <option value="Differential 90Ω">Differential 90Ω</option>
+                            <option value="Differential 100Ω">Differential 100Ω</option>
+                        </select>
+                    </div>
+                    
                     <div class="form-group"><label>Port Setup</label><input type="text" id="sport" placeholder="請輸入埠設定..."></div>
                     <div class="form-group"><label>Port Direction</label><input type="text" id="sdir" placeholder="例如: Odd-Even"></div>
                     <div class="form-group"><label>3D Model File</label><input type="text" id="s3d" placeholder="請輸入 3D 模型檔名 (例如: .stp)"></div>
@@ -214,9 +324,11 @@
 
             <section id="sec-geom" class="sim-only">
                 <h2 class="section-header">Geometry & Requirements</h2>
+                <p style="font-size:0.875rem; color:var(--text-muted); margin-top:-16px;">Please upload, paste, or <b style="color:var(--primary);">Drag & Drop</b> your 3D Geometry images here.</p>
                 <div class="upload-zone" id="zone-geom" onclick="document.getElementById('img_upload_geom').click()">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
                     <span>Click, Paste or <b style="color:var(--primary);">Drop images here</b></span>
+                    <div class="upload-zone-hint">Smart Drag & Drop enabled</div>
                     <input type="file" id="img_upload_geom" accept="image/*" multiple>
                 </div>
                 <div id="img_geom_container" class="chart-list"></div>
@@ -224,6 +336,7 @@
 
             <section id="sec-spec" class="sim-only">
                 <h2 class="section-header">Specifications (Text Table) <button type="button" class="btn btn-outline" onclick="addRow()">Add Row</button></h2>
+                <p style="font-size:0.875rem; color:var(--text-muted); margin-top:-16px;">Optional: If you already uploaded Spec images above, you can leave this empty and it will be hidden.</p>
                 <table class="spec-table">
                     <thead><tr><th>Item</th><th>Spec / Condition</th><th>Result</th><th>Margin</th><th>Status</th><th>Remark</th><th style="width: 40px;"></th></tr></thead>
                     <tbody id="specTableBody"></tbody>
@@ -255,7 +368,8 @@
             </section>
             
             <section id="sec-meas-matrix" class="test-only">
-                <h2 class="section-header">TX / RX Data Matrix <button type="button" class="btn btn-outline" onclick="addMatrixRow()">Add Row</button></h2>
+                <h2 class="section-header">TX / RX Data Matrix (Optional) <button type="button" class="btn btn-outline" onclick="addMatrixRow()">Add Row</button></h2>
+                <p style="font-size:0.875rem; color:var(--text-muted); margin-top:-16px;"><strong>⚡ Smart Paste Enabled:</strong> Copy from Excel, click the first cell, and press <strong>Ctrl+V</strong>.</p>
                 <div style="overflow-x: auto;">
                     <table class="spec-table" style="min-width: 700px;">
                         <thead><tr><th>Item / Freq</th><th>Limit</th><th>TX/RX 1</th><th>TX/RX 2</th><th>TX/RX 3</th><th>TX/RX 4</th><th>TX/RX 5</th><th>TX/RX 6</th><th>TX/RX 7</th><th>TX/RX 8</th><th>Result</th><th style="width: 40px;"></th></tr></thead>
@@ -266,9 +380,11 @@
 
             <section id="sec-chart">
                 <h2 class="section-header" id="header-chart">Simulation Results</h2>
+                <div class="sop-alert"><strong>💡 SOP 圖片擺放順序建議：</strong> 1. IL (Insertion Loss) ➔ 2. RL (Return Loss) ➔ 3. NEXT ➔ 4. FEXT ➔ 5. COM。請盡量依此順序貼上截圖。</div>
                 <div class="upload-zone" id="zone-charts" onclick="document.getElementById('img_upload').click()">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
                     <span>Click, Paste or <b style="color:var(--primary);">Drop images here</b></span>
+                    <div class="upload-zone-hint">Smart Drag & Drop enabled</div>
                     <input type="file" id="img_upload" accept="image/*" multiple>
                 </div>
                 <div id="img_charts_container" class="chart-list"></div>
@@ -287,10 +403,11 @@
         </div>
     </main>
 
+    <!-- ✨ New Report Confirmation Modal -->
     <div id="confirm-modal" class="modal-overlay">
         <div class="modal-box">
             <h3>✨ Create New Report?</h3>
-            <p>This will clear all current input data and charts.</p>
+            <p>This will clear all current input data and charts. Please make sure you have exported or saved your current work to a .jpc file before proceeding.</p>
             <div class="modal-actions">
                 <button class="btn btn-outline" onclick="closeNewReportModal()">Cancel</button>
                 <button class="btn btn-primary" onclick="confirmNewReport()">Yes, Clear All</button>
@@ -316,15 +433,30 @@
             setTimeout(() => { toast.style.opacity = 0; setTimeout(() => toast.remove(), 300); }, 3000);
         }
 
+        // --- New Report Modal ---
         function openNewReportModal() { document.getElementById('confirm-modal').classList.add('show'); }
         function closeNewReportModal() { document.getElementById('confirm-modal').classList.remove('show'); }
-        function confirmNewReport() { localStorage.removeItem('jpc_pro_draft'); location.reload(); }
+        function confirmNewReport() {
+            localStorage.removeItem('jpc_pro_draft');
+            location.reload(); // 一鍵清空並重新載入全新狀態
+        }
 
         let isDarkMode = false;
-        function toggleTheme() { isDarkMode = !isDarkMode; applyTheme(); localStorage.setItem('jpc_theme', isDarkMode ? 'dark' : 'light'); }
+        function toggleTheme() {
+            isDarkMode = !isDarkMode;
+            applyTheme();
+            localStorage.setItem('jpc_theme', isDarkMode ? 'dark' : 'light');
+        }
         function applyTheme() {
-            if (isDarkMode) { document.body.classList.add('dark'); document.getElementById('theme-icon').innerHTML = iconSun; document.getElementById('theme-text').innerText = "Light Mode"; } 
-            else { document.body.classList.remove('dark'); document.getElementById('theme-icon').innerHTML = iconMoon; document.getElementById('theme-text').innerText = "Dark Mode"; }
+            if (isDarkMode) {
+                document.body.classList.add('dark');
+                document.getElementById('theme-icon').innerHTML = iconSun;
+                document.getElementById('theme-text').innerText = "Light Mode";
+            } else {
+                document.body.classList.remove('dark');
+                document.getElementById('theme-icon').innerHTML = iconMoon;
+                document.getElementById('theme-text').innerText = "Dark Mode";
+            }
         }
 
         function switchRole(roleOverride) {
@@ -335,9 +467,13 @@
             
             document.getElementById('btn-role-sim').classList.toggle('active', isSim);
             document.getElementById('btn-role-test').classList.toggle('active', !isSim);
+            
             document.body.setAttribute('data-role', role);
+            
             document.getElementById('lbl-rev').innerText = isSim ? 'Version / Specification Standard' : 'Specification Standard';
+            
             document.getElementById('header-chart').innerText = isSim ? 'Simulation Results' : 'Charts & Data';
+            document.getElementById('nav-chart').innerHTML = `<svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"></path></svg> ${isSim ? 'Simulation Results' : 'Charts & Data'}`;
             saveDraft();
         }
 
@@ -349,21 +485,39 @@
             if(document.body.classList.contains('preview-mode')) return;
             let current = '';
             sections.forEach(sec => { if (mainContent.scrollTop >= (sec.offsetTop - 150)) current = sec.getAttribute('id'); });
-            navLinks.forEach(link => { link.classList.remove('active'); if (link.getAttribute('onclick').includes(current)) link.classList.add('active'); });
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('onclick').includes(current)) link.classList.add('active');
+            });
         });
 
         function updateHistoryData() {
             let history = JSON.parse(localStorage.getItem('jpc_autocomplete') || '{}');
             const trackIds = ['pname', 'pclient', 'powner', 'pchecker', 'ssoft', 'ssolver', 'sfreq_end', 'sstep'];
+            
             trackIds.forEach(id => {
                 const el = document.getElementById(id);
-                if(el && el.value.trim()) {
-                    if(!history[id]) history[id] = [];
-                    history[id] = history[id].filter(v => v !== el.value.trim()); 
-                    history[id].unshift(el.value.trim()); 
-                    if(history[id].length > 8) history[id].pop(); 
+                if(el) {
+                    const val = el.value.trim();
+                    if(val) {
+                        if(!history[id]) history[id] = [];
+                        history[id] = history[id].filter(v => v !== val); 
+                        history[id].unshift(val); 
+                        if(history[id].length > 8) history[id].pop(); 
+                    }
                 }
             });
+
+            if(!history['spec-item']) history['spec-item'] = [];
+            document.querySelectorAll('.spec-item-input').forEach(input => {
+                const val = input.value.trim();
+                if(val && !['IL', 'RL', 'NEXT', 'FEXT'].includes(val)) {
+                    history['spec-item'] = history['spec-item'].filter(v => v !== val);
+                    history['spec-item'].unshift(val);
+                }
+            });
+            if(history['spec-item'].length > 10) history['spec-item'] = history['spec-item'].slice(0,10);
+            
             localStorage.setItem('jpc_autocomplete', JSON.stringify(history));
             renderDataLists();
         }
@@ -385,22 +539,78 @@
 
         function addRow(defaultItem = "") {
             insertRowHTML('specTableBody', `
-                <td><input type="text" class="save-target spec-item-input" list="dl-spec-item" value="${defaultItem}"></td>
+                <td><input type="text" class="save-target spec-item-input" list="dl-spec-item" placeholder="測試項目" value="${defaultItem}"></td>
                 <td><input type="text" class="save-target"></td><td><input type="text" class="save-target"></td><td><input type="text" class="save-target"></td>
                 <td><select class="save-target" style="padding:10px 4px;"><option value="">-</option><option value="Pass">Pass</option><option value="Fail">Fail</option><option value="REF">REF</option></select></td>
                 <td><input type="text" class="save-target"></td>
             `);
         }
-        function addEquipRow(v1='', v2='', v3='', v4='') { insertRowHTML('equipTableBody', `<td><input type="text" class="save-t-equip" value="${v1}"></td><td><input type="text" class="save-t-equip" value="${v2}"></td><td><input type="text" class="save-t-equip" value="${v3}"></td><td><input type="text" class="save-t-equip" value="${v4}"></td>`); }
-        function addDutRow(k1='', v1='', k2='', v2='') { insertRowHTML('dutTableBody', `<td><input type="text" class="save-t-dut" value="${k1}"></td><td><input type="text" class="save-t-dut" value="${v1}"></td><td><input type="text" class="save-t-dut" value="${k2}"></td><td><input type="text" class="save-t-dut" value="${v2}"></td>`); }
-        function addSummaryRow(k='', v='') { insertRowHTML('summaryTableBody', `<td><input type="text" class="save-t-sum" value="${k}"></td><td><select class="save-t-sum"><option value="">-</option><option value="Pass" ${v==='Pass'?'selected':''}>Pass</option><option value="Fail" ${v==='Fail'?'selected':''}>Fail</option><option value="REF" ${v==='REF'?'selected':''}>REF</option></select></td>`); }
-        function addMatrixRow(v1='', v2='', c1='', c2='', c3='', c4='', c5='', c6='', c7='', c8='', r='') { insertRowHTML('matrixTableBody', `<td><input type="text" class="save-t-mat" value="${v1}"></td><td><input type="text" class="save-t-mat" value="${v2}"></td><td><input type="text" class="save-t-mat" value="${c1}"></td><td><input type="text" class="save-t-mat" value="${c2}"></td><td><input type="text" class="save-t-mat" value="${c3}"></td><td><input type="text" class="save-t-mat" value="${c4}"></td><td><input type="text" class="save-t-mat" value="${c5}"></td><td><input type="text" class="save-t-mat" value="${c6}"></td><td><input type="text" class="save-t-mat" value="${c7}"></td><td><input type="text" class="save-t-mat" value="${c8}"></td><td><select class="save-t-mat"><option value="">-</option><option value="Pass" ${r==='Pass'?'selected':''}>Pass</option><option value="Fail" ${r==='Fail'?'selected':''}>Fail</option><option value="REF" ${r==='REF'?'selected':''}>REF</option></select></td>`); }
+        
+        function addEquipRow(v1='', v2='', v3='', v4='') {
+            insertRowHTML('equipTableBody', `
+                <td><input type="text" class="save-t-equip" value="${v1}" style="width:60px; text-align:center;"></td>
+                <td><input type="text" class="save-t-equip" value="${v2}"></td>
+                <td><input type="text" class="save-t-equip" value="${v3}"></td>
+                <td><input type="text" class="save-t-equip" value="${v4}"></td>`);
+        }
+        
+        function addDutRow(k1='', v1='', k2='', v2='') {
+            insertRowHTML('dutTableBody', `
+                <td><input type="text" class="save-t-dut" value="${k1}" style="background:var(--bg-base); font-weight:600;"></td>
+                <td><input type="text" class="save-t-dut" value="${v1}"></td>
+                <td><input type="text" class="save-t-dut" value="${k2}" style="background:var(--bg-base); font-weight:600;"></td>
+                <td><input type="text" class="save-t-dut" value="${v2}"></td>`);
+        }
+
+        function addSummaryRow(k='', v='') {
+            insertRowHTML('summaryTableBody', `
+                <td><input type="text" class="save-t-sum" value="${k}"></td>
+                <td><select class="save-t-sum"><option value="">-</option><option value="Pass" ${v==='Pass'?'selected':''}>Pass</option><option value="Fail" ${v==='Fail'?'selected':''}>Fail</option><option value="REF" ${v==='REF'?'selected':''}>REF</option></select></td>`);
+        }
+        
+        function addMatrixRow(v1='', v2='', c1='', c2='', c3='', c4='', c5='', c6='', c7='', c8='', r='') {
+            insertRowHTML('matrixTableBody', `
+                <td><input type="text" class="save-t-mat" value="${v1}" style="width:80px"></td>
+                <td><input type="text" class="save-t-mat" value="${v2}" style="width:60px"></td>
+                <td><input type="text" class="save-t-mat" value="${c1}" style="width:50px"></td>
+                <td><input type="text" class="save-t-mat" value="${c2}" style="width:50px"></td>
+                <td><input type="text" class="save-t-mat" value="${c3}" style="width:50px"></td>
+                <td><input type="text" class="save-t-mat" value="${c4}" style="width:50px"></td>
+                <td><input type="text" class="save-t-mat" value="${c5}" style="width:50px"></td>
+                <td><input type="text" class="save-t-mat" value="${c6}" style="width:50px"></td>
+                <td><input type="text" class="save-t-mat" value="${c7}" style="width:50px"></td>
+                <td><input type="text" class="save-t-mat" value="${c8}" style="width:50px"></td>
+                <td style="width:75px;"><select class="save-t-mat"><option value="">-</option><option value="Pass" ${r==='Pass'?'selected':''}>Pass</option><option value="Fail" ${r==='Fail'?'selected':''}>Fail</option><option value="REF" ${r==='REF'?'selected':''}>REF</option></select></td>`);
+        }
 
         function initDefaultRows() {
-            if(document.getElementById('specTableBody').children.length === 0) { addRow("IL"); addRow("RL"); addRow("NEXT"); addRow("FEXT"); }
-            if(document.getElementById('equipTableBody').children.length === 0) { addEquipRow('1', '', '', ''); }
-            if(document.getElementById('dutTableBody').children.length === 0) { addDutRow('Length(m)', '', 'Tested Pairs', ''); }
-            if(document.getElementById('summaryTableBody').children.length === 0) { addSummaryRow('1. Differential Mode Insertion Loss (SDD21)', ''); }
+            if(document.getElementById('specTableBody').children.length === 0) { 
+                addRow("IL"); addRow("RL"); addRow("NEXT"); addRow("FEXT"); 
+            }
+            if(document.getElementById('equipTableBody').children.length === 0) {
+                addEquipRow('1', '', '', '');
+                addEquipRow('2', '', '', '');
+            }
+            if(document.getElementById('dutTableBody').children.length === 0) {
+                addDutRow('Length(m)', '', 'Tested Pairs', '');
+                addDutRow('Temperature', '', 'Humidity', '');
+                addDutRow('AWG', '', 'Part Number', '');
+                addDutRow('Work order', '', 'Serial Number', '');
+                addDutRow('Testing following', '', 'Test fixture', '');
+                addDutRow('Edited by', '', 'Test Result', '');
+            }
+            if(document.getElementById('summaryTableBody').children.length === 0) {
+                addSummaryRow('1. Differential Mode Insertion Loss (SDD21)', '');
+                addSummaryRow('2. Differential Mode Return Loss (SDD11, SDD22)', '');
+                addSummaryRow('3. Differential to Common-mode Return Loss (SCD11, SCD22)', '');
+                addSummaryRow('4. Differential to Common-mode conversion Loss (SCD21-SDD21)', '');
+                addSummaryRow('5. Common-mode Return Loss (SCC11, SCC22)', '');
+                addSummaryRow('6. Channel Operating Margin (COM)', '');
+            }
+            if(document.getElementById('matrixTableBody').children.length === 0) {
+                addMatrixRow('', '', '', '', '', '', '', '', '', '', '');
+                addMatrixRow('', '', '', '', '', '', '', '', '', '', '');
+            }
         }
 
         let currentPasteTarget = 'img_charts_container'; 
@@ -408,23 +618,36 @@
         document.getElementById('sec-chart').addEventListener('mouseenter', () => { currentPasteTarget = 'img_charts_container'; });
 
         function toggleChartLayout(btn) {
-            const states = [ { val: 'half', text: '◫ Half' }, { val: 'full', text: '🔲 Full' }, { val: 'focus', text: '🎯 Focus' } ];
+            const states = [
+                { val: 'half', text: '◫ Half', title: '半版並排' },
+                { val: 'full', text: '🔲 Full', title: '滿版換行' },
+                { val: 'focus', text: '🎯 Focus', title: '單頁置中' }
+            ];
             const input = btn.parentElement.querySelector('.chart-layout-state');
             const currentIdx = states.findIndex(s => s.val === input.value);
             const nextIdx = (currentIdx + 1) % states.length;
-            input.value = states[nextIdx].val; btn.innerHTML = states[nextIdx].text; saveDraft();
+            
+            input.value = states[nextIdx].val;
+            btn.innerHTML = states[nextIdx].text;
+            btn.title = states[nextIdx].title;
+            saveDraft();
         }
 
         function appendChartCard(imgSrc, containerId = 'img_charts_container', title = '', desc = '', layout = 'half') {
-            let btnText = layout === 'full' ? '🔲 Full' : layout === 'focus' ? '🎯 Focus' : '◫ Half';
+            let phTitle = containerId === 'img_geom_container' ? '圖片標題 (例如: 3D 幾何圖)' : '圖片標題 (例如: Insertion Loss)';
+            
+            let btnText = '◫ Half'; let btnTitle = '半版並排';
+            if(layout === 'full') { btnText = '🔲 Full'; btnTitle = '滿版換行'; }
+            if(layout === 'focus') { btnText = '🎯 Focus'; btnTitle = '單頁置中'; }
+
             const html = `
                 <div class="chart-card">
                     <img src="${imgSrc}" class="chart-img-preview" alt="Chart">
                     <div class="chart-content">
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-                            <label style="margin: 0;">Chart Title:</label>
+                            <label style="margin: 0;">Chart Title (Auto-numbered):</label>
                             <div class="chart-controls">
-                                <button type="button" class="layout-toggle-btn" onclick="toggleChartLayout(this)">${btnText}</button>
+                                <button type="button" class="layout-toggle-btn" onclick="toggleChartLayout(this)" title="${btnTitle}">${btnText}</button>
                                 <input type="hidden" class="chart-layout-state" value="${layout}">
                                 <div style="width:1px; height:14px; background:var(--border); margin:0 4px;"></div>
                                 <button type="button" class="btn-icon" onclick="moveUp(this)">${iconUp}</button>
@@ -432,48 +655,98 @@
                                 <button type="button" class="btn-icon danger" onclick="this.closest('.chart-card').remove(); saveDraft();">${iconTrash}</button>
                             </div>
                         </div>
-                        <input type="text" class="chart-title-input" value="${title}">
-                        <textarea class="chart-desc-input">${desc}</textarea>
+                        <input type="text" class="chart-title-input" placeholder="${phTitle}" value="${title}">
+                        <label style="margin-top: 4px;">Description:</label>
+                        <textarea class="chart-desc-input" placeholder="請輸入圖片補充說明...">${desc}</textarea>
                     </div>
-                </div>`;
+                </div>
+            `;
             document.getElementById(containerId).insertAdjacentHTML('beforeend', html);
-            saveDraft(); setTimeout(resizeAllTextareas, 50);
+            saveDraft();
+            setTimeout(resizeAllTextareas, 50);
         }
 
-        function setupSmartDropZone(zoneId, containerId, defaultLayout) {
+        function focusAndCenterNewCard(containerId) {
+            setTimeout(() => {
+                const container = document.getElementById(containerId);
+                if (container && container.lastElementChild) {
+                    const newCard = container.lastElementChild;
+                    const titleInput = newCard.querySelector('.chart-title-input');
+                    newCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    if (titleInput) { titleInput.focus({ preventScroll: true }); }
+                }
+            }, 100); 
+        }
+
+        // ✨ 智慧發光拖曳區 (Smart Drag & Drop Zones)
+        function setupSmartDropZone(zoneId, fileInputId, containerId, defaultLayout) {
             const zone = document.getElementById(zoneId);
             if(!zone) return;
-            zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('dragover'); });
-            zone.addEventListener('dragleave', e => { e.preventDefault(); zone.classList.remove('dragover'); });
+            
+            zone.addEventListener('dragover', e => { 
+                e.preventDefault(); e.stopPropagation(); 
+                zone.classList.add('dragover'); 
+            });
+            zone.addEventListener('dragleave', e => { 
+                e.preventDefault(); e.stopPropagation(); 
+                zone.classList.remove('dragover'); 
+            });
             zone.addEventListener('drop', e => {
-                e.preventDefault(); zone.classList.remove('dragover');
+                e.preventDefault(); e.stopPropagation();
+                zone.classList.remove('dragover');
+                
                 Array.from(e.dataTransfer.files).forEach(file => {
                     if(file.type.startsWith('image/')) {
                         const reader = new FileReader();
-                        reader.onload = ev => { appendChartCard(ev.target.result, containerId, '', '', defaultLayout); };
+                        reader.onload = ev => { 
+                            appendChartCard(ev.target.result, containerId, '', '', defaultLayout); 
+                            focusAndCenterNewCard(containerId);
+                        };
                         reader.readAsDataURL(file);
                     }
                 });
             });
         }
-        setupSmartDropZone('zone-geom', 'img_geom_container', 'full');
-        setupSmartDropZone('zone-charts', 'img_charts_container', 'half');
+        setupSmartDropZone('zone-geom', 'img_upload_geom', 'img_geom_container', 'full');
+        setupSmartDropZone('zone-charts', 'img_upload', 'img_charts_container', 'half');
 
+        // 傳統檔案選擇器
         document.getElementById('img_upload_geom').addEventListener('change', function(event) {
-            Array.from(event.target.files).forEach((file) => { const reader = new FileReader(); reader.onload = function(e) { appendChartCard(e.target.result, 'img_geom_container', '', '', 'full'); }; reader.readAsDataURL(file); });
+            Array.from(event.target.files).forEach((file) => {
+                const reader = new FileReader();
+                reader.onload = function(e) { appendChartCard(e.target.result, 'img_geom_container', '', '', 'full'); focusAndCenterNewCard('img_geom_container'); }
+                reader.readAsDataURL(file);
+            });
+            event.target.value = '';
         });
+
         document.getElementById('img_upload').addEventListener('change', function(event) {
-            Array.from(event.target.files).forEach((file) => { const reader = new FileReader(); reader.onload = function(e) { appendChartCard(e.target.result, 'img_charts_container', '', '', 'half'); }; reader.readAsDataURL(file); });
+            Array.from(event.target.files).forEach((file) => {
+                const reader = new FileReader();
+                reader.onload = function(e) { appendChartCard(e.target.result, 'img_charts_container', '', '', 'half'); focusAndCenterNewCard('img_charts_container'); }
+                reader.readAsDataURL(file);
+            });
+            event.target.value = '';
         });
 
         window.addEventListener('paste', function(e) {
-            if (['input', 'textarea'].includes(document.activeElement.tagName.toLowerCase())) return;
+            const activeTag = document.activeElement.tagName.toLowerCase();
+            if (activeTag === 'input' || activeTag === 'textarea') return;
+
             const items = (e.clipboardData || e.originalEvent.clipboardData).items;
             for (let index in items) {
-                if (items[index].kind === 'file' && items[index].type.includes('image/')) {
+                const item = items[index];
+                if (item.kind === 'file' && item.type.includes('image/')) {
+                    const blob = item.getAsFile();
                     const reader = new FileReader();
-                    reader.onload = function(event) { appendChartCard(event.target.result, currentPasteTarget, '', '', currentPasteTarget === 'img_geom_container' ? 'full' : 'half'); };
-                    reader.readAsDataURL(items[index].getAsFile()); e.preventDefault(); break;
+                    reader.onload = function(event) {
+                        const defaultLayout = currentPasteTarget === 'img_geom_container' ? 'full' : 'half';
+                        appendChartCard(event.target.result, currentPasteTarget, '', '', defaultLayout);
+                        focusAndCenterNewCard(currentPasteTarget);
+                    };
+                    reader.readAsDataURL(blob);
+                    e.preventDefault(); 
+                    break;
                 }
             }
         });
@@ -486,151 +759,307 @@
             document.querySelectorAll('#edit-workspace input[type="text"], #edit-workspace input[type="date"], #edit-workspace textarea, #edit-workspace select').forEach(el => {
                 if(el.id && el.id !== 'conf-level') data.fields[el.id] = el.value;
             });
+            
             const extractTable = (cls) => {
                 let rows = [];
                 document.querySelectorAll(`#edit-workspace tr`).forEach(tr => {
                     let inputs = tr.querySelectorAll('.' + cls);
-                    if(inputs.length) { let rowData = []; inputs.forEach(input => rowData.push(input.value)); rows.push(rowData); }
-                }); return rows;
+                    if(inputs.length) { 
+                        let rowData = []; inputs.forEach(input => rowData.push(input.value)); rows.push(rowData); 
+                    }
+                }); 
+                return rows;
             };
-            data.table = extractTable('save-target'); data.tblEquip = extractTable('save-t-equip'); data.tblDut = extractTable('save-t-dut'); data.tblSum = extractTable('save-t-sum'); data.tblMat = extractTable('save-t-mat');
+            
+            data.table = extractTable('save-target');
+            data.tblEquip = extractTable('save-t-equip');
+            data.tblDut = extractTable('save-t-dut');
+            data.tblSum = extractTable('save-t-sum');
+            data.tblMat = extractTable('save-t-mat');
+            
             const extractCharts = (containerId) => {
                 let charts = [];
                 document.querySelectorAll(`#${containerId} .chart-card`).forEach(card => {
-                    charts.push({ img: card.querySelector('.chart-img-preview').src, title: card.querySelector('.chart-title-input').value, desc: card.querySelector('.chart-desc-input').value, layout: card.querySelector('.chart-layout-state').value });
-                }); return charts;
+                    charts.push({
+                        img: card.querySelector('.chart-img-preview').src,
+                        title: card.querySelector('.chart-title-input').value,
+                        desc: card.querySelector('.chart-desc-input').value,
+                        layout: card.querySelector('.chart-layout-state').value
+                    });
+                });
+                return charts;
             };
-            data.geomCharts = extractCharts('img_geom_container'); data.resCharts = extractCharts('img_charts_container'); return data;
+            data.geomCharts = extractCharts('img_geom_container');
+            data.resCharts = extractCharts('img_charts_container');
+            
+            return data;
         }
 
-        function saveDraft() { try { localStorage.setItem('jpc_pro_draft', JSON.stringify(getProjectData())); } catch(e) {} updateHistoryData(); }
-        function saveProjectFile() {
-            const blob = new Blob([JSON.stringify(getProjectData())], {type: "application/json"});
-            const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = (document.getElementById('pname').value.trim() || 'Untitled') + ".jpc"; a.click(); showToast("💾 Project Exported!");
+        window.addEventListener('beforeunload', (e) => { e.preventDefault(); e.returnValue = ''; });
+        
+        function saveDraft() {
+            try { localStorage.setItem('jpc_pro_draft', JSON.stringify(getProjectData())); } catch(e) {}
+            updateHistoryData();
         }
+
+        function saveProjectFile() {
+            const data = getProjectData();
+            const blob = new Blob([JSON.stringify(data)], {type: "application/json"});
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            const pname = document.getElementById('pname').value.trim() || 'Untitled';
+            a.download = pname + ".jpc";
+            a.click();
+            URL.revokeObjectURL(url);
+            showToast("💾 Project Exported Successfully!");
+        }
+
         function loadProjectFile(file) {
             const reader = new FileReader();
-            reader.onload = function(e) { try { const data = JSON.parse(e.target.result); applyDataToUI(data); showToast("📂 Loaded!"); } catch(err) { showToast("⚠️ Error!", true); } };
+            reader.onload = function(e) {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    try { localStorage.setItem('jpc_pro_draft', JSON.stringify(data)); } catch(err){}
+                    applyDataToUI(data);
+                    showToast("📂 Project Loaded Successfully!");
+                } catch(err) { showToast("⚠️ Invalid .jpc file format!", true); }
+            };
             reader.readAsText(file);
         }
 
-        document.getElementById('jpc_upload').addEventListener('change', function(e) { if(e.target.files.length) loadProjectFile(e.target.files[0]); this.value = ''; });
-        window.addEventListener('dragenter', (e) => {
-             let isFile = false; let isImage = false;
-             if(e.dataTransfer.items) { for(let i=0; i<e.dataTransfer.items.length; i++) { if(e.dataTransfer.items[i].kind === 'file') isFile = true; if(e.dataTransfer.items[i].type.startsWith('image/')) isImage = true; } }
-             if (isFile && !isImage && !document.body.classList.contains('preview-mode')) document.getElementById('drop-overlay').style.display = 'flex';
+        document.getElementById('jpc_upload').addEventListener('change', function(e) {
+            if(e.target.files.length) loadProjectFile(e.target.files[0]);
+            this.value = ''; 
         });
-        document.getElementById('drop-overlay').addEventListener('dragleave', () => { document.getElementById('drop-overlay').style.display = 'none'; });
+
+        const dropOverlay = document.getElementById('drop-overlay');
+        window.addEventListener('dragenter', (e) => {
+             const items = e.dataTransfer.items;
+             let isFile = false; let isImage = false;
+             if(items) {
+                 for(let i=0; i<items.length; i++) {
+                     if(items[i].kind === 'file') isFile = true;
+                     if(items[i].type.startsWith('image/')) isImage = true;
+                 }
+             }
+             if (isFile && !isImage && !document.body.classList.contains('preview-mode')) {
+                 dropOverlay.style.display = 'flex';
+             }
+        });
+        window.addEventListener('dragleave', (e) => { if(e.target === dropOverlay) dropOverlay.style.display = 'none'; });
         window.addEventListener('drop', (e) => {
-            e.preventDefault(); document.getElementById('drop-overlay').style.display = 'none';
-            if(!document.body.classList.contains('preview-mode') && e.dataTransfer.files[0] && e.dataTransfer.files[0].name.endsWith('.jpc')) loadProjectFile(e.dataTransfer.files[0]);
+            e.preventDefault();
+            dropOverlay.style.display = 'none';
+            if(document.body.classList.contains('preview-mode')) return;
+            const file = e.dataTransfer.files[0];
+            if(file && file.name.endsWith('.jpc')) loadProjectFile(file);
         });
 
         function applyDataToUI(data) {
-            switchRole(data.role || 'sim'); if(data.conf) document.getElementById('conf-level').value = data.conf;
+            switchRole(data.role || 'sim');
+            if(data.conf) document.getElementById('conf-level').value = data.conf;
             Object.keys(data.fields).forEach(key => { if(document.getElementById(key)) document.getElementById(key).value = data.fields[key]; });
+            
+            const tbodySpec = document.getElementById('specTableBody');
+            tbodySpec.innerHTML = '';
+            if(data.table && data.table.length > 0) {
+                data.table.forEach(rowData => { 
+                    addRow(); 
+                    let inputs = tbodySpec.lastElementChild.querySelectorAll('.save-target'); 
+                    rowData.forEach((val, i) => { if(inputs[i]) inputs[i].value = val; }); 
+                });
+            } else if(data.table === undefined) { initDefaultRows(); }
+            
             const restoreTable = (dataArr, tbodyId, addFn) => {
                 document.getElementById(tbodyId).innerHTML = '';
                 if(dataArr && dataArr.length) { dataArr.forEach(row => addFn(...row)); }
             };
-            restoreTable(data.table, 'specTableBody', addRow); restoreTable(data.tblEquip, 'equipTableBody', addEquipRow); restoreTable(data.tblDut, 'dutTableBody', addDutRow); restoreTable(data.tblSum, 'summaryTableBody', addSummaryRow); restoreTable(data.tblMat, 'matrixTableBody', addMatrixRow);
-            if(!data.table || data.table.length === 0) initDefaultRows();
-            document.getElementById('img_geom_container').innerHTML = ''; if(data.geomCharts) data.geomCharts.forEach(c => appendChartCard(c.img, 'img_geom_container', c.title, c.desc, c.layout));
-            document.getElementById('img_charts_container').innerHTML = ''; if(data.resCharts) data.resCharts.forEach(c => appendChartCard(c.img, 'img_charts_container', c.title, c.desc, c.layout));
+            restoreTable(data.tblEquip, 'equipTableBody', addEquipRow);
+            restoreTable(data.tblDut, 'dutTableBody', addDutRow);
+            restoreTable(data.tblSum, 'summaryTableBody', addSummaryRow);
+            restoreTable(data.tblMat, 'matrixTableBody', addMatrixRow);
+            if(!data.tblEquip || data.tblEquip.length === 0) initDefaultRows();
+            
+            document.getElementById('img_geom_container').innerHTML = '';
+            if(data.geomCharts) data.geomCharts.forEach(c => appendChartCard(c.img, 'img_geom_container', c.title, c.desc, c.layout));
+            
+            document.getElementById('img_charts_container').innerHTML = '';
+            if(data.resCharts) data.resCharts.forEach(c => appendChartCard(c.img, 'img_charts_container', c.title, c.desc, c.layout));
+
             setTimeout(resizeAllTextareas, 100);
         }
 
-        function loadDraft() { renderDataLists(); if(localStorage.getItem('jpc_theme') === 'dark') { isDarkMode = true; applyTheme(); } const draft = localStorage.getItem('jpc_pro_draft'); if(draft) { try { applyDataToUI(JSON.parse(draft)); } catch(e) { initDefaultRows(); } } else { initDefaultRows(); } }
+        function loadDraft() {
+            renderDataLists(); 
+            const savedTheme = localStorage.getItem('jpc_theme');
+            if(savedTheme === 'dark') { isDarkMode = true; applyTheme(); } else { applyTheme(); }
+
+            const draft = localStorage.getItem('jpc_pro_draft');
+            if(!draft) { initDefaultRows(); return; }
+            try { applyDataToUI(JSON.parse(draft)); } catch(e) { initDefaultRows(); }
+        }
         document.addEventListener('change', (e) => { if(['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName)) saveDraft(); });
-        function autoResizeTextarea(el) { el.style.height = 'auto'; el.style.height = (el.scrollHeight + 2) + 'px'; }
+        
+        function autoResizeTextarea(el) {
+            el.style.height = 'auto';
+            el.style.height = (el.scrollHeight + 2) + 'px';
+        }
         document.addEventListener('input', function(e) { if (e.target.tagName === 'TEXTAREA') autoResizeTextarea(e.target); });
         function resizeAllTextareas() { document.querySelectorAll('textarea').forEach(autoResizeTextarea); }
+
         window.onload = () => { loadDraft(); setTimeout(resizeAllTextareas, 100); };
 
         let isPreview = false;
         
+        function getConfidentialityConfig() {
+            const level = document.getElementById('conf-level').value;
+            if (level === 'internal') {
+                return { text: 'JPC INTERNAL ONLY', color: 'rgba(209, 0, 1, 0.04)', footer: 'JPC Connectivity Confidential - Internal Use Only' };
+            } else if (level === 'confidential') {
+                return { text: 'JPC CONFIDENTIAL', color: 'rgba(0, 0, 0, 0.04)', footer: 'JPC Connectivity Confidential' };
+            } else {
+                return { text: '', color: 'transparent', footer: '' };
+            }
+        }
+
         function togglePreviewMode() {
-            isPreview = !isPreview; document.body.classList.toggle('preview-mode', isPreview);
-            document.getElementById('edit-workspace').style.display = isPreview ? 'none' : 'block'; document.getElementById('preview-workspace').style.display = isPreview ? 'block' : 'none';
+            isPreview = !isPreview;
+            document.body.classList.toggle('preview-mode', isPreview);
+            document.getElementById('edit-workspace').style.display = isPreview ? 'none' : 'block';
+            document.getElementById('preview-workspace').style.display = isPreview ? 'block' : 'none';
             if (isPreview) { generateReportHTML(); document.getElementById('main-content').scrollTop = 0; }
         }
 
+        function buildTableHTML(cls) {
+            let html = '';
+            document.querySelectorAll(`tr`).forEach(tr => {
+                const inputs = tr.querySelectorAll('.' + cls);
+                if(inputs.length && !Array.from(inputs).every(i => i.value.trim() === '')) {
+                    html += '<tr>';
+                    inputs.forEach((input, index) => {
+                        let val = input.value.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+                        let tdContent = val || "&nbsp;";
+                        if (val === "Pass") { tdContent = `<span class="status-badge badge-pass">Pass</span>`; } 
+                        else if (val === "Fail") { tdContent = `<span class="status-badge badge-fail">Fail</span>`; }
+                        else if (val === "REF") { tdContent = `<span class="status-badge badge-ref">REF</span>`; } 
+
+                        if (cls === 'save-t-dut' && (index === 0 || index === 2)) {
+                            html += `<td style="background-color: #f6f5f4; font-weight: 700;">${tdContent}</td>`;
+                        } else {
+                            html += `<td>${tdContent}</td>`;
+                        }
+                    });
+                    html += '</tr>';
+                }
+            });
+            return html;
+        }
+
         const sharedReportCSS = `
+            /* --- 全局與字體 (Global Typography) --- */
             .rpt-wrapper { font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; color: #333; line-height: 1.65; background: #fff;}
             .rpt-watermark-bg { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-repeat: repeat; z-index: 0; pointer-events: none; opacity: 0.8; }
-            .rpt-cover { display: flex; flex-direction: column; justify-content: center; min-height: 85vh; text-align: left; align-items: flex-start; padding-bottom: 10vh; position: relative; padding-left: 36px; }
-            .rpt-cover::before { content: ''; position: absolute; left: 0; top: 20vh; bottom: 15vh; width: 6px; background-color: #d10001; border-radius: 3px; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            
+            .rpt-content { position: relative; z-index: 1; padding: 50px 80px; min-height: 100vh;}
+            
+            /* --- 封面設計 (Premium Editorial Cover) --- */
+            .rpt-cover { 
+                display: flex; flex-direction: column; justify-content: center; 
+                min-height: 85vh; text-align: left; align-items: flex-start; 
+                padding-bottom: 10vh; position: relative; padding-left: 36px;
+            }
+            .rpt-cover::before {
+                content: ''; position: absolute; left: 0; top: 20vh; bottom: 15vh; width: 6px;
+                background-color: #d10001; border-radius: 3px; -webkit-print-color-adjust: exact; print-color-adjust: exact;
+            }
             .rpt-cover-logo { width: 220px; height: auto; margin-bottom: 32px; }
             .rpt-cover-title { font-size: 3.4rem; font-weight: 900; color: #111; margin: 0 0 12px 0; letter-spacing: -0.03em; line-height: 1.15;}
             .rpt-cover-subtitle { font-size: 1.1rem; font-weight: 600; color: #888; margin-bottom: 50px; text-transform: uppercase; letter-spacing: 0.15em;}
+            
             .rpt-cover-info { width: 100%; max-width: 600px; padding: 24px 32px; background-color: #fcfcfc; border-top: 3px solid #d10001; border-radius: 0 0 8px 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.03);}
             .rpt-cover-row { display: flex; justify-content: space-between; margin-bottom: 0; font-size: 1rem; border-bottom: 1px solid #eaeaea; padding: 14px 0;}
             .rpt-cover-row:last-child { border-bottom: none; padding-bottom: 0;}
-            .rpt-cover-label { font-weight: 500; color: #666; } .rpt-cover-val { font-weight: 700; color: #111; text-align: right;}
+            .rpt-cover-label { font-weight: 500; color: #666; }
+            .rpt-cover-val { font-weight: 700; color: #111; text-align: right;}
 
+            /* --- 區塊標題 (Clean Headers) --- */
             .rpt-section { margin-bottom: 60px; background: #fff; page-break-inside: auto; }
+            
             .rpt-title { font-size: 1.5rem; color: #111; margin-bottom: 24px; font-weight: 800; letter-spacing: -0.01em; page-break-after: avoid; display: flex; align-items: center; gap: 12px;}
             .rpt-title::before { content: ''; display: block; width: 6px; height: 24px; background-color: #d10001; border-radius: 4px; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+
             .rpt-grid { display: grid; grid-template-columns: minmax(180px, 200px) 1fr; row-gap: 16px; font-size: 1rem; margin-bottom: 16px; word-break: break-word; page-break-inside: avoid; }
             .rpt-key { font-weight: 600; color: #555; }
             .rpt-box { border: 1px solid #eaeaea; border-left: 4px solid #d10001; border-radius: 6px; padding: 20px 24px; font-size: 1rem; background-color: #fafafa; color: #333; line-height: 1.7; page-break-inside: avoid;}
             
+            /* --- 學術級無直線表格 (Booktabs Style) --- */
             .rpt-table { width: 100%; border-collapse: collapse; font-size: 0.95rem; margin-top: 16px; page-break-inside: auto; }
-            .rpt-table thead { display: table-header-group; } .rpt-table tr { page-break-inside: avoid; } 
+            
+            .rpt-table thead { display: table-header-group; } 
+            .rpt-table tr { page-break-inside: avoid; } 
+            
             .rpt-table th { font-weight: 700; padding: 14px 12px; text-align: left; color: #111; border-top: 2px solid #111; border-bottom: 1px solid #111;}
             .rpt-table td { padding: 14px 12px; border-bottom: 1px solid #f0f0f0; word-break: break-word; color: #444;}
             .rpt-table tr:last-child td { border-bottom: 2px solid #111; } 
             
+            /* 標籤設計 */
             .status-badge { padding: 4px 10px; border-radius: 6px; font-weight: 700; display: inline-block; font-size: 0.85rem; line-height: 1; text-align: center; white-space: nowrap; }
             .badge-pass { background-color: #e6f4ea !important; color: #1e7e34 !important; }
             .badge-fail { background-color: #fce8e6 !important; color: #c5221f !important; }
             .badge-ref { background-color: #e0f2fe !important; color: #0369a1 !important; border: 1px solid #bae6fd !important; }
             
+            /* --- 三段式圖表排版架構 --- */
             .rpt-charts-container { display: flex; flex-wrap: wrap; gap: 32px; justify-content: flex-start; }
             .rpt-chart-wrapper { page-break-inside: avoid; display: flex; flex-direction: column; align-items: stretch; text-align: left; }
-            .chart-layout-half { width: calc(50% - 16px); } .chart-layout-full { width: 100%; } .chart-layout-focus { width: 100%; min-height: 85vh; justify-content: center; page-break-before: always; page-break-after: always; }
+            
+            .chart-layout-half { width: calc(50% - 16px); }
+            .chart-layout-full { width: 100%; }
+            .chart-layout-focus { width: 100%; min-height: 85vh; justify-content: center; page-break-before: always; page-break-after: always; }
+            
             .rpt-chart-title { font-size: 1.05rem; color: #111; margin-bottom: 16px; font-weight: 700;}
             .rpt-chart-box { background: #fff; border: 1px solid #e6e6e6; border-radius: 12px; padding: 24px; box-shadow: 0 4px 20px rgba(0,0,0,0.03); display: flex; justify-content: center; align-items: center; width: 100%; box-sizing: border-box;}
             .rpt-chart-img { max-width: 100%; max-height: 40vh; display: block; border-radius: 4px; object-fit: contain; mix-blend-mode: multiply;}
             .chart-layout-focus .rpt-chart-img { max-height: 65vh; }
             .rpt-chart-desc { margin-top: 16px; padding: 16px 20px; background: #f8f9fa; border-radius: 8px; font-size: 0.9rem; color: #555; line-height: 1.6; border-left: 3px solid #ccc; }
+            
             .page-break { page-break-before: always; break-before: page; }
             
             @media screen { 
-                .rpt-content { padding: 50px 80px; }
                 .print-fixed-header, .print-fixed-footer { display: none; } 
                 .rpt-footer-text { text-align: center; font-size: 0.75rem; color: #999; margin-top: 50px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;}
             }
 
             @media print { 
-                /* ✨ 終極修復：回歸標準 margin，不依賴隱形大表格 */
+                /* ✨ 核心修復：強制解除 Flexbox，讓內容自然流動 */
                 *, *::before, *::after { box-sizing: border-box; }
-                
-                /* 核心：宣告真實的物理白邊，強制把報告內容往中間擠 */
-                @page { margin: 40mm 15mm 30mm 15mm; } 
-
-                /* 移除所有會破壞列印流動的 Flex 設定 */
                 body, html, #main-content, #preview-workspace, #report-render-area, .rpt-wrapper, .rpt-content { 
-                    display: block !important; height: auto !important; overflow: visible !important; position: static !important; padding: 0 !important; margin: 0 !important;
+                    display: block !important; height: auto !important; overflow: visible !important; position: static !important; margin: 0 !important; padding: 0 !important;
                 }
                 
-                /* 精準定位：把頁首往上推入那 40mm 的白邊裡 */
+                /* ✨ 終極解法一：強制設定紙張的絕對白邊 */
+                @page { margin: 40mm 15mm 30mm 15mm !important; } 
+
+                /* ✨ 終極解法二：把 Fixed 頁首精準設定在距離紙張頂部 1cm 處 (40mm - 30mm = 10mm) */
                 .print-fixed-header { 
-                    position: fixed !important; top: -30mm; left: 0; right: 0; height: 15mm; 
+                    position: fixed !important; top: -30mm; left: 0; right: 0; height: 12mm; 
                     border-bottom: 2px solid #d10001; display: flex !important; justify-content: space-between; align-items: flex-end; 
                     padding-bottom: 6px; z-index: 1000; background: transparent; 
                 }
                 .print-fixed-header img { height: 22px; }
                 .print-fixed-header .hdr-text { font-size: 0.8rem; color: #888; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
                 
-                /* 把頁尾往下推入 30mm 的白邊裡 */
+                /* ✨ 終極解法三：把 Fixed 頁尾精準設定在距離紙張底部 1cm 處 (30mm - 20mm = 10mm) */
                 .print-fixed-footer { 
-                    position: fixed !important; bottom: -20mm; left: 0; right: 0; height: 12mm; 
+                    position: fixed !important; bottom: -20mm; left: 0; right: 0; height: 10mm; 
                     border-top: 1px solid #eaeaea; display: flex !important; justify-content: space-between; align-items: flex-start;
                     padding-top: 6px; font-size: 0.7rem; color: #aaa; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; z-index: 1000; background: transparent; 
                 }
                 
-                /* 其他原封不動的精美設計 */
+                /* 確保首頁版面不會亂跑 */
+                .rpt-cover { padding-top: 2vh; min-height: 75vh; }
+                .rpt-cover::before { top: 10vh; bottom: 5vh; }
+                
                 .rpt-cover::before { background-color: #d10001 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
                 .rpt-cover-info { background-color: #fcfcfc !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
                 .rpt-title::before { background-color: #d10001 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
@@ -681,27 +1110,6 @@
                 return hasCharts ? html : '';
             };
 
-            const buildTable = (cls) => {
-                let html = '';
-                document.querySelectorAll(`#edit-workspace tr`).forEach(tr => {
-                    const inputs = tr.querySelectorAll('.' + cls);
-                    if(inputs.length && !Array.from(inputs).every(i => i.value.trim() === '')) {
-                        html += '<tr>';
-                        inputs.forEach((input, index) => {
-                            let val = escapeHTML(input.value);
-                            let tdContent = val || "&nbsp;";
-                            if (val === "Pass") { tdContent = `<span class="status-badge badge-pass">Pass</span>`; } 
-                            else if (val === "Fail") { tdContent = `<span class="status-badge badge-fail">Fail</span>`; }
-                            else if (val === "REF") { tdContent = `<span class="status-badge badge-ref">REF</span>`; } 
-                            if (cls === 'save-t-dut' && (index === 0 || index === 2)) { html += `<td style="background-color: #f6f5f4; font-weight: 700;">${tdContent}</td>`; } 
-                            else { html += `<td>${tdContent}</td>`; }
-                        });
-                        html += '</tr>';
-                    }
-                });
-                return html;
-            };
-
             let geomHTML = processCharts('img_geom_container');
             let chartsHTML = processCharts('img_charts_container');
 
@@ -719,6 +1127,7 @@
             </div>
 
             <div class="rpt-content">
+                <!-- Cover Section -->
                 <div class="rpt-cover">
                     <img src="jpc logo.png" class="rpt-cover-logo" alt="JPC Logo" onerror="this.style.display='none'">
                     ${pName !== "-" ? `<h1 class="rpt-cover-title">${pName}</h1>` : ''}
@@ -762,36 +1171,73 @@
             </div>`;
 
             let concText = getVal('c_conc');
-            if (concText) { outHtml += `<div class="rpt-section"><div class="rpt-title">${secIndex++}. Executive Summary (Conclusion)</div><div class="rpt-box">${escapeHTML(concText)}</div></div>`; }
+            if (concText) {
+                outHtml += `<div class="rpt-section"><div class="rpt-title">${secIndex++}. Executive Summary (Conclusion)</div><div class="rpt-box">${escapeHTML(concText)}</div></div>`;
+            }
             let nextText = getVal('c_next');
-            if (nextText) { outHtml += `<div class="rpt-section"><div class="rpt-title">${secIndex++}. Next Steps</div><div class="rpt-box">${escapeHTML(nextText)}</div></div>`; }
+            if (nextText) {
+                outHtml += `<div class="rpt-section"><div class="rpt-title">${secIndex++}. Next Steps</div><div class="rpt-box">${escapeHTML(nextText)}</div></div>`;
+            }
 
+            // 自然流動，僅在有矩陣或圖表時手動換頁
             if (isSim) {
                 let setupGrid = '';
+                let startFreq = getVal('sfreq_start') || '0'; let endFreq = getVal('sfreq_end');
+                let freqStr = endFreq ? `${startFreq} ~ ${endFreq} GHz` : '';
+                
                 const fields = [
-                    { id: 'ssoft', label: 'Software' }, { id: 'ssolver', label: 'Solver' }, { val: getVal('sfreq_end') ? `${getVal('sfreq_start') || '0'} ~ ${getVal('sfreq_end')} GHz` : '', label: 'Frequency Range' },
+                    { id: 'ssoft', label: 'Software' }, { id: 'ssolver', label: 'Solver' }, { val: freqStr, label: 'Frequency Range' },
                     { id: 'sstep', label: 'Sweep Step' }, { id: 'simp', label: 'Connector Impedance' }, { id: 'sport', label: 'Port Setup' },
                     { id: 'sdir', label: 'Port Direction' }, { id: 's3d', label: '3D Model File' }, { id: 'ssnp', label: 'sNp File' },
                     { id: 'smat', label: 'Material / Stackup' }
                 ];
-                fields.forEach(f => { let v = f.val !== undefined ? f.val : getVal(f.id); if(v) setupGrid += `<div class="rpt-key">${f.label}</div><div>${escapeHTML(v)}</div>`; });
-                if(setupGrid) { outHtml += `<div class="page-break"></div><div class="rpt-section"><div class="rpt-title">${secIndex++}. Product & Environment Setup</div><div class="rpt-grid">${setupGrid}</div></div>`; }
-                if (geomHTML) { outHtml += `<div class="rpt-section"><div class="rpt-title">${secIndex++}. Geometry & Requirements</div>${geomHTML}</div>`; }
-                let specTableHTML = buildTable('save-target');
-                if (specTableHTML) { outHtml += `<div class="page-break"></div><div class="rpt-section"><div class="rpt-title">${secIndex++}. Specifications (Text Table)</div><table class="rpt-table"><thead><tr><th>Item</th><th>Spec / Condition</th><th>Result</th><th>Margin</th><th>Status</th><th>Remark</th></tr></thead><tbody>${specTableHTML}</tbody></table></div>`; }
+                fields.forEach(f => {
+                    let v = f.val !== undefined ? f.val : getVal(f.id);
+                    if(v) setupGrid += `<div class="rpt-key">${f.label}</div><div>${escapeHTML(v)}</div>`;
+                });
+
+                if(setupGrid) outHtml += `<div class="rpt-section page-break"><div class="rpt-title">${secIndex++}. Product & Environment Setup</div><div class="rpt-grid">${setupGrid}</div></div>`;
+                
+                if (geomHTML) {
+                    outHtml += `<div class="rpt-section"><div class="rpt-title">${secIndex++}. Geometry & Requirements</div>${geomHTML}</div>`;
+                }
+
+                let specTableHTML = buildTableHTML('save-target');
+                if (specTableHTML) {
+                    outHtml += `<div class="rpt-section page-break"><div class="rpt-title">${secIndex++}. Specifications (Text Table)</div><table class="rpt-table"><thead><tr><th>Item</th><th>Spec / Condition</th><th>Result</th><th>Margin</th><th>Status</th><th>Remark</th></tr></thead><tbody>${specTableHTML}</tbody></table></div>`;
+                }
             } else {
-                let equipHtml = buildTable('save-t-equip'); let dutHtml = buildTable('save-t-dut'); let sumHtml = buildTable('save-t-sum'); let matrixHtml = buildTable('save-t-mat');
-                let forceBreak = false;
-                if(equipHtml || dutHtml) { outHtml += `<div class="page-break"></div>`; }
-                if(equipHtml) { outHtml += `<div class="rpt-section"><div class="rpt-title">${secIndex++}. Test Equipments Information</div><table class="rpt-table"><thead><tr><th>ID</th><th>Instrument</th><th>Description with Instrumentation and software</th><th>Manufacture</th></tr></thead><tbody>${equipHtml}</tbody></table></div>`; }
-                if(dutHtml) { outHtml += `<div class="rpt-section"><div class="rpt-title">${secIndex++}. Device Under Test (DUT) Information</div><table class="rpt-table"><thead><tr><th>Property Name</th><th>Value</th><th>Property Name</th><th>Value</th></tr></thead><tbody>${dutHtml}</tbody></table></div>`; }
-                if(sumHtml) { outHtml += `<div class="page-break"></div><div class="rpt-section"><div class="rpt-title">${secIndex++}. Summary of Results</div><table class="rpt-table"><thead><tr><th style="width:80%;">Item</th><th>Test Result</th></tr></thead><tbody>${sumHtml}</tbody></table></div>`; }
-                if (matrixHtml) { outHtml += `<div class="page-break"></div><div class="rpt-section"><div class="rpt-title">${secIndex++}. Summary of Results for the DUT</div><div style="overflow-x:auto;"><table class="rpt-table" style="font-size: 0.85rem; text-align:center;"><thead><tr><th>Item / Freq</th><th>Limit</th><th>TX/RX 1</th><th>TX/RX 2</th><th>TX/RX 3</th><th>TX/RX 4</th><th>TX/RX 5</th><th>TX/RX 6</th><th>TX/RX 7</th><th>TX/RX 8</th><th>Result</th></tr></thead><tbody>${matrixHtml}</tbody></table></div></div>`; }
+                let equipHtml = buildTableHTML('save-t-equip'); let dutHtml = buildTableHTML('save-t-dut');
+                let sumHtml = buildTableHTML('save-t-sum'); let matrixHtml = buildTableHTML('save-t-mat');
+
+                if(equipHtml) {
+                    outHtml += `<div class="rpt-section page-break"><div class="rpt-title">${secIndex++}. Test Equipments Information</div><table class="rpt-table"><thead><tr><th>ID</th><th>Instrument</th><th>Description with Instrumentation and software</th><th>Manufacture</th></tr></thead><tbody>${equipHtml}</tbody></table></div>`;
+                }
+                if(dutHtml) {
+                    outHtml += `<div class="rpt-section"><div class="rpt-title">${secIndex++}. Device Under Test (DUT) Information</div><table class="rpt-table"><thead><tr><th>Property Name</th><th>Value</th><th>Property Name</th><th>Value</th></tr></thead><tbody>${dutHtml}</tbody></table></div>`;
+                }
+                
+                // 應使用者要求，第 6 點 Summary of Results 強制換頁
+                if(sumHtml) {
+                    outHtml += `<div class="rpt-section page-break"><div class="rpt-title">${secIndex++}. Summary of Results</div><table class="rpt-table"><thead><tr><th style="width:80%;">Item</th><th>Test Result</th></tr></thead><tbody>${sumHtml}</tbody></table></div>`;
+                }
+                
+                if (matrixHtml) {
+                    outHtml += `<div class="rpt-section page-break"><div class="rpt-title">${secIndex++}. Summary of Results for the DUT</div><div style="overflow-x:auto;">
+                        <table class="rpt-table" style="font-size: 0.85rem; text-align:center;">
+                            <thead><tr><th>Item / Freq</th><th>Limit</th><th>TX/RX 1</th><th>TX/RX 2</th><th>TX/RX 3</th><th>TX/RX 4</th><th>TX/RX 5</th><th>TX/RX 6</th><th>TX/RX 7</th><th>TX/RX 8</th><th>Result</th></tr></thead>
+                            <tbody>${matrixHtml}</tbody>
+                        </table></div></div>`;
+                }
             }
 
-            if (chartsHTML) { outHtml += `<div class="page-break"></div><div class="rpt-section"><div class="rpt-title">${secIndex++}. ${isSim ? 'Simulation Results' : 'Charts & Data'}</div>${chartsHTML}</div>`; }
+            if (chartsHTML) {
+                outHtml += `<div class="rpt-section page-break"><div class="rpt-title">${secIndex++}. ${isSim ? 'Simulation Results' : 'Charts & Data'}</div>${chartsHTML}</div>`;
+            }
             
-            outHtml += `</div>`; // rpt-content
+            outHtml += `</div>`; // 結束 rpt-content
+            outHtml += `${confCfg.footer ? `<div class="rpt-footer-text">${confCfg.footer}</div>` : ''}`;
+
             currentReportInnerHTML = outHtml;
             document.getElementById('report-render-area').innerHTML = `<style>${finalCSS}</style><div class="rpt-wrapper">${currentReportInnerHTML}</div>`;
         }
@@ -802,8 +1248,10 @@
             const fileName = `JPC_${projName}_${roleStr}_Report.html`;
             const fullHTMLFile = `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>${projName} - ${roleStr} Report</title><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"><style>body { margin: 0; background: #fff; -webkit-print-color-adjust: exact; print-color-adjust: exact;} ${document.getElementById('report-render-area').querySelector('style').innerHTML}</style></head><body><div class="rpt-wrapper">${currentReportInnerHTML}</div></body></html>`;
             const blob = new Blob([fullHTMLFile], { type: 'text/html;charset=utf-8' });
-            const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = fileName;
-            document.body.appendChild(a); a.click(); document.body.removeChild(a); showToast("🌐 HTML Exported Successfully!");
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a'); a.href = url; a.download = fileName;
+            document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
+            showToast("🌐 HTML Exported Successfully!");
         }
     </script>
 </body>
