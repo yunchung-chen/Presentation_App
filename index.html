@@ -1026,7 +1026,7 @@
             .page-break { page-break-before: always; break-before: page; }
             
             @media screen { 
-                .print-fixed-header, .print-fixed-footer { display: none; } 
+                .print-fixed-header, .print-fixed-footer, .print-wrapper-table { display: none; } 
                 .rpt-footer-text { text-align: center; font-size: 0.75rem; color: #999; margin-top: 50px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;}
             }
 
@@ -1037,30 +1037,37 @@
                     display: block !important; height: auto !important; overflow: visible !important; position: static !important; margin: 0 !important; padding: 0 !important;
                 }
                 
-                /* ✨ 加大實體紙張邊界：上下留出「絕對安全空間 (Safe Zone)」給內容 */
-                @page { margin: 35mm 15mm 30mm 15mm; } 
+                /* ✨ 設定物理紙張安全邊界 (Safe Paper Margin) */
+                @page { margin: 12mm 15mm 15mm 15mm; } 
 
-                /* ✨ Header 向上對齊白邊頂部，高度設為 15mm，剩下 20mm 作為安全緩衝距離 */
+                /* ✨ Fixed Header 停靠在 Printable Area 最上方 */
                 .print-fixed-header { 
-                    position: fixed !important; top: -35mm; left: 0; right: 0; height: 15mm; 
+                    position: fixed !important; top: 0; left: 0; right: 0; height: 12mm; 
                     border-bottom: 2px solid #d10001; display: flex !important; justify-content: space-between; align-items: flex-end; 
-                    padding-bottom: 6px; z-index: 1000; background: transparent; 
+                    padding-bottom: 6px; z-index: 1000; background: #fff;
                 }
-                .print-fixed-header img { height: 22px; }
-                .print-fixed-header .hdr-text { font-size: 0.8rem; color: #888; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+                .print-fixed-header img { height: 20px; }
+                .print-fixed-header .hdr-text { font-size: 0.75rem; color: #888; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
                 
-                /* ✨ Footer 向下對齊白邊底部，高度設為 12mm，剩下 18mm 作為安全緩衝距離 */
+                /* ✨ Fixed Footer 停靠在 Printable Area 最下方 */
                 .print-fixed-footer { 
-                    position: fixed !important; bottom: -30mm; left: 0; right: 0; height: 12mm; 
+                    position: fixed !important; bottom: 0; left: 0; right: 0; height: 10mm; 
                     border-top: 1px solid #eaeaea; display: flex !important; justify-content: space-between; align-items: flex-start;
-                    padding-top: 6px; font-size: 0.7rem; color: #aaa; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; z-index: 1000; background: transparent; 
+                    padding-top: 6px; font-size: 0.7rem; color: #aaa; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; z-index: 1000; background: #fff;
                 }
+
+                /* ✨ Wrapper Table 強制在每頁預留空白給 Fixed elements，防止重疊 */
+                .print-wrapper-table { width: 100%; border-collapse: collapse; border: none; }
+                .print-wrapper-table > thead > tr > td, 
+                .print-wrapper-table > tbody > tr > td, 
+                .print-wrapper-table > tfoot > tr > td { padding: 0; border: none; background: transparent; vertical-align: top;}
                 
-                /* 稍微修正首頁封面的位置，因為 @page margin 變大了 */
-                .rpt-cover { padding-top: 5vh; min-height: 70vh; }
-                .rpt-cover::before { top: 10vh; bottom: 5vh; }
+                .print-header-space { height: 16mm; } /* 留出大於 Header 高度 (12mm) 的空間作為內距 */
+                .print-footer-space { height: 14mm; } /* 留出大於 Footer 高度 (10mm) 的空間 */
                 
-                /* 確保表格跟標籤樣式都正常列印 */
+                .rpt-content { padding: 0 !important; margin: 0 !important; }
+                
+                .rpt-cover { min-height: 80vh; padding-top: 4vh; }
                 .rpt-cover::before { background-color: #d10001 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
                 .rpt-cover-info { background-color: #fcfcfc !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
                 .rpt-title::before { background-color: #d10001 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
@@ -1127,13 +1134,17 @@
                 <span>${escapeHTML(getValAlways('pdate'))} | Confidential</span>
             </div>
 
-            <div class="rpt-content">
-                <!-- Cover Section -->
-                <div class="rpt-cover">
-                    <img src="jpc logo.png" class="rpt-cover-logo" alt="JPC Logo" onerror="this.style.display='none'">
-                    ${pName !== "-" ? `<h1 class="rpt-cover-title">${pName}</h1>` : ''}
-                    <div class="rpt-cover-subtitle">${isSim ? 'Simulation' : 'SI Measurement'} Analysis Report</div>
-                    <div class="rpt-cover-info">`;
+            <!-- 強制撐開空間的排版魔術 Table -->
+            <table class="print-wrapper-table">
+                <thead><tr><td><div class="print-header-space"></div></td></tr></thead>
+                <tfoot><tr><td><div class="print-footer-space"></div></td></tr></tfoot>
+                <tbody><tr><td>
+                    <div class="rpt-content">
+                        <div class="rpt-cover">
+                            <img src="jpc logo.png" class="rpt-cover-logo" alt="JPC Logo" onerror="this.style.display='none'">
+                            ${pName !== "-" ? `<h1 class="rpt-cover-title">${pName}</h1>` : ''}
+                            <div class="rpt-cover-subtitle">${isSim ? 'Simulation' : 'SI Measurement'} Analysis Report</div>
+                            <div class="rpt-cover-info">`;
 
             if (isSim) {
                 outHtml += `
@@ -1241,7 +1252,7 @@
                 outHtml += `<div class="rpt-section page-break"><div class="rpt-title">${secIndex++}. ${isSim ? 'Simulation Results' : 'Charts & Data'}</div>${chartsHTML}</div>`;
             }
             
-            outHtml += `</div>`; // 結束 rpt-content
+            outHtml += `</div></td></tr></tbody></table>`; // 結束排版魔術 Table
             outHtml += `${confCfg.footer ? `<div class="rpt-footer-text">${confCfg.footer}</div>` : ''}`;
 
             currentReportInnerHTML = outHtml;
