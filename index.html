@@ -222,7 +222,6 @@
         <div class="role-label">Navigation</div>
         <nav class="nav-menu">
             <a class="nav-link active" onclick="scrollToSection('sec-info')"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg> Project Info</a>
-            
             <a class="nav-link" onclick="scrollToSection('sec-conc')"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg> Executive Summary</a>
 
             <a class="nav-link sim-only" onclick="scrollToSection('sec-setup')"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path></svg> Product & Setup</a>
@@ -237,7 +236,6 @@
         </nav>
 
         <div class="nav-action">
-            <!-- ✨ New Report 按鈕 -->
             <button class="btn-theme" style="margin-bottom: 8px; background: var(--primary-light); color: var(--primary); border-color: var(--primary-light); justify-content: center; font-weight: 800;" onclick="openNewReportModal()">
                 <svg style="width: 18px; height: 18px; flex-shrink: 0;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>Clean All
             </button>
@@ -281,7 +279,6 @@
                 </div>
             </section>
 
-            <!-- ✨ 閱讀邏輯升級：大綱前置 -->
             <section id="sec-conc">
                 <h2 class="section-header">Executive Summary </h2>
                 <div class="form-group" style="margin-bottom: 20px;"><label>Conclusion</label><textarea id="c_conc" placeholder="請輸入報告結論..."></textarea></div>
@@ -960,6 +957,7 @@
             /* --- 全局與字體 (Global Typography) --- */
             .rpt-wrapper { font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; color: #333; line-height: 1.65; background: #fff;}
             .rpt-watermark-bg { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-repeat: repeat; z-index: 0; pointer-events: none; opacity: 0.8; }
+            
             .rpt-content { position: relative; z-index: 1; padding: 50px 80px; min-height: 100vh;}
             
             /* --- 封面設計 (Premium Editorial Cover) --- */
@@ -984,6 +982,7 @@
 
             /* --- 區塊標題 (Clean Headers) --- */
             .rpt-section { margin-bottom: 60px; background: #fff; page-break-inside: auto; }
+            
             .rpt-title { font-size: 1.5rem; color: #111; margin-bottom: 24px; font-weight: 800; letter-spacing: -0.01em; page-break-after: avoid; display: flex; align-items: center; gap: 12px;}
             .rpt-title::before { content: ''; display: block; width: 6px; height: 24px; background-color: #d10001; border-radius: 4px; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
 
@@ -993,8 +992,10 @@
             
             /* --- 學術級無直線表格 (Booktabs Style) --- */
             .rpt-table { width: 100%; border-collapse: collapse; font-size: 0.95rem; margin-top: 16px; page-break-inside: auto; }
-            .rpt-table thead { display: table-header-group; } /* 確保表頭在下一頁出現 */
-            .rpt-table tr { page-break-inside: avoid; } /* 確保每一列不會被腰斬 */
+            
+            .rpt-table thead { display: table-header-group; } 
+            .rpt-table tr { page-break-inside: avoid; } 
+            
             .rpt-table th { font-weight: 700; padding: 14px 12px; text-align: left; color: #111; border-top: 2px solid #111; border-bottom: 1px solid #111;}
             .rpt-table td { padding: 14px 12px; border-bottom: 1px solid #f0f0f0; word-break: break-word; color: #444;}
             .rpt-table tr:last-child td { border-bottom: 2px solid #111; } 
@@ -1030,7 +1031,7 @@
                 /* ✨ 核心修復：強制解除 Flexbox，讓內容自然流動，避免表格和分頁錯亂 */
                 body, #main-content { display: block !important; height: auto !important; overflow: visible !important; }
                 
-                /* ✨ 設定實體紙張邊界：上下留出巨大的空白，專門給 Fixed Header/Footer 住 */
+                /* ✨ 設定實體紙張邊界：上下留白給 Fixed Header/Footer 住 */
                 @page { margin: 25mm 15mm 25mm 15mm; } 
 
                 /* ✨ 利用負 top 將 Header 塞進上方的 margin 中，絕對不蓋到內容 */
@@ -1141,7 +1142,7 @@
                     <div class="rpt-cover-row"><span class="rpt-cover-label">Approved by</span><span class="rpt-cover-val">${escapeHTML(getValAlways('pchecker'))}</span></div>
                 `;
             }
-            outHtml += `</div></div><div class="page-break"></div>`; // 封面結束換頁
+            outHtml += `</div></div><div class="page-break"></div>`;
 
             let secIndex = 1; 
             let purposeText = getVal('ppurpose');
@@ -1169,8 +1170,7 @@
                 outHtml += `<div class="rpt-section"><div class="rpt-title">${secIndex++}. Next Steps</div><div class="rpt-box">${escapeHTML(nextText)}</div></div>`;
             }
 
-            if(concText || nextText) { outHtml += `<div class="page-break"></div>`; }
-
+            // 自然流動，僅在有矩陣或圖表時手動換頁
             if (isSim) {
                 let setupGrid = '';
                 let startFreq = getVal('sfreq_start') || '0'; let endFreq = getVal('sfreq_end');
@@ -1218,7 +1218,8 @@
                 outHtml += `<div class="page-break"></div><div class="rpt-section"><div class="rpt-title">${secIndex++}. ${isSim ? 'Simulation Results' : 'Charts & Data'}</div>${chartsHTML}</div>`;
             }
             
-            outHtml += `${confCfg.footer ? `<div class="rpt-footer-text">${confCfg.footer}</div>` : ''}</div>`;
+            outHtml += `</div>`; // 結束 rpt-content
+            outHtml += `${confCfg.footer ? `<div class="rpt-footer-text">${confCfg.footer}</div>` : ''}`;
 
             currentReportInnerHTML = outHtml;
             document.getElementById('report-render-area').innerHTML = `<style>${finalCSS}</style><div class="rpt-wrapper">${currentReportInnerHTML}</div>`;
