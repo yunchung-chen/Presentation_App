@@ -237,6 +237,7 @@
         </nav>
 
         <div class="nav-action">
+            <!-- ✨ New Report 按鈕 -->
             <button class="btn-theme" style="margin-bottom: 8px; background: var(--primary-light); color: var(--primary); border-color: var(--primary-light); justify-content: center; font-weight: 800;" onclick="openNewReportModal()">
                 <svg style="width: 18px; height: 18px; flex-shrink: 0;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>Clean All
             </button>
@@ -959,6 +960,7 @@
             /* --- 全局與字體 (Global Typography) --- */
             .rpt-wrapper { font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; color: #333; line-height: 1.65; background: #fff;}
             .rpt-watermark-bg { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-repeat: repeat; z-index: 0; pointer-events: none; opacity: 0.8; }
+            
             .rpt-content { position: relative; z-index: 1; padding: 50px 80px; min-height: 100vh;}
             
             /* --- 封面設計 (Premium Editorial Cover) --- */
@@ -983,6 +985,7 @@
 
             /* --- 區塊標題 (Clean Headers) --- */
             .rpt-section { margin-bottom: 60px; background: #fff; page-break-inside: auto; }
+            
             .rpt-title { font-size: 1.5rem; color: #111; margin-bottom: 24px; font-weight: 800; letter-spacing: -0.01em; page-break-after: avoid; display: flex; align-items: center; gap: 12px;}
             .rpt-title::before { content: ''; display: block; width: 6px; height: 24px; background-color: #d10001; border-radius: 4px; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
 
@@ -992,8 +995,10 @@
             
             /* --- 學術級無直線表格 (Booktabs Style) --- */
             .rpt-table { width: 100%; border-collapse: collapse; font-size: 0.95rem; margin-top: 16px; page-break-inside: auto; }
+            
             .rpt-table thead { display: table-header-group; } 
             .rpt-table tr { page-break-inside: avoid; } 
+            
             .rpt-table th { font-weight: 700; padding: 14px 12px; text-align: left; color: #111; border-top: 2px solid #111; border-bottom: 1px solid #111;}
             .rpt-table td { padding: 14px 12px; border-bottom: 1px solid #f0f0f0; word-break: break-word; color: #444;}
             .rpt-table tr:last-child td { border-bottom: 2px solid #111; } 
@@ -1026,31 +1031,36 @@
             }
 
             @media print { 
-                /* ✨ 核心修復：強制解除 Flexbox，讓內容自然流動，避免表格和分頁錯亂 */
+                /* ✨ 核心修復：強制解除 Flexbox，讓內容自然流動 */
                 *, *::before, *::after { box-sizing: border-box; }
                 body, html, #main-content, #preview-workspace, #report-render-area, .rpt-wrapper, .rpt-content { 
                     display: block !important; height: auto !important; overflow: visible !important; position: static !important; margin: 0 !important; padding: 0 !important;
                 }
                 
-                /* ✨ 設定實體紙張邊界：上下留白給 Fixed Header/Footer 住 */
-                @page { margin: 25mm 15mm 20mm 15mm; } 
+                /* ✨ 加大實體紙張邊界：上下留出「絕對安全空間 (Safe Zone)」給內容 */
+                @page { margin: 35mm 15mm 30mm 15mm; } 
 
-                /* ✨ 利用負 top 將 Header 塞進上方的 margin 中，絕對不蓋到內容 */
+                /* ✨ Header 向上對齊白邊頂部，高度設為 15mm，剩下 20mm 作為安全緩衝距離 */
                 .print-fixed-header { 
-                    position: fixed !important; top: -25mm; left: 0; right: 0; height: 18mm; 
+                    position: fixed !important; top: -35mm; left: 0; right: 0; height: 15mm; 
                     border-bottom: 2px solid #d10001; display: flex !important; justify-content: space-between; align-items: flex-end; 
                     padding-bottom: 6px; z-index: 1000; background: transparent; 
                 }
-                .print-fixed-header img { height: 20px; }
-                .print-fixed-header .hdr-text { font-size: 0.75rem; color: #888; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+                .print-fixed-header img { height: 22px; }
+                .print-fixed-header .hdr-text { font-size: 0.8rem; color: #888; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
                 
-                /* ✨ 利用負 bottom 將 Footer 塞進下方的 margin 中 */
+                /* ✨ Footer 向下對齊白邊底部，高度設為 12mm，剩下 18mm 作為安全緩衝距離 */
                 .print-fixed-footer { 
-                    position: fixed !important; bottom: -20mm; left: 0; right: 0; height: 12mm; 
+                    position: fixed !important; bottom: -30mm; left: 0; right: 0; height: 12mm; 
                     border-top: 1px solid #eaeaea; display: flex !important; justify-content: space-between; align-items: flex-start;
                     padding-top: 6px; font-size: 0.7rem; color: #aaa; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; z-index: 1000; background: transparent; 
                 }
                 
+                /* 稍微修正首頁封面的位置，因為 @page margin 變大了 */
+                .rpt-cover { padding-top: 5vh; min-height: 70vh; }
+                .rpt-cover::before { top: 10vh; bottom: 5vh; }
+                
+                /* 確保表格跟標籤樣式都正常列印 */
                 .rpt-cover::before { background-color: #d10001 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
                 .rpt-cover-info { background-color: #fcfcfc !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
                 .rpt-title::before { background-color: #d10001 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
@@ -1141,7 +1151,7 @@
                     <div class="rpt-cover-row"><span class="rpt-cover-label">Approved by</span><span class="rpt-cover-val">${escapeHTML(getValAlways('pchecker'))}</span></div>
                 `;
             }
-            outHtml += `</div></div>`; // 封面結束
+            outHtml += `</div></div><div class="page-break"></div>`;
 
             let secIndex = 1; 
             let purposeText = getVal('ppurpose');
@@ -1173,7 +1183,7 @@
                 outHtml += `<div class="rpt-section"><div class="rpt-title">${secIndex++}. Next Steps</div><div class="rpt-box">${escapeHTML(nextText)}</div></div>`;
             }
 
-            // --- 測試環境與表格區塊 ---
+            // 自然流動，僅在有矩陣或圖表時手動換頁
             if (isSim) {
                 let setupGrid = '';
                 let startFreq = getVal('sfreq_start') || '0'; let endFreq = getVal('sfreq_end');
@@ -1190,7 +1200,7 @@
                     if(v) setupGrid += `<div class="rpt-key">${f.label}</div><div>${escapeHTML(v)}</div>`;
                 });
 
-                if(setupGrid) outHtml += `<div class="rpt-section page-break"><div class="rpt-title">${secIndex++}. Product & Environment Setup</div><div class="rpt-grid">${setupGrid}</div></div>`;
+                if(setupGrid) outHtml += `<div class="rpt-section"><div class="rpt-title">${secIndex++}. Product & Environment Setup</div><div class="rpt-grid">${setupGrid}</div></div>`;
                 
                 if (geomHTML) {
                     outHtml += `<div class="rpt-section"><div class="rpt-title">${secIndex++}. Geometry & Requirements</div>${geomHTML}</div>`;
@@ -1214,7 +1224,6 @@
                     isFirstInTest = false;
                 }
                 
-                // 應使用者要求，第 6 點 Summary of Results 強制換頁
                 if(sumHtml) {
                     outHtml += `<div class="rpt-section page-break"><div class="rpt-title">${secIndex++}. Summary of Results</div><table class="rpt-table"><thead><tr><th style="width:80%;">Item</th><th>Test Result</th></tr></thead><tbody>${sumHtml}</tbody></table></div>`;
                 }
