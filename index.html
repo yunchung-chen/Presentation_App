@@ -541,7 +541,7 @@
             insertRowHTML('specTableBody', `
                 <td><input type="text" class="save-target spec-item-input" list="dl-spec-item" placeholder="測試項目" value="${defaultItem}"></td>
                 <td><input type="text" class="save-target"></td><td><input type="text" class="save-target"></td><td><input type="text" class="save-target"></td>
-                <td><select class="save-target" style="padding:10px 4px;"><option value="">-</option><option value="Pass">Pass</option><option value="Fail">Fail</option></select></td>
+                <td><select class="save-target" style="padding:10px 4px;"><option value="">-</option><option value="Pass">Pass</option><option value="Fail">Fail</option><option value="REF">REF</option></select></td>
                 <td><input type="text" class="save-target"></td>
             `);
         }
@@ -565,17 +565,22 @@
         function addSummaryRow(k='', v='') {
             insertRowHTML('summaryTableBody', `
                 <td><input type="text" class="save-t-sum" value="${k}"></td>
-                <td><select class="save-t-sum"><option value="">-</option><option value="Pass" ${v==='Pass'?'selected':''}>Pass</option><option value="Fail" ${v==='Fail'?'selected':''}>Fail</option></select></td>`);
+                <td><select class="save-t-sum"><option value="">-</option><option value="Pass" ${v==='Pass'?'selected':''}>Pass</option><option value="Fail" ${v==='Fail'?'selected':''}>Fail</option><option value="REF" ${v==='REF'?'selected':''}>REF</option></select></td>`);
         }
         
         function addMatrixRow(v1='', v2='', c1='', c2='', c3='', c4='', c5='', c6='', c7='', c8='', r='') {
             insertRowHTML('matrixTableBody', `
-                <td><input type="text" class="save-t-mat" value="${v1}" style="width:80px"></td><td><input type="text" class="save-t-mat" value="${v2}" style="width:60px"></td>
-                <td><input type="text" class="save-t-mat" value="${c1}" style="width:50px"></td><td><input type="text" class="save-t-mat" value="${c2}" style="width:50px"></td>
-                <td><input type="text" class="save-t-mat" value="${c3}" style="width:50px"></td><td><input type="text" class="save-t-mat" value="${c4}" style="width:50px"></td>
-                <td><input type="text" class="save-t-mat" value="${c5}" style="width:50px"></td><td><input type="text" class="save-t-mat" value="${c6}" style="width:50px"></td>
-                <td><input type="text" class="save-t-mat" value="${c7}" style="width:50px"></td><td><input type="text" class="save-t-mat" value="${c8}" style="width:50px"></td>
-                <td><select class="save-t-mat"><option value="">-</option><option value="Pass" ${r==='Pass'?'selected':''}>Pass</option><option value="Fail" ${r==='Fail'?'selected':''}>Fail</option></select></td>`);
+                <td><input type="text" class="save-t-mat" value="${v1}" style="width:80px"></td>
+                <td><input type="text" class="save-t-mat" value="${v2}" style="width:60px"></td>
+                <td><input type="text" class="save-t-mat" value="${c1}" style="width:50px"></td>
+                <td><input type="text" class="save-t-mat" value="${c2}" style="width:50px"></td>
+                <td><input type="text" class="save-t-mat" value="${c3}" style="width:50px"></td>
+                <td><input type="text" class="save-t-mat" value="${c4}" style="width:50px"></td>
+                <td><input type="text" class="save-t-mat" value="${c5}" style="width:50px"></td>
+                <td><input type="text" class="save-t-mat" value="${c6}" style="width:50px"></td>
+                <td><input type="text" class="save-t-mat" value="${c7}" style="width:50px"></td>
+                <td><input type="text" class="save-t-mat" value="${c8}" style="width:50px"></td>
+                <td style="width:75px;"><select class="save-t-mat"><option value="">-</option><option value="Pass" ${r==='Pass'?'selected':''}>Pass</option><option value="Fail" ${r==='Fail'?'selected':''}>Fail</option><option value="REF" ${r==='REF'?'selected':''}>REF</option></select></td>`);
         }
 
         function initDefaultRows() {
@@ -936,9 +941,11 @@
                     html += '<tr>';
                     inputs.forEach((input, index) => {
                         let val = input.value.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+                        // 標籤化測試結果判斷
                         let tdContent = val || "&nbsp;";
                         if (val === "Pass") { tdContent = `<span class="status-badge badge-pass">Pass</span>`; } 
                         else if (val === "Fail") { tdContent = `<span class="status-badge badge-fail">Fail</span>`; }
+                        else if (val === "REF") { tdContent = `<span class="status-badge badge-ref">REF</span>`; } /* ★ 新增：渲染 REF 標籤 */
 
                         if (cls === 'save-t-dut' && (index === 0 || index === 2)) {
                             html += `<td style="background-color: #f6f5f4; font-weight: 700;">${tdContent}</td>`;
@@ -993,9 +1000,11 @@
             .rpt-table tr:last-child td { border-bottom: 2px solid #111; } 
             .rpt-table tr { page-break-inside: avoid; } 
             
-            .status-badge { padding: 4px 10px; border-radius: 6px; font-weight: 700; display: inline-block; font-size: 0.85rem; line-height: 1; text-align: center; }
+            /* 標籤化視覺 Badge UI (含防換行鎖與新增的 REF) */
+            .status-badge { padding: 4px 10px; border-radius: 6px; font-weight: 700; display: inline-block; font-size: 0.85rem; line-height: 1; text-align: center; white-space: nowrap; /* ★ 終極防換行鎖：保證字體不被擠斷 */ }
             .badge-pass { background-color: #e6f4ea !important; color: #1e7e34 !important; }
             .badge-fail { background-color: #fce8e6 !important; color: #c5221f !important; }
+            .badge-ref { background-color: #e0f2fe !important; color: #0369a1 !important; border: 1px solid #bae6fd !important; } /* ★ 新增：科技感淺藍色 REF 標籤 */
             
             .rpt-box { border: 1px solid #eaeaea; border-left: 4px solid #d10001; border-radius: 6px; padding: 20px 24px; font-size: 1rem; background-color: #fafafa; color: #333; line-height: 1.7;}
             .rpt-box.success { border-left-color: #16a34a !important; } /* 用於 Conclusion 強調 */
@@ -1024,16 +1033,28 @@
             }
 
             @media print { 
-                /* ✨ 總裁級高階列印：全頁面 Fixed 頁首頁尾 */
-                .print-fixed-header { position: fixed; top: 0; left: 0; right: 0; height: 40px; border-bottom: 1px solid #d10001; display: flex; justify-content: space-between; align-items: flex-end; padding-bottom: 8px; background: #fff; z-index: 1000; }
+                /* 🔧 修復 1：強制解除 Flexbox 佈局，讓分頁符號 (page-break) 完美生效 */
+                body, #main-content { display: block !important; height: auto !important; overflow: visible !important; }
+                
+                /* 🔧 修復 2：利用負邊距，將 Header/Footer 塞入 @page 預留的紙張邊緣空白處，絕對不遮擋內容 */
+                .print-fixed-header { 
+                    position: fixed; top: -20mm; left: 0; right: 0; height: 12mm; 
+                    border-bottom: 2px solid #d10001; display: flex; justify-content: space-between; align-items: flex-end; 
+                    padding-bottom: 6px; z-index: 1000; box-sizing: border-box; background: transparent;
+                }
                 .print-fixed-header img { height: 20px; }
-                .print-fixed-header .hdr-text { font-size: 0.75rem; color: #888; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+                .print-fixed-header .hdr-text { font-size: 0.8rem; color: #888; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; }
                 
-                .print-fixed-footer { position: fixed; bottom: 0; left: 0; right: 0; border-top: 1px solid #eaeaea; padding-top: 8px; display: flex; justify-content: space-between; font-size: 0.7rem; color: #aaa; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; background: #fff; z-index: 1000;}
+                .print-fixed-footer { 
+                    position: fixed; bottom: -15mm; left: 0; right: 0; height: 10mm; 
+                    border-top: 1px solid #eaeaea; padding-top: 6px; display: flex; justify-content: space-between; 
+                    font-size: 0.7rem; color: #aaa; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; z-index: 1000; box-sizing: border-box; background: transparent;
+                }
 
-                /* 將頁面內容上下推開，避免與 Header/Footer 重疊 */
-                .rpt-content { padding: 0; margin-top: 50px; margin-bottom: 30px; }
+                .rpt-content { padding: 0; margin: 0; } /* 清除多餘的推擠 */
                 
+                /* 其餘企業級列印設定 */
+                .rpt-cover { padding-top: 10mm; } /* 給封面一點呼吸空間 */
                 .rpt-cover::before { background-color: #d10001 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
                 .rpt-cover-info { background-color: #fcfcfc !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
                 .rpt-title::before { background-color: #d10001 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
@@ -1046,7 +1067,9 @@
                 .rpt-chart-desc { -webkit-print-color-adjust: exact; print-color-adjust: exact; background-color: #f8f9fa !important; }
                 .rpt-watermark-bg { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
                 .rpt-footer-text { display: none; }
-                @page { margin: 15mm 15mm 20mm 15mm; }
+                
+                /* ★ 核心修復：加大上下紙張邊界，自動讓出空間給 Header 和 Footer */
+                @page { margin: 25mm 15mm 20mm 15mm; } 
             }
         `;
 
