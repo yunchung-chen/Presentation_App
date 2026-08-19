@@ -962,7 +962,10 @@
         const sharedReportCSS = `
             /* --- 全局與字體 (Global Typography) --- */
             .rpt-wrapper { font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; color: #333; line-height: 1.65; background: #fff;}
-            .rpt-watermark-bg { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background-repeat: repeat; z-index: 0; pointer-events: none; opacity: 0.8; }
+            
+            /* 將浮水印改為 Fixed，確保每一張印出來的 PDF 都有浮水印 */
+            .rpt-watermark-bg { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-repeat: repeat; z-index: 0; pointer-events: none; opacity: 0.8; }
+            
             .rpt-content { position: relative; z-index: 1; padding: 50px 80px; min-height: 100vh;}
             
             /* --- 封面設計 (Premium Editorial Cover) --- */
@@ -986,28 +989,34 @@
             .rpt-cover-val { font-weight: 700; color: #111; text-align: right;}
 
             /* --- 區塊標題 (Clean Headers) --- */
-            .rpt-section { margin-bottom: 60px; background: #fff;}
+            /* 加入 page-break-inside: auto 允許區塊正常換頁 */
+            .rpt-section { margin-bottom: 60px; background: #fff; page-break-inside: auto; }
+            
+            /* 加入 page-break-after: avoid 確保標題絕對不會單獨留在頁面底部 */
             .rpt-title { font-size: 1.5rem; color: #111; margin-bottom: 24px; font-weight: 800; letter-spacing: -0.01em; page-break-after: avoid; display: flex; align-items: center; gap: 12px;}
             .rpt-title::before { content: ''; display: block; width: 6px; height: 24px; background-color: #d10001; border-radius: 4px; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
 
-            .rpt-grid { display: grid; grid-template-columns: minmax(180px, 200px) 1fr; row-gap: 16px; font-size: 1rem; margin-bottom: 16px; word-break: break-word; }
+            /* 確保網格和重點文字框不會被腰斬 */
+            .rpt-grid { display: grid; grid-template-columns: minmax(180px, 200px) 1fr; row-gap: 16px; font-size: 1rem; margin-bottom: 16px; word-break: break-word; page-break-inside: avoid; }
             .rpt-key { font-weight: 600; color: #555; }
+            .rpt-box { border: 1px solid #eaeaea; border-left: 4px solid #d10001; border-radius: 6px; padding: 20px 24px; font-size: 1rem; background-color: #fafafa; color: #333; line-height: 1.7; page-break-inside: avoid;}
             
             /* --- 學術級無直線表格 (Booktabs Style) --- */
-            .rpt-table { width: 100%; border-collapse: collapse; font-size: 0.95rem; margin-top: 16px; }
+            .rpt-table { width: 100%; border-collapse: collapse; font-size: 0.95rem; margin-top: 16px; page-break-inside: auto; }
+            
+            /* ✨ 智慧換頁防護鎖：讓表格標題在下一頁自動重複出現，且每行資料不被切斷 */
+            .rpt-table thead { display: table-header-group; } 
+            .rpt-table tr { page-break-inside: avoid; } 
+            
             .rpt-table th { font-weight: 700; padding: 14px 12px; text-align: left; color: #111; border-top: 2px solid #111; border-bottom: 1px solid #111;}
             .rpt-table td { padding: 14px 12px; border-bottom: 1px solid #f0f0f0; word-break: break-word; color: #444;}
             .rpt-table tr:last-child td { border-bottom: 2px solid #111; } 
-            .rpt-table tr { page-break-inside: avoid; } 
             
-            /* 標籤化視覺 Badge UI (含防換行鎖與新增的 REF) */
-            .status-badge { padding: 4px 10px; border-radius: 6px; font-weight: 700; display: inline-block; font-size: 0.85rem; line-height: 1; text-align: center; white-space: nowrap; /* ★ 終極防換行鎖：保證字體不被擠斷 */ }
+            /* 標籤設計 */
+            .status-badge { padding: 4px 10px; border-radius: 6px; font-weight: 700; display: inline-block; font-size: 0.85rem; line-height: 1; text-align: center; white-space: nowrap; }
             .badge-pass { background-color: #e6f4ea !important; color: #1e7e34 !important; }
             .badge-fail { background-color: #fce8e6 !important; color: #c5221f !important; }
-            .badge-ref { background-color: #e0f2fe !important; color: #0369a1 !important; border: 1px solid #bae6fd !important; } /* ★ 新增：科技感淺藍色 REF 標籤 */
-            
-            .rpt-box { border: 1px solid #eaeaea; border-left: 4px solid #d10001; border-radius: 6px; padding: 20px 24px; font-size: 1rem; background-color: #fafafa; color: #333; line-height: 1.7;}
-            .rpt-box.success { border-left-color: #16a34a !important; } /* 用於 Conclusion 強調 */
+            .badge-ref { background-color: #e0f2fe !important; color: #0369a1 !important; border: 1px solid #bae6fd !important; }
             
             /* --- 三段式圖表排版架構 --- */
             .rpt-charts-container { display: flex; flex-wrap: wrap; gap: 32px; justify-content: flex-start; }
@@ -1018,43 +1027,50 @@
             .chart-layout-focus { width: 100%; min-height: 85vh; justify-content: center; page-break-before: always; page-break-after: always; }
             
             .rpt-chart-title { font-size: 1.05rem; color: #111; margin-bottom: 16px; font-weight: 700;}
-            
             .rpt-chart-box { background: #fff; border: 1px solid #e6e6e6; border-radius: 12px; padding: 24px; box-shadow: 0 4px 20px rgba(0,0,0,0.03); display: flex; justify-content: center; align-items: center; width: 100%; box-sizing: border-box;}
             .rpt-chart-img { max-width: 100%; max-height: 40vh; display: block; border-radius: 4px; object-fit: contain; mix-blend-mode: multiply;}
             .chart-layout-focus .rpt-chart-img { max-height: 65vh; }
-            
             .rpt-chart-desc { margin-top: 16px; padding: 16px 20px; background: #f8f9fa; border-radius: 8px; font-size: 0.9rem; color: #555; line-height: 1.6; border-left: 3px solid #ccc; }
             
             .page-break { page-break-before: always; break-before: page; }
             
             @media screen { 
-                .print-fixed-header, .print-fixed-footer { display: none; } 
+                .print-fixed-header, .print-fixed-footer, .print-header-space, .print-footer-space { display: none; } 
                 .rpt-footer-text { text-align: center; font-size: 0.75rem; color: #999; margin-top: 50px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;}
             }
 
             @media print { 
-                /* 🔧 修復 1：強制解除 Flexbox 佈局，讓分頁符號 (page-break) 完美生效 */
+                /* ✨ 終極重疊修復 1：強制解除所有外部 Flexbox 干擾 */
                 body, #main-content { display: block !important; height: auto !important; overflow: visible !important; }
                 
-                /* 🔧 修復 2：利用負邊距，將 Header/Footer 塞入 @page 預留的紙張邊緣空白處，絕對不遮擋內容 */
+                @page { margin: 15mm 15mm 20mm 15mm; } 
+
+                /* ✨ 終極重疊修復 2：Header 和 Footer 永遠緊貼紙張邊緣 */
                 .print-fixed-header { 
-                    position: fixed; top: -20mm; left: 0; right: 0; height: 12mm; 
+                    position: fixed; top: 0; left: 0; right: 0; height: 12mm; 
                     border-bottom: 2px solid #d10001; display: flex; justify-content: space-between; align-items: flex-end; 
-                    padding-bottom: 6px; z-index: 1000; box-sizing: border-box; background: transparent;
+                    padding-bottom: 6px; z-index: 1000; background: #fff; 
                 }
                 .print-fixed-header img { height: 20px; }
-                .print-fixed-header .hdr-text { font-size: 0.8rem; color: #888; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; }
+                .print-fixed-header .hdr-text { font-size: 0.75rem; color: #888; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
                 
                 .print-fixed-footer { 
-                    position: fixed; bottom: -15mm; left: 0; right: 0; height: 10mm; 
+                    position: fixed; bottom: 0; left: 0; right: 0; height: 10mm; 
                     border-top: 1px solid #eaeaea; padding-top: 6px; display: flex; justify-content: space-between; 
-                    font-size: 0.7rem; color: #aaa; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; z-index: 1000; box-sizing: border-box; background: transparent;
+                    font-size: 0.7rem; color: #aaa; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; z-index: 1000; background: #fff;
                 }
 
-                .rpt-content { padding: 0; margin: 0; } /* 清除多餘的推擠 */
+                /* ✨ 終極重疊修復 3：利用表格的 Header/Footer 強制在「每一頁」預留出安全空間，絕對不遮擋！ */
+                .print-wrapper-table { width: 100%; border-collapse: collapse; border: none; }
+                .print-wrapper-table > thead > tr > td, 
+                .print-wrapper-table > tbody > tr > td, 
+                .print-wrapper-table > tfoot > tr > td { padding: 0; border: none; background: transparent; }
                 
-                /* 其餘企業級列印設定 */
-                .rpt-cover { padding-top: 10mm; } /* 給封面一點呼吸空間 */
+                .print-header-space { height: 16mm; } /* 每頁頂部強制留空 16mm 給 Fixed Header */
+                .print-footer-space { height: 14mm; } /* 每頁底部強制留空 14mm 給 Fixed Footer */
+
+                .rpt-content { padding: 0; margin: 0; }
+                
                 .rpt-cover::before { background-color: #d10001 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
                 .rpt-cover-info { background-color: #fcfcfc !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
                 .rpt-title::before { background-color: #d10001 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
@@ -1062,14 +1078,10 @@
                 .rpt-table tr:nth-child(even) { background-color: transparent !important; } 
                 .status-badge { -webkit-print-color-adjust: exact; print-color-adjust: exact; } 
                 .rpt-box { -webkit-print-color-adjust: exact; print-color-adjust: exact; background-color: #fafafa !important; border-left: 4px solid #d10001 !important;}
-                .rpt-box.success { border-left-color: #16a34a !important; }
                 .rpt-chart-box { -webkit-print-color-adjust: exact; print-color-adjust: exact; box-shadow: none; border-color: #ddd;}
                 .rpt-chart-desc { -webkit-print-color-adjust: exact; print-color-adjust: exact; background-color: #f8f9fa !important; }
                 .rpt-watermark-bg { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
                 .rpt-footer-text { display: none; }
-                
-                /* ★ 核心修復：加大上下紙張邊界，自動讓出空間給 Header 和 Footer */
-                @page { margin: 25mm 15mm 20mm 15mm; } 
             }
         `;
 
@@ -1106,6 +1118,52 @@
                 html += '</div>';
                 return html;
             };
+
+            let geomHTML = processCharts('img_geom_container');
+            let chartsHTML = processCharts('img_charts_container');
+
+            // ✨ 加入 PDF 空間預留 Table 結構
+            let outHtml = `
+            <div class="rpt-watermark-bg"></div>
+            
+            <div class="print-fixed-header">
+                <img src="jpc logo.png" alt="JPC Logo" onerror="this.style.display='none'">
+                <span class="hdr-text">${isSim ? 'Simulation' : 'SI Measurement'} Report</span>
+            </div>
+            
+            <div class="print-fixed-footer">
+                <span>${pName !== "-" ? escapeHTML(pName) : 'JPC Connectivity'}</span>
+                <span>${escapeHTML(getValAlways('pdate'))} | Confidential</span>
+            </div>
+
+            <!-- 強制撐開空間的排版魔術 Table -->
+            <table class="print-wrapper-table">
+                <thead><tr><td><div class="print-header-space"></div></td></tr></thead>
+                <tbody><tr><td>
+                    <div class="rpt-content">
+                        <div class="rpt-cover">
+                            <img src="jpc logo.png" class="rpt-cover-logo" alt="JPC Logo" onerror="this.style.display='none'">
+                            ${pName !== "-" ? `<h1 class="rpt-cover-title">${pName}</h1>` : ''}
+                            <div class="rpt-cover-subtitle">${isSim ? 'Simulation' : 'SI Measurement'} Analysis Report</div>
+                            <div class="rpt-cover-info">`;
+
+            if (isSim) {
+                outHtml += `
+                    <div class="rpt-cover-row"><span class="rpt-cover-label">Date</span><span class="rpt-cover-val">${escapeHTML(getValAlways('pdate'))}</span></div>
+                    <div class="rpt-cover-row"><span class="rpt-cover-label">Version / Std.</span><span class="rpt-cover-val">${escapeHTML(getValAlways('prev'))}</span></div>
+                    <div class="rpt-cover-row"><span class="rpt-cover-label">Prepared by</span><span class="rpt-cover-val">${escapeHTML(getValAlways('powner'))}</span></div>
+                    <div class="rpt-cover-row"><span class="rpt-cover-label">Approved by</span><span class="rpt-cover-val">${escapeHTML(getValAlways('pchecker'))}</span></div>
+                `;
+            } else {
+                outHtml += `
+                    <div class="rpt-cover-row"><span class="rpt-cover-label">Report To</span><span class="rpt-cover-val">${escapeHTML(getValAlways('ptarget'))}</span></div>
+                    <div class="rpt-cover-row"><span class="rpt-cover-label">Date</span><span class="rpt-cover-val">${escapeHTML(getValAlways('pdate'))}</span></div>
+                    <div class="rpt-cover-row"><span class="rpt-cover-label">Specification Standard</span><span class="rpt-cover-val">${escapeHTML(getValAlways('prev'))}</span></div>
+                    <div class="rpt-cover-row"><span class="rpt-cover-label">Prepared by</span><span class="rpt-cover-val">${escapeHTML(getValAlways('powner'))}</span></div>
+                    <div class="rpt-cover-row"><span class="rpt-cover-label">Approved by</span><span class="rpt-cover-val">${escapeHTML(getValAlways('pchecker'))}</span></div>
+                `;
+            }
+            outHtml += `</div></div><div class="page-break"></div>`;
 
             let geomHTML = processCharts('img_geom_container');
             let chartsHTML = processCharts('img_charts_container');
