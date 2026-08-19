@@ -843,7 +843,6 @@
                      if(items[i].type.startsWith('image/')) isImage = true;
                  }
              }
-             // 只在拖曳「非圖片」的檔案 (通常是 .jpc 專案檔) 時，才顯示全螢幕覆蓋
              if (isFile && !isImage && !document.body.classList.contains('preview-mode')) {
                  dropOverlay.style.display = 'flex';
              }
@@ -902,7 +901,6 @@
         }
         document.addEventListener('change', (e) => { if(['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName)) saveDraft(); });
         
-        // ======= 自動調整 Textarea 高度 =======
         function autoResizeTextarea(el) {
             el.style.height = 'auto';
             el.style.height = (el.scrollHeight + 2) + 'px';
@@ -941,11 +939,10 @@
                     html += '<tr>';
                     inputs.forEach((input, index) => {
                         let val = input.value.replace(/</g, "&lt;").replace(/>/g, "&gt;");
-                        // 標籤化測試結果判斷
                         let tdContent = val || "&nbsp;";
                         if (val === "Pass") { tdContent = `<span class="status-badge badge-pass">Pass</span>`; } 
                         else if (val === "Fail") { tdContent = `<span class="status-badge badge-fail">Fail</span>`; }
-                        else if (val === "REF") { tdContent = `<span class="status-badge badge-ref">REF</span>`; } /* ★ 新增：渲染 REF 標籤 */
+                        else if (val === "REF") { tdContent = `<span class="status-badge badge-ref">REF</span>`; } 
 
                         if (cls === 'save-t-dut' && (index === 0 || index === 2)) {
                             html += `<td style="background-color: #f6f5f4; font-weight: 700;">${tdContent}</td>`;
@@ -962,8 +959,6 @@
         const sharedReportCSS = `
             /* --- 全局與字體 (Global Typography) --- */
             .rpt-wrapper { font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; color: #333; line-height: 1.65; background: #fff;}
-            
-            /* 將浮水印改為 Fixed，確保每一張印出來的 PDF 都有浮水印 */
             .rpt-watermark-bg { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-repeat: repeat; z-index: 0; pointer-events: none; opacity: 0.8; }
             
             .rpt-content { position: relative; z-index: 1; padding: 50px 80px; min-height: 100vh;}
@@ -989,14 +984,11 @@
             .rpt-cover-val { font-weight: 700; color: #111; text-align: right;}
 
             /* --- 區塊標題 (Clean Headers) --- */
-            /* 加入 page-break-inside: auto 允許區塊正常換頁 */
             .rpt-section { margin-bottom: 60px; background: #fff; page-break-inside: auto; }
             
-            /* 加入 page-break-after: avoid 確保標題絕對不會單獨留在頁面底部 */
             .rpt-title { font-size: 1.5rem; color: #111; margin-bottom: 24px; font-weight: 800; letter-spacing: -0.01em; page-break-after: avoid; display: flex; align-items: center; gap: 12px;}
             .rpt-title::before { content: ''; display: block; width: 6px; height: 24px; background-color: #d10001; border-radius: 4px; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
 
-            /* 確保網格和重點文字框不會被腰斬 */
             .rpt-grid { display: grid; grid-template-columns: minmax(180px, 200px) 1fr; row-gap: 16px; font-size: 1rem; margin-bottom: 16px; word-break: break-word; page-break-inside: avoid; }
             .rpt-key { font-weight: 600; color: #555; }
             .rpt-box { border: 1px solid #eaeaea; border-left: 4px solid #d10001; border-radius: 6px; padding: 20px 24px; font-size: 1rem; background-color: #fafafa; color: #333; line-height: 1.7; page-break-inside: avoid;}
@@ -1004,7 +996,6 @@
             /* --- 學術級無直線表格 (Booktabs Style) --- */
             .rpt-table { width: 100%; border-collapse: collapse; font-size: 0.95rem; margin-top: 16px; page-break-inside: auto; }
             
-            /* ✨ 智慧換頁防護鎖：讓表格標題在下一頁自動重複出現，且每行資料不被切斷 */
             .rpt-table thead { display: table-header-group; } 
             .rpt-table tr { page-break-inside: avoid; } 
             
@@ -1047,9 +1038,9 @@
 
                 /* ✨ 終極重疊修復 2：Header 和 Footer 永遠緊貼紙張邊緣 */
                 .print-fixed-header { 
-                    position: fixed; top: 0; left: 0; right: 0; height: 12mm; 
+                    position: fixed; top: 0; left: 0; right: 0; height: 14mm; 
                     border-bottom: 2px solid #d10001; display: flex; justify-content: space-between; align-items: flex-end; 
-                    padding-bottom: 6px; z-index: 1000; background: #fff; 
+                    padding-bottom: 6px; z-index: 1000; background: #fff; box-sizing: border-box;
                 }
                 .print-fixed-header img { height: 20px; }
                 .print-fixed-header .hdr-text { font-size: 0.75rem; color: #888; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
@@ -1057,18 +1048,20 @@
                 .print-fixed-footer { 
                     position: fixed; bottom: 0; left: 0; right: 0; height: 10mm; 
                     border-top: 1px solid #eaeaea; padding-top: 6px; display: flex; justify-content: space-between; 
-                    font-size: 0.7rem; color: #aaa; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; z-index: 1000; background: #fff;
+                    font-size: 0.7rem; color: #aaa; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; z-index: 1000; background: #fff; box-sizing: border-box;
                 }
 
-                /* ✨ 終極重疊修復 3：利用表格的 Header/Footer 強制在「每一頁」預留出安全空間，絕對不遮擋！ */
+                /* ✨ 終極重疊修復 3：利用表格強制預留空間 */
                 .print-wrapper-table { width: 100%; border-collapse: collapse; border: none; }
                 .print-wrapper-table > thead > tr > td, 
                 .print-wrapper-table > tbody > tr > td, 
-                .print-wrapper-table > tfoot > tr > td { padding: 0; border: none; background: transparent; }
+                .print-wrapper-table > tfoot > tr > td { padding: 0; border: none; background: transparent; vertical-align: top; }
                 
-                .print-header-space { height: 16mm; } /* 每頁頂部強制留空 16mm 給 Fixed Header */
-                .print-footer-space { height: 14mm; } /* 每頁底部強制留空 14mm 給 Fixed Footer */
+                .print-header-space { height: 18mm; } /* 給 Fixed Header 留出空間 */
+                .print-footer-space { height: 12mm; } /* 給 Fixed Footer 留出空間 */
 
+                .page-break-tbody { break-before: page; page-break-before: always; }
+                
                 .rpt-content { padding: 0; margin: 0; }
                 
                 .rpt-cover::before { background-color: #d10001 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
@@ -1139,6 +1132,9 @@
             <!-- 強制撐開空間的排版魔術 Table -->
             <table class="print-wrapper-table">
                 <thead><tr><td><div class="print-header-space"></div></td></tr></thead>
+                <tfoot><tr><td><div class="print-footer-space"></div></td></tr></tfoot>
+                
+                <!-- PAGE 1: Cover -->
                 <tbody><tr><td>
                     <div class="rpt-content">
                         <div class="rpt-cover">
@@ -1163,47 +1159,10 @@
                     <div class="rpt-cover-row"><span class="rpt-cover-label">Approved by</span><span class="rpt-cover-val">${escapeHTML(getValAlways('pchecker'))}</span></div>
                 `;
             }
-            outHtml += `</div></div><div class="page-break"></div>`;
+            outHtml += `</div></div></div></td></tr></tbody>`; // 結束封面 tbody
 
-            let geomHTML = processCharts('img_geom_container');
-            let chartsHTML = processCharts('img_charts_container');
-
-            // ✨ 加入 PDF Fixed Header / Footer 結構
-            let outHtml = `
-            <div class="rpt-watermark-bg"></div>
-            <div class="print-fixed-header">
-                <img src="jpc logo.png" alt="JPC Logo" onerror="this.style.display='none'">
-                <span class="hdr-text">${isSim ? 'Simulation' : 'SI Measurement'} Report</span>
-            </div>
-            <div class="print-fixed-footer">
-                <span>${pName !== "-" ? escapeHTML(pName) : 'JPC Connectivity'}</span>
-                <span>${escapeHTML(getValAlways('pdate'))} | Confidential</span>
-            </div>
-            <div class="rpt-content">
-                <div class="rpt-cover">
-                    <img src="jpc logo.png" class="rpt-cover-logo" alt="JPC Logo" onerror="this.style.display='none'">
-                    ${pName !== "-" ? `<h1 class="rpt-cover-title">${pName}</h1>` : ''}
-                    <div class="rpt-cover-subtitle">${isSim ? 'Simulation' : 'SI Measurement'} Analysis Report</div>
-                    <div class="rpt-cover-info">`;
-
-            if (isSim) {
-                outHtml += `
-                    <div class="rpt-cover-row"><span class="rpt-cover-label">Date</span><span class="rpt-cover-val">${escapeHTML(getValAlways('pdate'))}</span></div>
-                    <div class="rpt-cover-row"><span class="rpt-cover-label">Version / Std.</span><span class="rpt-cover-val">${escapeHTML(getValAlways('prev'))}</span></div>
-                    <div class="rpt-cover-row"><span class="rpt-cover-label">Prepared by</span><span class="rpt-cover-val">${escapeHTML(getValAlways('powner'))}</span></div>
-                    <div class="rpt-cover-row"><span class="rpt-cover-label">Approved by</span><span class="rpt-cover-val">${escapeHTML(getValAlways('pchecker'))}</span></div>
-                `;
-            } else {
-                outHtml += `
-                    <div class="rpt-cover-row"><span class="rpt-cover-label">Report To</span><span class="rpt-cover-val">${escapeHTML(getValAlways('ptarget'))}</span></div>
-                    <div class="rpt-cover-row"><span class="rpt-cover-label">Date</span><span class="rpt-cover-val">${escapeHTML(getValAlways('pdate'))}</span></div>
-                    <div class="rpt-cover-row"><span class="rpt-cover-label">Specification Standard</span><span class="rpt-cover-val">${escapeHTML(getValAlways('prev'))}</span></div>
-                    <div class="rpt-cover-row"><span class="rpt-cover-label">Prepared by</span><span class="rpt-cover-val">${escapeHTML(getValAlways('powner'))}</span></div>
-                    <div class="rpt-cover-row"><span class="rpt-cover-label">Approved by</span><span class="rpt-cover-val">${escapeHTML(getValAlways('pchecker'))}</span></div>
-                `;
-            }
-            outHtml += `</div></div><div class="page-break"></div>`;
-
+            // --- PAGE 2: Summary & Info ---
+            outHtml += `<tbody class="page-break-tbody"><tr><td><div class="rpt-content">`;
             let secIndex = 1; 
             let purposeText = getVal('ppurpose');
             if(isSim && purposeText) {
@@ -1221,7 +1180,6 @@
                 </div>
             </div>`;
 
-            // ✨ Executive Summary 前置佈局 (高階主管 Top-down 邏輯)
             let concText = getVal('c_conc');
             if (concText) {
                 outHtml += `<div class="rpt-section"><div class="rpt-title">${secIndex++}. Executive Summary (Conclusion)</div><div class="rpt-box">${escapeHTML(concText)}</div></div>`;
@@ -1230,9 +1188,10 @@
             if (nextText) {
                 outHtml += `<div class="rpt-section"><div class="rpt-title">${secIndex++}. Next Steps</div><div class="rpt-box">${escapeHTML(nextText)}</div></div>`;
             }
+            outHtml += `</div></td></tr></tbody>`; // 結束 Page 2 tbody
 
-            if(concText || nextText) { outHtml += `<div class="page-break"></div>`; }
-
+            // --- PAGE 3: Setup / Test Equipments / Spec Table ---
+            outHtml += `<tbody class="page-break-tbody"><tr><td><div class="rpt-content">`;
             if (isSim) {
                 let setupGrid = '';
                 let startFreq = getVal('sfreq_start') || '0'; let endFreq = getVal('sfreq_end');
@@ -1251,7 +1210,7 @@
 
                 if(setupGrid) outHtml += `<div class="rpt-section"><div class="rpt-title">${secIndex++}. Product & Environment Setup</div><div class="rpt-grid">${setupGrid}</div></div>`;
                 if (document.querySelectorAll('#img_geom_container .chart-card').length > 0) {
-                    outHtml += `<div class="page-break"></div><div class="rpt-section"><div class="rpt-title">${secIndex++}. Geometry & Requirements</div>${geomHTML}</div>`;
+                    outHtml += `<div class="rpt-section"><div class="rpt-title">${secIndex++}. Geometry & Requirements</div>${geomHTML}</div>`;
                 }
 
                 let specTableHTML = buildTableHTML('save-target');
@@ -1265,21 +1224,30 @@
                 if(equipHtml) outHtml += `<div class="rpt-section"><div class="rpt-title">${secIndex++}. Test Equipments Information</div><table class="rpt-table"><tr><th>ID</th><th>Instrument</th><th>Description with Instrumentation and software</th><th>Manufacture</th></tr>${equipHtml}</table></div>`;
                 if(dutHtml) outHtml += `<div class="rpt-section"><div class="rpt-title">${secIndex++}. Device Under Test (DUT) Information</div><table class="rpt-table"><tr><th>Property Name</th><th>Value</th><th>Property Name</th><th>Value</th></tr>${dutHtml}</table></div>`;
                 if(sumHtml) outHtml += `<div class="rpt-section"><div class="rpt-title">${secIndex++}. Summary of Results</div><table class="rpt-table"><tr><th style="width:80%;">Item</th><th>Test Result</th></tr>${sumHtml}</table></div>`;
-                
-                if (matrixHtml) {
-                    outHtml += `<div class="page-break"></div><div class="rpt-section"><div class="rpt-title">${secIndex++}. Summary of Results for the DUT</div><div style="overflow-x:auto;">
-                        <table class="rpt-table" style="font-size: 0.85rem; text-align:center;">
-                            <tr><th>Item / Freq</th><th>Limit</th><th>TX/RX 1</th><th>TX/RX 2</th><th>TX/RX 3</th><th>TX/RX 4</th><th>TX/RX 5</th><th>TX/RX 6</th><th>TX/RX 7</th><th>TX/RX 8</th><th>Result</th></tr>
-                            ${matrixHtml}
-                        </table></div></div>`;
-                }
+            }
+            outHtml += `</div></td></tr></tbody>`; // 結束 Page 3 tbody
+
+            // --- PAGE 4: Matrix (Optional) ---
+            let matrixHtml = buildTableHTML('save-t-mat');
+            if (!isSim && matrixHtml) {
+                outHtml += `<tbody class="page-break-tbody"><tr><td><div class="rpt-content">`;
+                outHtml += `<div class="rpt-section"><div class="rpt-title">${secIndex++}. Summary of Results for the DUT</div><div style="overflow-x:auto;">
+                    <table class="rpt-table" style="font-size: 0.85rem; text-align:center;">
+                        <tr><th>Item / Freq</th><th>Limit</th><th>TX/RX 1</th><th>TX/RX 2</th><th>TX/RX 3</th><th>TX/RX 4</th><th>TX/RX 5</th><th>TX/RX 6</th><th>TX/RX 7</th><th>TX/RX 8</th><th>Result</th></tr>
+                        ${matrixHtml}
+                    </table></div></div>`;
+                outHtml += `</div></td></tr></tbody>`;
             }
 
+            // --- PAGE 5: Charts (Optional) ---
             if (document.querySelectorAll('#img_charts_container .chart-card').length > 0) {
-                outHtml += `<div class="page-break"></div><div class="rpt-section"><div class="rpt-title">${secIndex++}. ${isSim ? 'Simulation Results' : 'Charts & Data'}</div>${chartsHTML}</div>`;
+                outHtml += `<tbody class="page-break-tbody"><tr><td><div class="rpt-content">`;
+                outHtml += `<div class="rpt-section"><div class="rpt-title">${secIndex++}. ${isSim ? 'Simulation Results' : 'Charts & Data'}</div>${chartsHTML}</div>`;
+                outHtml += `</div></td></tr></tbody>`;
             }
             
-            outHtml += `${confCfg.footer ? `<div class="rpt-footer-text">${confCfg.footer}</div>` : ''}</div>`;
+            // 結束排版魔術 Table
+            outHtml += `</table>`;
 
             currentReportInnerHTML = outHtml;
             document.getElementById('report-render-area').innerHTML = `<style>${finalCSS}</style><div class="rpt-wrapper">${currentReportInnerHTML}</div>`;
