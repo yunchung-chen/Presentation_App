@@ -237,7 +237,6 @@
         </nav>
 
         <div class="nav-action">
-            <!-- ✨ New Report 按鈕 -->
             <button class="btn-theme" style="margin-bottom: 8px; background: var(--primary-light); color: var(--primary); border-color: var(--primary-light); justify-content: center; font-weight: 800;" onclick="openNewReportModal()">
                 <svg style="width: 18px; height: 18px; flex-shrink: 0;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>Clean All
             </button>
@@ -281,7 +280,6 @@
                 </div>
             </section>
 
-            <!-- ✨ 閱讀邏輯升級：大綱前置 -->
             <section id="sec-conc">
                 <h2 class="section-header">Executive Summary </h2>
                 <div class="form-group" style="margin-bottom: 20px;"><label>Conclusion</label><textarea id="c_conc" placeholder="請輸入報告結論..."></textarea></div>
@@ -1031,32 +1029,33 @@
             }
 
             @media print { 
-                /* ✨ 核心修復：強制解除 Flexbox，讓內容自然流動 */
+                /* ✨ 核心修復：強制解除 Flexbox，讓內容自然流動，避免表格和分頁錯亂 */
                 *, *::before, *::after { box-sizing: border-box; }
                 body, html, #main-content, #preview-workspace, #report-render-area, .rpt-wrapper, .rpt-content { 
                     display: block !important; height: auto !important; overflow: visible !important; position: static !important; margin: 0 !important; padding: 0 !important;
                 }
                 
-                /* ✨ 終極解法一：強制設定紙張的絕對白邊 */
-                @page { margin: 40mm 15mm 30mm 15mm !important; } 
+                /* ✨ 設定實體紙張邊界：利用原生的 margin 為頁首頁尾預留空間 */
+                /* 這裡直接把 margin 變大，讓本文絕對不會印到 header/footer 的位子 */
+                @page { margin: 40mm 15mm 30mm 15mm; } 
 
-                /* ✨ 終極解法二：把 Fixed 頁首精準設定在距離紙張頂部 1cm 處 (40mm - 30mm = 10mm) */
+                /* ✨ 利用負的 margin，將 Fixed 頁首精準設定在距離紙張物理頂部 1cm 處 */
                 .print-fixed-header { 
                     position: fixed !important; top: -30mm; left: 0; right: 0; height: 12mm; 
                     border-bottom: 2px solid #d10001; display: flex !important; justify-content: space-between; align-items: flex-end; 
                     padding-bottom: 6px; z-index: 1000; background: transparent; 
                 }
-                .print-fixed-header img { height: 22px; }
-                .print-fixed-header .hdr-text { font-size: 0.8rem; color: #888; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+                .print-fixed-header img { height: 20px; }
+                .print-fixed-header .hdr-text { font-size: 0.75rem; color: #888; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
                 
-                /* ✨ 終極解法三：把 Fixed 頁尾精準設定在距離紙張底部 1cm 處 (30mm - 20mm = 10mm) */
+                /* ✨ 利用負的 margin，將 Fixed 頁尾精準設定在距離紙張物理底部 1cm 處 */
                 .print-fixed-footer { 
                     position: fixed !important; bottom: -20mm; left: 0; right: 0; height: 10mm; 
                     border-top: 1px solid #eaeaea; display: flex !important; justify-content: space-between; align-items: flex-start;
                     padding-top: 6px; font-size: 0.7rem; color: #aaa; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; z-index: 1000; background: transparent; 
                 }
                 
-                /* 確保首頁版面不會亂跑 */
+                /* 封面排版微調，以適應加大的 page margin */
                 .rpt-cover { padding-top: 2vh; min-height: 75vh; }
                 .rpt-cover::before { top: 10vh; bottom: 5vh; }
                 
@@ -1150,11 +1149,15 @@
                     <div class="rpt-cover-row"><span class="rpt-cover-label">Approved by</span><span class="rpt-cover-val">${escapeHTML(getValAlways('pchecker'))}</span></div>
                 `;
             }
+            // 封面結束，強制換頁
             outHtml += `</div></div><div class="page-break"></div>`;
 
             let secIndex = 1; 
+            
+            // --- Part 1: Purpose & Project Info ---
             let purposeText = getVal('ppurpose');
-
+            let firstContentClass = 'page-break'; // 第一個出現的內容不需要換頁，因為封面已經換過了
+            
             if(isSim && purposeText) {
                 outHtml += `<div class="rpt-section"><div class="rpt-title">${secIndex++}. Purpose</div><div class="rpt-box">${escapeHTML(purposeText)}</div></div>`;
             }
@@ -1174,12 +1177,13 @@
             if (concText) {
                 outHtml += `<div class="rpt-section"><div class="rpt-title">${secIndex++}. Executive Summary (Conclusion)</div><div class="rpt-box">${escapeHTML(concText)}</div></div>`;
             }
+            
             let nextText = getVal('c_next');
             if (nextText) {
                 outHtml += `<div class="rpt-section"><div class="rpt-title">${secIndex++}. Next Steps</div><div class="rpt-box">${escapeHTML(nextText)}</div></div>`;
             }
 
-            // 自然流動，僅在有矩陣或圖表時手動換頁
+            // --- Part 2: Tables & Setups ---
             if (isSim) {
                 let setupGrid = '';
                 let startFreq = getVal('sfreq_start') || '0'; let endFreq = getVal('sfreq_end');
@@ -1213,15 +1217,18 @@
                 if(equipHtml) {
                     outHtml += `<div class="rpt-section page-break"><div class="rpt-title">${secIndex++}. Test Equipments Information</div><table class="rpt-table"><thead><tr><th>ID</th><th>Instrument</th><th>Description with Instrumentation and software</th><th>Manufacture</th></tr></thead><tbody>${equipHtml}</tbody></table></div>`;
                 }
+                
                 if(dutHtml) {
+                    // DUT 通常不需獨立一頁，接在設備表下方
                     outHtml += `<div class="rpt-section"><div class="rpt-title">${secIndex++}. Device Under Test (DUT) Information</div><table class="rpt-table"><thead><tr><th>Property Name</th><th>Value</th><th>Property Name</th><th>Value</th></tr></thead><tbody>${dutHtml}</tbody></table></div>`;
                 }
                 
-                // 應使用者要求，第 6 點 Summary of Results 強制換頁
+                // 強制換頁
                 if(sumHtml) {
                     outHtml += `<div class="rpt-section page-break"><div class="rpt-title">${secIndex++}. Summary of Results</div><table class="rpt-table"><thead><tr><th style="width:80%;">Item</th><th>Test Result</th></tr></thead><tbody>${sumHtml}</tbody></table></div>`;
                 }
                 
+                // 強制換頁
                 if (matrixHtml) {
                     outHtml += `<div class="rpt-section page-break"><div class="rpt-title">${secIndex++}. Summary of Results for the DUT</div><div style="overflow-x:auto;">
                         <table class="rpt-table" style="font-size: 0.85rem; text-align:center;">
@@ -1231,12 +1238,12 @@
                 }
             }
 
+            // --- Part 3: Charts ---
             if (chartsHTML) {
                 outHtml += `<div class="rpt-section page-break"><div class="rpt-title">${secIndex++}. ${isSim ? 'Simulation Results' : 'Charts & Data'}</div>${chartsHTML}</div>`;
             }
             
             outHtml += `</div>`; // 結束 rpt-content
-            outHtml += `${confCfg.footer ? `<div class="rpt-footer-text">${confCfg.footer}</div>` : ''}`;
 
             currentReportInnerHTML = outHtml;
             document.getElementById('report-render-area').innerHTML = `<style>${finalCSS}</style><div class="rpt-wrapper">${currentReportInnerHTML}</div>`;
